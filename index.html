@@ -3,86 +3,69 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Control Diario de Tesorería</title>
+  <title>Sistema de Tesorería y Conciliación Bancaria</title>
   <style>
-    /* RESET Y BASES */
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body { background-color: #f1f5f9; color: #1e293b; padding-bottom: 50px; }
+    body { background-color: #f8fafc; color: #0f172a; display: flex; min-height: 100vh; }
 
-    /* ENCABEZADO SUPERIOR TIPO EXECUTIVE */
-    header { background-color: #0f172a; color: #ffffff; padding: 16px 24px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-    .header-box { max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .brand-icon { background: #10b981; color: white; padding: 8px 12px; border-radius: 10px; font-weight: bold; font-size: 18px; }
-    .brand-text h1 { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; color: #ffffff; }
-    .brand-text p { font-size: 11px; color: #94a3b8; }
+    /* BARRA LATERAL (SIDEBAR DE MÓDULOS) */
+    aside { width: 260px; background-color: #0f172a; color: #ffffff; display: flex; flex-col; flex-shrink: 0; border-r: 1px solid #1e293b; }
+    .sidebar-header { padding: 20px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; gap: 12px; }
+    .sidebar-logo { background: #10b981; color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
+    .sidebar-title h2 { font-size: 15px; font-weight: 800; color: #ffffff; }
+    .sidebar-title p { font-size: 11px; color: #64748b; }
 
-    /* CONTROLES Y CUENTAS */
-    .controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-    .select-acc { background-color: #1e293b; border: 1px solid #334155; color: white; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; outline: none; }
-    .btn-acc { background-color: #059669; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-    .btn-acc:hover { background-color: #047857; }
+    .module-nav { padding: 16px 12px; flex: 1; }
+    .nav-section-label { font-size: 10px; font-weight: 800; text-transform: uppercase; color: #475569; padding: 8px 12px; letter-spacing: 0.5px; }
+    .mod-link { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 10px; color: #94a3b8; font-size: 13px; font-weight: 600; text-decoration: none; margin-bottom: 4px; cursor: pointer; transition: all 0.2s; }
+    .mod-link:hover { background-color: #1e293b; color: #ffffff; }
+    .mod-link.active { background-color: #059669; color: #ffffff; box-shadow: 0 4px 12px rgba(5,150,105,0.25); }
 
-    /* BOTONES CAMBIO DE VISTA */
-    .nav-tabs { display: flex; background: #1e293b; padding: 4px; border-radius: 10px; border: 1px solid #334155; }
-    .btn-tab { border: none; background: transparent; color: #94a3b8; padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
-    .btn-tab.active { background: #334155; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    /* ZONA DE CONTENIDO PRINCIPAL */
+    .app-viewport { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow-y: auto; }
 
-    /* CONTENEDOR PRINCIPAL */
-    main { max-width: 1280px; margin: 24px auto; padding: 0 16px; }
+    /* CABECERA SUPERIOR DE ACCIONES */
+    header { background: #ffffff; padding: 16px 32px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .top-info h1 { font-size: 20px; font-weight: 800; color: #0f172a; }
+    .top-info p { font-size: 12px; color: #64748b; }
 
-    /* TARJETAS DE SALDO REAL (KPIS) */
+    .account-switcher { display: flex; align-items: center; gap: 10px; background: #f1f5f9; padding: 6px 12px; border-radius: 10px; border: 1px solid #cbd5e1; }
+    .account-switcher select { background: transparent; border: none; font-size: 13px; font-weight: 700; color: #0f172a; outline: none; cursor: pointer; }
+    .btn-add-acc { background: #0f172a; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+
+    /* CONTENEDOR DE MODULOS */
+    main { padding: 32px; max-width: 1400px; margin: 0 auto; width: 100%; }
+
+    /* TARJETAS KPIS */
     .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .card-kpi { background: #ffffff; padding: 20px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-    .card-kpi .label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; }
-    .card-kpi .val { font-size: 22px; font-weight: 800; margin-top: 6px; color: #0f172a; }
-    .card-kpi .val.green { color: #059669; }
-    .card-kpi .val.red { color: #dc2626; }
+    .kpi-card { background: #ffffff; padding: 20px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+    .kpi-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; }
+    .kpi-val { font-size: 22px; font-weight: 800; margin-top: 6px; color: #0f172a; }
+    .kpi-val.green { color: #059669; }
+    .kpi-val.red { color: #dc2626; }
+    .kpi-card.emerald-highlight { background: #ecfdf5; border-color: #a7f3d0; }
+    .kpi-card.emerald-highlight .kpi-label { color: #065f46; }
+    .kpi-card.emerald-highlight .kpi-val { color: #064e3b; font-size: 24px; }
 
-    .card-kpi.highlight { background: #ecfdf5; border-color: #a7f3d0; }
-    .card-kpi.highlight .label { color: #065f46; }
-    .card-kpi.highlight .val { color: #064e3b; font-size: 24px; }
-
-    /* BARRA TABLA Y BOTÓN AGREGAR */
-    .action-bar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 14px 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
-    .btn-add-mov { background: #059669; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 4px rgba(5,150,105,0.2); }
-    .btn-add-mov:hover { background: #047857; }
-    .hint { font-size: 12px; color: #64748b; font-style: italic; }
-
-    /* TABLA PRINCIPAL EXCEL REALISTA CON CABECERA VERDE */
-    .table-wrapper { background: white; border-radius: 14px; border: 1px solid #cbd5e1; overflow-x: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    /* TABLAS EXCEL */
+    .table-card { background: #ffffff; border-radius: 14px; border: 1px solid #cbd5e1; overflow-x: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
     table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
-    th { background-color: #107c41 !important; color: #ffffff !important; font-weight: 700; padding: 14px 12px; text-transform: uppercase; border-bottom: 2px solid #084c27; letter-spacing: 0.3px; }
+    th { background-color: #107c41 !important; color: #ffffff !important; font-weight: 700; padding: 14px 12px; text-transform: uppercase; border-bottom: 2px solid #084c27; }
     td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #334155; }
     tr:hover { background-color: #f8fafc; }
 
     /* SUBTOTALES AMARILLOS */
-    tr.subtotal-row { background-color: #fef08a !important; }
-    tr.subtotal-row:hover { background-color: #fde047 !important; }
-    td.subtotal-tag { padding-left: 28px !important; font-style: italic; color: #713f12; font-weight: 700; }
+    tr.bg-subtotal { background-color: #fef08a !important; }
+    tr.bg-subtotal:hover { background-color: #fde047 !important; }
+    td.subtotal-indent { padding-left: 28px !important; font-style: italic; color: #713f12; font-weight: 700; }
 
-    /* INFORMES DE AUDITORÍA */
-    .reports-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .rep-box { padding: 20px; border-radius: 14px; border: 1px solid #cbd5e1; }
-    .rep-box.amber { background: #fffbeb; border-color: #fde68a; }
-    .rep-box.blue { background: #eff6ff; border-color: #bfdbfe; }
-    .rep-box .title { font-size: 12px; font-weight: 800; text-transform: uppercase; }
-    .rep-box.amber .title { color: #92400e; }
-    .rep-box.blue .title { color: #1e40af; }
-    .rep-box .num { font-size: 28px; font-weight: 900; margin-top: 6px; }
-    .rep-box.amber .num { color: #78350f; }
-    .rep-box.blue .num { color: #1e3a8a; }
-    .rep-box .sub { font-size: 12px; color: #64748b; margin-top: 4px; }
-
-    .detail-card { background: white; padding: 20px; border-radius: 14px; border: 1px solid #e2e8f0; margin-bottom: 24px; }
-    .detail-card h3 { font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 14px; }
-
-    /* BADGES */
+    /* ETIQUETAS */
     .badge { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; display: inline-block; }
     .badge-in { background: #d1fae5; color: #065f46; }
     .badge-out { background: #ffe4e6; color: #9f1239; }
-    .badge-sub { background: #fef08a; color: #713f12; }
     .badge-gasto { background: #e2e8f0; color: #475569; }
+
+    .btn-action { background: #059669; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-bottom: 16px; }
 
     .text-right { text-align: right; }
     .text-center { text-align: center; }
@@ -91,108 +74,104 @@
 </head>
 <body>
 
-  <!-- CABECERA DE LA APP -->
-  <header>
-    <div class="header-box">
-      <div class="brand">
-        <div class="brand-icon">🏦</div>
-        <div class="brand-text">
-          <h1>Control Diario de Tesorería</h1>
-          <p>Conciliación Bancaria y Reportes de Auditoría</p>
-        </div>
-      </div>
-
-      <div class="controls">
-        <label style="font-size: 12px; font-weight: 700; color: #94a3b8;">CUENTA:</label>
-        <select id="accountSelect" onchange="changeAccount()" class="select-acc">
-          <option value="DAVIVIENDA 5152">DAVIVIENDA 5152</option>
-          <option value="BANCOLOMBIA 9015">BANCOLOMBIA 9015</option>
-        </select>
-        <button onclick="addNewAccount()" class="btn-acc">+ Nueva Cuenta</button>
-
-        <div class="nav-tabs">
-          <button id="tab-table" onclick="switchView('table')" class="btn-tab active">📊 Movimientos</button>
-          <button id="tab-reports" onclick="switchView('reports')" class="btn-tab">📋 Informes Auditoría</button>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- CONTENIDO -->
-  <main>
-
-    <!-- METRICAS DE TESORERÍA -->
-    <div class="kpi-grid">
-      <div class="card-kpi">
-        <div class="label">Saldo Inicial</div>
-        <div id="kpiSaldoInicial" class="val">$0</div>
-      </div>
-      <div class="card-kpi">
-        <div class="label">Entradas Totales</div>
-        <div id="kpiEntradas" class="val green">$0</div>
-      </div>
-      <div class="card-kpi">
-        <div class="label">Salidas Totales</div>
-        <div id="kpiSalidas" class="val red">$0</div>
-      </div>
-      <div class="card-kpi highlight">
-        <div class="label">Saldo Final Real Banco</div>
-        <div id="kpiSaldoFinal" class="val">$0</div>
+  <!-- BARRA LATERAL CON MÓDULOS DEL SISTEMA -->
+  <aside>
+    <div class="sidebar-header">
+      <div class="sidebar-logo">🏦</div>
+      <div class="sidebar-title">
+        <h2>GESTIÓN TESORERÍA</h2>
+        <p>Sistema Bancario v3.0</p>
       </div>
     </div>
 
-    <!-- VISTA 1: TABLA PRINCIPAL DE MOVIMIENTOS -->
-    <div id="view-table">
-      <div class="action-bar">
-        <button onclick="addNewRow()" class="btn-add-mov">+ Agregar Movimiento Banco</button>
-        <div class="hint">💡 Las filas amarillas desglosan los subtotales individuales de cada movimiento global.</div>
+    <nav class="module-nav">
+      <div class="nav-section-label">Módulos Principales</div>
+      <div id="link-mod-posicion" onclick="switchModule('mod-posicion')" class="mod-link active">
+        <span>📊</span> <span>1. Posición Bancaria</span>
+      </div>
+      <div id="link-mod-identificar" onclick="switchModule('mod-identificar')" class="mod-link">
+        <span>🔍</span> <span>2. Por Identificar</span>
+      </div>
+      <div id="link-mod-contabilizar" onclick="switchModule('mod-contabilizar')" class="mod-link">
+        <span>📝</span> <span>3. Por Contabilizar</span>
       </div>
 
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th class="text-center" style="width: 50px;">Acción</th>
-              <th>Fecha</th>
-              <th>Descripción</th>
-              <th class="text-right">Referencia</th>
-              <th class="text-right">Saldo Inicial</th>
-              <th class="text-right">Entrada</th>
-              <th class="text-right">Salida</th>
-              <th class="text-right">Saldo</th>
-              <th>Información</th>
-              <th>Documento</th>
-              <th>Observaciones</th>
-            </tr>
-          </thead>
-          <tbody id="bankTableBody"></tbody>
-        </table>
+      <div class="nav-section-label" style="margin-top: 16px;">Auditoría y Control</div>
+      <div id="link-mod-reversos" onclick="switchModule('mod-reversos')" class="mod-link">
+        <span>🔄</span> <span>4. Reversos y Reembolsos</span>
       </div>
-    </div>
+      <div id="link-mod-consolidado" onclick="switchModule('mod-consolidado')" class="mod-link">
+        <span>🌐</span> <span>5. Consolidado Multicuenta</span>
+      </div>
+    </nav>
+  </aside>
 
-    <!-- VISTA 2: INFORMES DE AUDITORÍA Y PENDIENTES -->
-    <div id="view-reports" class="hidden">
-      
-      <div class="reports-grid">
-        <div class="rep-box amber">
-          <div class="title">Pendientes por Identificar</div>
-          <div id="repCountIdentificar" class="num">0 Registros</div>
-          <div class="sub">Columna INFORMACION vacía o no identificada.</div>
+  <!-- VISTA DE TRABAJO -->
+  <div class="app-viewport">
+    
+    <!-- BARRA SUPERIOR DE ACCIONES -->
+    <header>
+      <div class="top-info">
+        <h1 id="moduleTitle">1. Posición Bancaria y Movimientos</h1>
+        <p id="moduleSubtitle">Control diario de tesorería y subtotales desglosados de adquirencia</p>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="account-switcher">
+          <span style="font-size: 11px; font-weight: 800; color: #64748b;">CUENTA:</span>
+          <select id="accountSelect" onchange="changeAccount()">
+            <option value="DAVIVIENDA 5152">DAVIVIENDA 5152</option>
+            <option value="BANCOLOMBIA 9015">BANCOLOMBIA 9015</option>
+          </select>
+        </div>
+        <button onclick="addNewAccount()" class="btn-add-acc">+ Cuenta</button>
+      </div>
+    </header>
+
+    <main>
+
+      <!-- MÓDULO 1: POSICIÓN BANCARIA Y MOVIMIENTOS -->
+      <section id="mod-posicion" class="module-section">
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Saldo Inicial</div><div id="kpiSaldoInicial" class="kpi-val">$0</div></div>
+          <div class="kpi-card"><div class="kpi-label">Entradas Totales</div><div id="kpiEntradas" class="kpi-val green">$0</div></div>
+          <div class="kpi-card"><div class="kpi-label">Salidas Totales</div><div id="kpiSalidas" class="kpi-val red">$0</div></div>
+          <div class="kpi-card emerald-highlight"><div class="kpi-label">Saldo Real en Banco</div><div id="kpiSaldoFinal" class="kpi-val">$0</div></div>
         </div>
 
-        <div class="rep-box blue">
-          <div class="title">Pendientes por Contabilizar</div>
-          <div id="repCountContabilizar" class="num">0 Registros</div>
-          <div class="sub">Columna DOCUMENTO sin RC/FVE (Excluye Gastos Bancarios).</div>
-        </div>
-      </div>
+        <button onclick="addNewRow()" class="btn-action">+ Agregar Movimiento al Banco</button>
 
-      <div class="detail-card">
-        <h3>🔍 Detalle de Pendientes por Identificar</h3>
-        <div class="table-wrapper">
+        <div class="table-card">
           <table>
             <thead>
-              <tr style="background-color: #475569 !important;">
+              <tr>
+                <th class="text-center" style="width: 50px;">Acción</th>
+                <th>Fecha</th>
+                <th>Descripción</th>
+                <th class="text-right">Referencia</th>
+                <th class="text-right">Saldo Inicial</th>
+                <th class="text-right">Entrada</th>
+                <th class="text-right">Salida</th>
+                <th class="text-right">Saldo Real</th>
+                <th>Información</th>
+                <th>Documento</th>
+                <th>Observaciones</th>
+              </tr>
+            </thead>
+            <tbody id="bankTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- MÓDULO 2: PENDIENTES POR IDENTIFICAR -->
+      <section id="mod-identificar" class="module-section hidden">
+        <div class="table-card" style="padding: 24px;">
+          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">🔍 Informe de Movimientos Pendientes por Identificar</h3>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Evalúa registros con la columna <strong>INFORMACION</strong> vacía o no identificada.</p>
+          
+          <table>
+            <thead>
+              <tr style="background: #475569 !important;">
                 <th>Fecha</th>
                 <th>Flujo</th>
                 <th>Descripción</th>
@@ -204,14 +183,17 @@
             <tbody id="reportIdentificarBody"></tbody>
           </table>
         </div>
-      </div>
+      </section>
 
-      <div class="detail-card">
-        <h3>📝 Detalle de Pendientes por Contabilizar</h3>
-        <div class="table-wrapper">
+      <!-- MÓDULO 3: PENDIENTES POR CONTABILIZAR -->
+      <section id="mod-contabilizar" class="module-section hidden">
+        <div class="table-card" style="padding: 24px;">
+          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">📝 Informe de Partidas Pendientes por Contabilizar</h3>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Examina la presencia de Recibos de Caja (RC) o Facturas (FVE) en los subtotales desglosados (Excluye Gastos Bancarios).</p>
+          
           <table>
             <thead>
-              <tr style="background-color: #334155 !important;">
+              <tr style="background: #334155 !important;">
                 <th>Fecha</th>
                 <th>Flujo</th>
                 <th>Descripción / Información</th>
@@ -223,11 +205,53 @@
             <tbody id="reportContabilizarBody"></tbody>
           </table>
         </div>
-      </div>
+      </section>
 
-    </div>
+      <!-- MÓDULO 4: REVERSOS Y REEMBOLSOS -->
+      <section id="mod-reversos" class="module-section hidden">
+        <div class="table-card" style="padding: 24px;">
+          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">🔄 Seguimiento de Reversos, Devoluciones y Reembolsos</h3>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Control de transacciones en reclamación con entidades bancarias o proveedores.</p>
 
-  </main>
+          <table>
+            <thead>
+              <tr style="background: #1e293b !important;">
+                <th>Fecha</th>
+                <th>Flujo</th>
+                <th>Descripción</th>
+                <th class="text-right">Monto</th>
+                <th>Observación</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="reportReversosBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- MÓDULO 5: CONSOLIDADO MULTICUENTA -->
+      <section id="mod-consolidado" class="module-section hidden">
+        <div class="table-card" style="padding: 24px;">
+          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">🌐 Resumen Consolidado Global de Cuentas</h3>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Total de saldo disponible en la compañía a través de todas las cuentas bancarias configuradas.</p>
+
+          <table>
+            <thead>
+              <tr style="background: #0f172a !important;">
+                <th>Cuenta Bancaria</th>
+                <th class="text-right">Saldo Inicial</th>
+                <th class="text-right">Entradas</th>
+                <th class="text-right">Salidas</th>
+                <th class="text-right">Saldo Final</th>
+              </tr>
+            </thead>
+            <tbody id="consolidadoBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
 
   <script>
     let currentAccount = 'DAVIVIENDA 5152';
@@ -292,7 +316,8 @@
             { id: '4-5', referencia: 95119, informacion: 'INVERSIONES EAMC SAS R-V-10011 | FVE 17515', documento: 'RC-1-3306', observaciones: 'este seria un subtotal movimiento banco' }
           ]
         }
-      ]
+      ],
+      'BANCOLOMBIA 9015': []
     };
 
     function formatCurrency(val) {
@@ -300,24 +325,29 @@
       return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(num);
     }
 
-    function switchView(view) {
-      const btnTable = document.getElementById('tab-table');
-      const btnReports = document.getElementById('tab-reports');
-      const viewTable = document.getElementById('view-table');
-      const viewReports = document.getElementById('view-reports');
+    // NAVEGACIÓN ENTRE MÓDULOS
+    function switchModule(modId) {
+      document.querySelectorAll('.module-section').forEach(s => s.classList.add('hidden'));
+      document.querySelectorAll('.mod-link').forEach(l => l.classList.remove('active'));
 
-      if (view === 'table') {
-        viewTable.classList.remove('hidden');
-        viewReports.classList.add('hidden');
-        btnTable.classList.add('active');
-        btnReports.classList.remove('active');
-      } else {
-        viewTable.classList.add('hidden');
-        viewReports.classList.remove('hidden');
-        btnReports.classList.add('active');
-        btnTable.classList.remove('active');
-        generateReports();
-      }
+      document.getElementById(modId).classList.remove('hidden');
+      document.getElementById('link-' + modId).classList.add('active');
+
+      const titles = {
+        'mod-posicion': ['1. Posición Bancaria y Movimientos', 'Control diario de tesorería y subtotales desglosados de adquirencia'],
+        'mod-identificar': ['2. Pendientes por Identificar', 'Partidas sin cliente o información asignada en la columna INFORMACION'],
+        'mod-contabilizar': ['3. Pendientes por Contabilizar', 'Control de Recibos de Caja (RC) y Facturas (FVE)'],
+        'mod-reversos': ['4. Reversos y Reembolsos', 'Seguimiento a devoluciones y notas crédito bancarias'],
+        'mod-consolidado': ['5. Consolidado Multicuenta', 'Resumen total de dinero disponible en la compañía']
+      };
+
+      document.getElementById('moduleTitle').innerText = titles[modId][0];
+      document.getElementById('moduleSubtitle').innerText = titles[modId][1];
+
+      if (modId === 'mod-identificar') generateReportIdentificar();
+      if (modId === 'mod-contabilizar') generateReportContabilizar();
+      if (modId === 'mod-reversos') generateReportReversos();
+      if (modId === 'mod-consolidado') generateConsolidado();
     }
 
     function renderApp() {
@@ -364,13 +394,13 @@
         if (row.subtotales && row.subtotales.length > 0) {
           row.subtotales.forEach((sub) => {
             const trSub = document.createElement('tr');
-            trSub.className = "subtotal-row";
+            trSub.className = "bg-subtotal";
             trSub.innerHTML = `
               <td class="text-center">
                 <button onclick="deleteSubtotal('${row.id}', '${sub.id}')" style="background:transparent; color:#dc2626; border:none; font-weight:bold; cursor:pointer;" title="Eliminar Subtotal">✕</button>
               </td>
               <td class="text-center" style="color:#a1a1aa;">—</td>
-              <td class="subtotal-tag">↳ Subtotal Desglosado</td>
+              <td class="subtotal-indent">↳ Subtotal Desglosado</td>
               <td class="text-right" style="font-weight:800; color:#713f12;">${formatCurrency(sub.referencia)}</td>
               <td></td>
               <td></td>
@@ -391,119 +421,94 @@
       document.getElementById('kpiSaldoFinal').innerText = formatCurrency(runningBalance);
     }
 
-    function generateReports() {
+    function generateReportIdentificar() {
       const data = appData[currentAccount] || [];
-      const bodyIdentificar = document.getElementById('reportIdentificarBody');
-      const bodyContabilizar = document.getElementById('reportContabilizarBody');
-
-      bodyIdentificar.innerHTML = '';
-      bodyContabilizar.innerHTML = '';
-
-      let countIdentificar = 0;
-      let countContabilizar = 0;
+      const body = document.getElementById('reportIdentificarBody');
+      body.innerHTML = '';
 
       data.forEach(row => {
         const flujoBadge = row.entrada > 0 
           ? '<span class="badge badge-in">ENTRADA</span>'
           : '<span class="badge badge-out">SALIDA</span>';
-        
-        const montoGlobal = row.entrada > 0 ? row.entrada : row.salida;
+        const monto = row.entrada > 0 ? row.entrada : row.salida;
 
         if (row.subtotales.length > 0) {
           row.subtotales.forEach(sub => {
             if (!sub.informacion || sub.informacion.trim() === '') {
-              countIdentificar++;
-              bodyIdentificar.innerHTML += `
-                <tr>
-                  <td>${row.fecha}</td>
-                  <td>${flujoBadge}</td>
-                  <td>${row.descripcion} (Subtotal)</td>
-                  <td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td>
-                  <td style="color:#dc2626; font-weight:bold;">Sin información</td>
-                  <td><span class="badge badge-sub">Subtotal</span></td>
-                </tr>`;
+              body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion} (Subtotal)</td><td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td><td style="color:#dc2626; font-weight:bold;">Sin información</td><td><span class="badge" style="background:#fef08a;">Subtotal</span></td></tr>`;
             }
           });
         } else {
           if (!row.informacion || row.informacion.trim() === '' || row.informacion.toLowerCase().includes('pendiente')) {
-            countIdentificar++;
-            bodyIdentificar.innerHTML += `
-              <tr>
-                <td>${row.fecha}</td>
-                <td>${flujoBadge}</td>
-                <td>${row.descripcion}</td>
-                <td class="text-right" style="font-weight:bold;">${formatCurrency(montoGlobal)}</td>
-                <td style="color:#dc2626; font-weight:bold;">${row.informacion || 'Sin información'}</td>
-                <td><span class="badge" style="background:#e2e8f0;">Movimiento Banco</span></td>
-              </tr>`;
+            body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(monto)}</td><td style="color:#dc2626; font-weight:bold;">${row.informacion || 'Sin información'}</td><td><span class="badge" style="background:#e2e8f0;">Movimiento Banco</span></td></tr>`;
           }
         }
+      });
+    }
+
+    function generateReportContabilizar() {
+      const data = appData[currentAccount] || [];
+      const body = document.getElementById('reportContabilizarBody');
+      body.innerHTML = '';
+
+      data.forEach(row => {
+        const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
+        const monto = row.entrada > 0 ? row.entrada : row.salida;
 
         if (row.subtotales.length > 0) {
           row.subtotales.forEach(sub => {
             const isGasto = (row.informacion + ' ' + sub.informacion).toLowerCase().includes('gastos bancarios');
             if (isGasto) {
-              bodyContabilizar.innerHTML += `
-                <tr style="opacity:0.6;">
-                  <td>${row.fecha}</td>
-                  <td>${flujoBadge}</td>
-                  <td>${sub.informacion}</td>
-                  <td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td>
-                  <td style="color:#64748b;">—</td>
-                  <td><span class="badge badge-gasto">Gasto Bancario (Excluido)</span></td>
-                </tr>`;
+              body.innerHTML += `<tr style="opacity:0.6;"><td>${row.fecha}</td><td>${flujoBadge}</td><td>${sub.informacion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td><td style="color:#64748b;">—</td><td><span class="badge badge-gasto">Gasto Bancario (Excluido)</span></td></tr>`;
             } else if (!sub.documento || sub.documento.trim() === '') {
-              countContabilizar++;
-              bodyContabilizar.innerHTML += `
-                <tr>
-                  <td>${row.fecha}</td>
-                  <td>${flujoBadge}</td>
-                  <td>${sub.informacion}</td>
-                  <td class="text-right" style="font-weight:bold; color:#2563eb;">${formatCurrency(sub.referencia)}</td>
-                  <td style="color:#dc2626; font-weight:bold;">Sin Documento / RC</td>
-                  <td><span class="badge" style="background:#dbeafe; color:#1e40af;">Pendiente Contabilizar</span></td>
-                </tr>`;
+              body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${sub.informacion}</td><td class="text-right" style="font-weight:bold; color:#2563eb;">${formatCurrency(sub.referencia)}</td><td style="color:#dc2626; font-weight:bold;">Sin Documento / RC</td><td><span class="badge" style="background:#dbeafe; color:#1e40af;">Pendiente Contabilizar</span></td></tr>`;
             }
           });
         } else {
           const isGasto = row.informacion.toLowerCase().includes('gastos bancarios');
           if (isGasto) {
-            bodyContabilizar.innerHTML += `
-              <tr style="opacity:0.6;">
-                <td>${row.fecha}</td>
-                <td>${flujoBadge}</td>
-                <td>${row.descripcion}</td>
-                <td class="text-right" style="font-weight:bold;">${formatCurrency(montoGlobal)}</td>
-                <td style="color:#64748b;">—</td>
-                <td><span class="badge badge-gasto">Gasto Bancario (Excluido)</span></td>
-              </tr>`;
+            body.innerHTML += `<tr style="opacity:0.6;"><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(monto)}</td><td style="color:#64748b;">—</td><td><span class="badge badge-gasto">Gasto Bancario (Excluido)</span></td></tr>`;
           } else if (!row.documento || row.documento.trim() === '') {
-            countContabilizar++;
-            bodyContabilizar.innerHTML += `
-              <tr>
-                <td>${row.fecha}</td>
-                <td>${flujoBadge}</td>
-                <td>${row.descripcion}</td>
-                <td class="text-right" style="font-weight:bold; color:#2563eb;">${formatCurrency(montoGlobal)}</td>
-                <td style="color:#dc2626; font-weight:bold;">Sin Documento / RC</td>
-                <td><span class="badge" style="background:#dbeafe; color:#1e40af;">Pendiente Contabilizar</span></td>
-              </tr>`;
+            body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold; color:#2563eb;">${formatCurrency(monto)}</td><td style="color:#dc2626; font-weight:bold;">Sin Documento / RC</td><td><span class="badge" style="background:#dbeafe; color:#1e40af;">Pendiente Contabilizar</span></td></tr>`;
           }
         }
       });
+    }
 
-      document.getElementById('repCountIdentificar').innerText = countIdentificar + ' Registros';
-      document.getElementById('repCountContabilizar').innerText = countContabilizar + ' Registros';
+    function generateReportReversos() {
+      const body = document.getElementById('reportReversosBody');
+      body.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b; padding:20px;">Sin casos de reversos o devoluciones registrados.</td></tr>`;
+    }
+
+    function generateConsolidado() {
+      const body = document.getElementById('consolidadoBody');
+      body.innerHTML = '';
+      
+      Object.keys(appData).forEach(acc => {
+        const rows = appData[acc];
+        let init = rows.length > 0 ? rows[0].saldoInicial : 0;
+        let inTotal = rows.reduce((s, r) => s + (parseFloat(r.entrada)||0), 0);
+        let outTotal = rows.reduce((s, r) => s + (parseFloat(r.salida)||0), 0);
+        let finalBal = init + inTotal - outTotal;
+
+        body.innerHTML += `
+          <tr>
+            <td style="font-weight:800;">${acc}</td>
+            <td class="text-right">${formatCurrency(init)}</td>
+            <td class="text-right" style="color:#059669; font-weight:bold;">${formatCurrency(inTotal)}</td>
+            <td class="text-right" style="color:#dc2626; font-weight:bold;">${formatCurrency(outTotal)}</td>
+            <td class="text-right" style="font-weight:900;">${formatCurrency(finalBal)}</td>
+          </tr>`;
+      });
     }
 
     function addSubtotal(parentId) {
       const data = appData[currentAccount];
       const parent = data.find(r => r.id === parentId);
       if (parent) {
-        const subMonto = prompt("Ingrese el monto del subtotal:");
-        const subInfo = prompt("Ingrese la información (Cliente / Factura FVE):");
-        const subDoc = prompt("Ingrese el documento (Recibo de Caja RC):");
-        
+        const subMonto = prompt("Monto del subtotal:");
+        const subInfo = prompt("Información (Cliente / Factura FVE):");
+        const subDoc = prompt("Documento (Recibo de Caja RC):");
         if (subMonto) {
           parent.subtotales.push({
             id: parentId + '-' + (parent.subtotales.length + 1),
@@ -518,8 +523,7 @@
     }
 
     function deleteSubtotal(parentId, subId) {
-      const data = appData[currentAccount];
-      const parent = data.find(r => r.id === parentId);
+      const parent = appData[currentAccount].find(r => r.id === parentId);
       if (parent) {
         parent.subtotales = parent.subtotales.filter(s => s.id !== subId);
         renderApp();
@@ -528,7 +532,6 @@
 
     function addNewRow() {
       const data = appData[currentAccount];
-      const fecha = prompt("Fecha (AAAA-MM-DD):", "2025-04-01");
       const desc = prompt("Descripción del movimiento:");
       const entrada = prompt("Entrada ($):", "0");
       const salida = prompt("Salida ($):", "0");
@@ -537,7 +540,7 @@
       if (desc) {
         data.push({
           id: Date.now().toString(),
-          fecha: fecha || '2025-04-01',
+          fecha: new Date().toISOString().split('T')[0],
           descripcion: desc,
           referencia: '',
           saldoInicial: 0,
@@ -558,13 +561,12 @@
     }
 
     function addNewAccount() {
-      const accName = prompt("Ingrese el nombre de la nueva cuenta:");
+      const accName = prompt("Nombre de la nueva cuenta (ej: BOGOTA 1234):");
       if (accName) {
         appData[accName] = [];
         const select = document.getElementById('accountSelect');
         const opt = document.createElement('option');
-        opt.value = accName;
-        opt.innerText = accName;
+        opt.value = accName; opt.innerText = accName;
         select.appendChild(opt);
         select.value = accName;
         currentAccount = accName;
