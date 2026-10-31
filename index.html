@@ -4,59 +4,66 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Control Diario de Tesorería</title>
-  <!-- Cargador CDN infalible de Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            excel: '#107c41',
-            excelHover: '#0b582e'
-          }
-        }
-      }
-    }
-  </script>
+  <!-- CDN Tailwind CSS con versión para forzar actualización de caché -->
+  <script src="https://cdn.tailwindcss.com?v=2.0"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: #f8fafc; }
-    .tr-subtotal { background-color: #fef08a !important; }
-    .tr-subtotal:hover { background-color: #fde047 !important; }
+    /* ESTILOS DE RESPALDO DIRECTOS (Sin depender de CDN) */
+    * { box-sizing: border-box; }
+    body { background-color: #f8fafc !important; font-family: system-ui, -apple-system, sans-serif !important; margin: 0; padding-bottom: 40px; }
+    
+    header { background-color: #0f172a !important; color: white !important; padding: 16px 24px !important; }
+    
+    /* TARJETAS */
+    .kpi-card { background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .kpi-card-emerald { background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 16px; padding: 20px; }
+    
+    /* TABLA Y ENCABEZADOS VERDES */
+    .table-container { background: white; border-radius: 16px; border: 1px solid #cbd5e1; overflow-x: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th { background-color: #107c41 !important; color: white !important; font-weight: 700; padding: 12px 10px; text-transform: uppercase; text-align: left; border-bottom: 2px solid #0b582e; }
+    td { padding: 10px; border-bottom: 1px solid #f1f5f9; color: #334155; }
+    
+    /* FILA SUBTOTALES AMARILLA */
+    tr.tr-subtotal { background-color: #fef08a !important; }
+    tr.tr-subtotal:hover { background-color: #fde047 !important; }
+    
+    /* ETIQUETAS Y INFORMES */
+    .badge { padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; display: inline-block; }
+    .badge-entrada { background-color: #d1fae5; color: #065f46; }
+    .badge-salida { background-color: #ffe4e6; color: #9f1239; }
+    
+    .hidden { display: none !important; }
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
   </style>
 </head>
-<body class="text-slate-800 antialiased pb-12">
+<body class="text-slate-800 antialiased">
 
-  <!-- BARRA SUPERIOR ELEGANTE CORPORATIVA -->
-  <header class="bg-slate-900 text-white sticky top-0 z-50 shadow-lg border-b border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row justify-between items-center gap-4">
-      
+  <!-- ENCABEZADO SUPERIOR -->
+  <header class="shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
       <div class="flex items-center space-x-3">
-        <div class="bg-emerald-500/20 border border-emerald-500/30 p-2 rounded-xl text-emerald-400">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m0 0h4m-4 0V11m0 0h4M9 7h6" />
-          </svg>
-        </div>
+        <div class="bg-emerald-500 text-white p-2 rounded-xl font-bold text-lg">🏦</div>
         <div>
-          <h1 class="text-lg font-bold tracking-tight text-white">Control Diario de Tesorería</h1>
-          <p class="text-xs text-slate-400 font-medium">Posición Bancaria y Reportes de Auditoría</p>
+          <h1 class="text-lg font-bold text-white">Control Diario de Tesorería</h1>
+          <p class="text-xs text-slate-400">Conciliación Bancaria y Reportes de Auditoría</p>
         </div>
       </div>
 
-      <!-- SELECTOR DE CUENTAS BANCARIAS -->
+      <!-- SELECCIÓN DE CUENTA -->
       <div class="flex items-center space-x-2">
-        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Cuenta:</span>
-        <select id="accountSelect" onchange="changeAccount()" class="bg-slate-800 border border-slate-700 text-white rounded-lg text-xs px-3 py-2 font-medium focus:ring-2 focus:ring-emerald-500 outline-none">
+        <label for="accountSelect" class="text-xs font-semibold text-slate-300">CUENTA:</label>
+        <select id="accountSelect" onchange="changeAccount()" class="bg-slate-800 border border-slate-700 text-white rounded-lg text-xs px-3 py-2 outline-none">
           <option value="DAVIVIENDA 5152">DAVIVIENDA 5152</option>
           <option value="BANCOLOMBIA 9015">BANCOLOMBIA 9015</option>
         </select>
-        <button onclick="addNewAccount()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-2 rounded-lg font-semibold transition shadow-sm">
+        <button onclick="addNewAccount()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-2 rounded-lg font-semibold transition">
           + Nueva Cuenta
         </button>
       </div>
 
-      <!-- CONMUTADOR DE INFORMES -->
-      <div class="flex bg-slate-800 p-1 rounded-xl border border-slate-700/80 text-xs font-semibold">
+      <!-- BOTONES DE NAVEGACIÓN -->
+      <div class="flex bg-slate-800 p-1 rounded-xl border border-slate-700 text-xs font-semibold">
         <button id="tab-table" onclick="switchView('table')" class="px-4 py-2 rounded-lg text-white bg-slate-700 shadow-sm transition">
           📊 Movimientos
         </button>
@@ -64,68 +71,65 @@
           📋 Informes Auditoría
         </button>
       </div>
-
     </div>
   </header>
 
   <!-- CONTENIDO PRINCIPAL -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
+  <main class="max-w-7xl mx-auto px-4 mt-6 space-y-6">
 
-    <!-- TARJETAS DE MÉTRICAS / KPIS DE BANCO -->
+    <!-- TARJETAS MÉRICA SALDO REAL -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+      <div class="kpi-card">
         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Saldo Inicial</span>
         <div id="kpiSaldoInicial" class="text-xl font-extrabold text-slate-800 mt-1">$0</div>
       </div>
-      <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+      <div class="kpi-card">
         <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Entradas Totales</span>
         <div id="kpiEntradas" class="text-xl font-extrabold text-emerald-600 mt-1">$0</div>
       </div>
-      <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+      <div class="kpi-card">
         <span class="text-xs font-bold text-rose-600 uppercase tracking-wider">Salidas Totales</span>
         <div id="kpiSalidas" class="text-xl font-extrabold text-rose-600 mt-1">$0</div>
       </div>
-      <div class="bg-emerald-500/10 border border-emerald-500/30 p-5 rounded-2xl shadow-sm">
+      <div class="kpi-card-emerald">
         <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider">Saldo Final Real Banco</span>
         <div id="kpiSaldoFinal" class="text-2xl font-black text-emerald-950 mt-1">$0</div>
       </div>
     </div>
 
-    <!-- VISTA 1: TABLA PRINCIPAL POSICIÓN BANCARIA -->
+    <!-- VISTA 1: TABLA POSICIÓN BANCARIA -->
     <div id="view-table" class="space-y-4">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm gap-2">
-        <button onclick="addNewRow()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm flex items-center space-x-1 transition">
-          <span>+ Agregar Movimiento Banco</span>
+      <div class="flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-2xl border border-slate-200 gap-2">
+        <button onclick="addNewRow()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition">
+          + Agregar Movimiento Banco
         </button>
         <span class="text-xs text-slate-500 font-medium italic">
           💡 Las filas amarillas desglosan los subtotales individuales de cada movimiento global.
         </span>
       </div>
 
-      <!-- TABLA DE MOVIMIENTOS Y SUBTOTALES -->
-      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full text-xs text-left border-collapse">
-            <thead>
-              <tr class="bg-excel text-white font-bold uppercase tracking-wider">
-                <th class="p-3 text-center w-12">Acción</th>
-                <th class="p-3">Fecha</th>
-                <th class="p-3">Descripción</th>
-                <th class="p-3 text-right">Referencia</th>
-                <th class="p-3 text-right">Saldo Inicial</th>
-                <th class="p-3 text-right">Entrada</th>
-                <th class="p-3 text-right">Salida</th>
-                <th class="p-3 text-right">Saldo</th>
-                <th class="p-3">Información</th>
-                <th class="p-3">Documento</th>
-                <th class="p-3">Observaciones</th>
-              </tr>
-            </thead>
-            <tbody id="bankTableBody" class="divide-y divide-slate-100 font-medium">
-              <!-- Renderizado JS -->
-            </tbody>
-          </table>
-        </div>
+      <!-- TABLA PRINCIPAL EXCEL -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th class="text-center" style="width: 50px;">Acción</th>
+              <th>Fecha</th>
+              <th>Descripción</th>
+              <th class="text-right">Referencia</th>
+              <th class="text-right">Saldo Inicial</th>
+              <th class="text-right">Entrada</th>
+              <th class="text-right">Salida</th>
+              <th class="text-right">Saldo</th>
+              <th>Información</th>
+              <th>Documento</th>
+              <th>Observaciones</th>
+            </tr>
+          </thead>
+          <tbody id="bankTableBody">
+            <!-- Renderizado JS -->
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -133,59 +137,53 @@
     <div id="view-reports" class="hidden space-y-6">
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="bg-amber-500/10 border border-amber-500/30 p-6 rounded-2xl">
+        <div class="bg-amber-50 border border-amber-200 p-6 rounded-2xl">
           <span class="text-xs font-bold text-amber-800 uppercase tracking-wider">Pendientes por Identificar</span>
           <div id="repCountIdentificar" class="text-3xl font-black text-amber-950 mt-2">0 Registros</div>
           <p class="text-xs text-amber-800/80 mt-1">Columna INFORMACION vacía o no identificada.</p>
         </div>
 
-        <div class="bg-blue-500/10 border border-blue-500/30 p-6 rounded-2xl">
+        <div class="bg-blue-50 border border-blue-200 p-6 rounded-2xl">
           <span class="text-xs font-bold text-blue-800 uppercase tracking-wider">Pendientes por Contabilizar</span>
           <div id="repCountContabilizar" class="text-3xl font-black text-blue-950 mt-2">0 Registros</div>
           <p class="text-xs text-blue-800/80 mt-1">Columna DOCUMENTO sin RC/FVE (Excluye Gastos Bancarios).</p>
         </div>
       </div>
 
-      <!-- DETALLE INFORME PENDIENTES IDENTIFICAR -->
-      <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
-        <h3 class="text-sm font-bold text-slate-800 flex items-center space-x-2">
-          <span>🔍 Detalle de Pendientes por Identificar</span>
-        </h3>
-        <div class="overflow-x-auto rounded-xl border border-slate-200/60">
-          <table class="w-full text-xs text-left">
-            <thead class="bg-slate-100 text-slate-600 font-bold uppercase">
-              <tr>
-                <th class="p-3">Fecha</th>
-                <th class="p-3">Flujo</th>
-                <th class="p-3">Descripción</th>
-                <th class="p-3 text-right">Monto</th>
-                <th class="p-3">Información Actual</th>
-                <th class="p-3">Tipo</th>
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 space-y-3">
+        <h3 class="text-sm font-bold text-slate-800">🔍 Detalle de Pendientes por Identificar</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr style="background:#64748b !important;">
+                <th>Fecha</th>
+                <th>Flujo</th>
+                <th>Descripción</th>
+                <th class="text-right">Monto</th>
+                <th>Información Actual</th>
+                <th>Tipo</th>
               </tr>
             </thead>
-            <tbody id="reportIdentificarBody" class="divide-y divide-slate-100"></tbody>
+            <tbody id="reportIdentificarBody"></tbody>
           </table>
         </div>
       </div>
 
-      <!-- DETALLE INFORME PENDIENTES CONTABILIZAR -->
-      <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
-        <h3 class="text-sm font-bold text-slate-800 flex items-center space-x-2">
-          <span>📝 Detalle de Pendientes por Contabilizar</span>
-        </h3>
-        <div class="overflow-x-auto rounded-xl border border-slate-200/60">
-          <table class="w-full text-xs text-left">
-            <thead class="bg-slate-100 text-slate-600 font-bold uppercase">
-              <tr>
-                <th class="p-3">Fecha</th>
-                <th class="p-3">Flujo</th>
-                <th class="p-3">Descripción / Información</th>
-                <th class="p-3 text-right">Monto</th>
-                <th class="p-3">Estado Documento</th>
-                <th class="p-3">Clasificación</th>
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 space-y-3">
+        <h3 class="text-sm font-bold text-slate-800">📝 Detalle de Pendientes por Contabilizar</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr style="background:#475569 !important;">
+                <th>Fecha</th>
+                <th>Flujo</th>
+                <th>Descripción / Información</th>
+                <th class="text-right">Monto</th>
+                <th>Estado Documento</th>
+                <th>Clasificación</th>
               </tr>
             </thead>
-            <tbody id="reportContabilizarBody" class="divide-y divide-slate-100"></tbody>
+            <tbody id="reportContabilizarBody"></tbody>
           </table>
         </div>
       </div>
@@ -309,42 +307,42 @@
         runningBalance = runningBalance + entrada - salida;
 
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
+        tr.className = "hover:bg-slate-50 transition";
         tr.innerHTML = `
-          <td class="p-3 text-center">
-            <button onclick="addSubtotal('${row.id}')" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold px-2 py-1 rounded-md text-xs transition" title="Agregar Subtotal">+</button>
+          <td class="text-center">
+            <button onclick="addSubtotal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:3px 8px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal">+</button>
           </td>
-          <td class="p-3 font-medium text-slate-600">${row.fecha}</td>
-          <td class="p-3 font-bold text-slate-900">${row.descripcion}</td>
-          <td class="p-3 text-right font-medium text-slate-400">${row.referencia ? formatCurrency(row.referencia) : ''}</td>
-          <td class="p-3 text-right font-semibold text-slate-600">${index === 0 ? formatCurrency(row.saldoInicial) : ''}</td>
-          <td class="p-3 text-right font-bold text-emerald-600">${entrada > 0 ? formatCurrency(entrada) : ''}</td>
-          <td class="p-3 text-right font-bold text-rose-600">${salida > 0 ? formatCurrency(salida) : ''}</td>
-          <td class="p-3 text-right font-black text-slate-900">${formatCurrency(runningBalance)}</td>
-          <td class="p-3 text-slate-700 font-medium">${row.informacion}</td>
-          <td class="p-3 font-bold text-slate-800">${row.documento}</td>
-          <td class="p-3 text-slate-500 italic">${row.observaciones}</td>
+          <td style="font-weight:600;">${row.fecha}</td>
+          <td style="font-weight:700; color:#0f172a;">${row.descripcion}</td>
+          <td class="text-right" style="color:#94a3b8;">${row.referencia ? formatCurrency(row.referencia) : ''}</td>
+          <td class="text-right" style="font-weight:600;">${index === 0 ? formatCurrency(row.saldoInicial) : ''}</td>
+          <td class="text-right" style="font-weight:800; color:#059669;">${entrada > 0 ? formatCurrency(entrada) : ''}</td>
+          <td class="text-right" style="font-weight:800; color:#dc2626;">${salida > 0 ? formatCurrency(salida) : ''}</td>
+          <td class="text-right" style="font-weight:900; color:#0f172a;">${formatCurrency(runningBalance)}</td>
+          <td style="font-weight:500;">${row.informacion}</td>
+          <td style="font-weight:700;">${row.documento}</td>
+          <td style="font-style:italic; color:#64748b;">${row.observaciones}</td>
         `;
         tbody.appendChild(tr);
 
         if (row.subtotales && row.subtotales.length > 0) {
           row.subtotales.forEach((sub) => {
             const trSub = document.createElement('tr');
-            trSub.className = "tr-subtotal border-b border-yellow-300/60";
+            trSub.className = "tr-subtotal";
             trSub.innerHTML = `
-              <td class="p-3 text-center">
-                <button onclick="deleteSubtotal('${row.id}', '${sub.id}')" class="text-rose-600 hover:text-rose-800 font-bold px-1" title="Eliminar Subtotal">✕</button>
+              <td class="text-center">
+                <button onclick="deleteSubtotal('${row.id}', '${sub.id}')" style="background:transparent; color:#dc2626; border:none; font-weight:bold; cursor:pointer;" title="Eliminar Subtotal">✕</button>
               </td>
-              <td class="p-3 text-slate-400 text-center">—</td>
-              <td class="p-3 pl-8 text-amber-900 font-semibold italic">↳ Subtotal Desglosado</td>
-              <td class="p-3 text-right font-bold text-amber-950">${formatCurrency(sub.referencia)}</td>
-              <td class="p-3"></td>
-              <td class="p-3"></td>
-              <td class="p-3"></td>
-              <td class="p-3"></td>
-              <td class="p-3 font-semibold text-amber-950">${sub.informacion}</td>
-              <td class="p-3 font-bold text-amber-950">${sub.documento}</td>
-              <td class="p-3 text-amber-900/80 italic">${sub.observaciones}</td>
+              <td class="text-center" style="color:#a1a1aa;">—</td>
+              <td style="padding-left: 24px; font-style: italic; color: #854d0e; font-weight: 600;">↳ Subtotal Desglosado</td>
+              <td class="text-right" style="font-weight:800; color:#713f12;">${formatCurrency(sub.referencia)}</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td style="font-weight:600; color:#451a03;">${sub.informacion}</td>
+              <td style="font-weight:800; color:#451a03;">${sub.documento}</td>
+              <td style="font-style:italic; color:#78350f;">${sub.observaciones}</td>
             `;
             tbody.appendChild(trSub);
           });
@@ -370,8 +368,8 @@
 
       data.forEach(row => {
         const flujoBadge = row.entrada > 0 
-          ? '<span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-md text-[10px]">ENTRADA</span>'
-          : '<span class="bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-md text-[10px]">SALIDA</span>';
+          ? '<span class="badge badge-entrada">ENTRADA</span>'
+          : '<span class="badge badge-salida">SALIDA</span>';
         
         const montoGlobal = row.entrada > 0 ? row.entrada : row.salida;
 
@@ -380,13 +378,13 @@
             if (!sub.informacion || sub.informacion.trim() === '') {
               countIdentificar++;
               bodyIdentificar.innerHTML += `
-                <tr class="hover:bg-slate-50">
-                  <td class="p-3">${row.fecha}</td>
-                  <td class="p-3">${flujoBadge}</td>
-                  <td class="p-3">${row.descripcion} (Subtotal)</td>
-                  <td class="p-3 text-right font-bold">${formatCurrency(sub.referencia)}</td>
-                  <td class="p-3 text-rose-600 font-bold">Sin información</td>
-                  <td class="p-3"><span class="bg-amber-100 text-amber-800 font-semibold px-2 py-0.5 rounded text-[10px]">Subtotal</span></td>
+                <tr>
+                  <td>${row.fecha}</td>
+                  <td>${flujoBadge}</td>
+                  <td>${row.descripcion} (Subtotal)</td>
+                  <td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td>
+                  <td style="color:#dc2626; font-weight:bold;">Sin información</td>
+                  <td><span class="badge" style="background:#fef08a; color:#854d0e;">Subtotal</span></td>
                 </tr>`;
             }
           });
@@ -394,13 +392,13 @@
           if (!row.informacion || row.informacion.trim() === '' || row.informacion.toLowerCase().includes('pendiente')) {
             countIdentificar++;
             bodyIdentificar.innerHTML += `
-              <tr class="hover:bg-slate-50">
-                <td class="p-3">${row.fecha}</td>
-                <td class="p-3">${flujoBadge}</td>
-                <td class="p-3">${row.descripcion}</td>
-                <td class="p-3 text-right font-bold">${formatCurrency(montoGlobal)}</td>
-                <td class="p-3 text-rose-600 font-bold">${row.informacion || 'Sin información'}</td>
-                <td class="p-3"><span class="bg-slate-100 text-slate-800 font-semibold px-2 py-0.5 rounded text-[10px]">Movimiento Banco</span></td>
+              <tr>
+                <td>${row.fecha}</td>
+                <td>${flujoBadge}</td>
+                <td>${row.descripcion}</td>
+                <td class="text-right" style="font-weight:bold;">${formatCurrency(montoGlobal)}</td>
+                <td style="color:#dc2626; font-weight:bold;">${row.informacion || 'Sin información'}</td>
+                <td><span class="badge" style="background:#e2e8f0;">Movimiento Banco</span></td>
               </tr>`;
           }
         }
@@ -410,24 +408,24 @@
             const isGasto = (row.informacion + ' ' + sub.informacion).toLowerCase().includes('gastos bancarios');
             if (isGasto) {
               bodyContabilizar.innerHTML += `
-                <tr class="opacity-60 hover:opacity-100 transition">
-                  <td class="p-3">${row.fecha}</td>
-                  <td class="p-3">${flujoBadge}</td>
-                  <td class="p-3">${sub.informacion}</td>
-                  <td class="p-3 text-right font-bold">${formatCurrency(sub.referencia)}</td>
-                  <td class="p-3 text-slate-500">—</td>
-                  <td class="p-3"><span class="bg-slate-200 text-slate-700 font-semibold px-2 py-0.5 rounded text-[10px]">Gasto Bancario (Excluido)</span></td>
+                <tr style="opacity:0.6;">
+                  <td>${row.fecha}</td>
+                  <td>${flujoBadge}</td>
+                  <td>${sub.informacion}</td>
+                  <td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td>
+                  <td style="color:#64748b;">—</td>
+                  <td><span class="badge" style="background:#e2e8f0; color:#475569;">Gasto Bancario (Excluido)</span></td>
                 </tr>`;
             } else if (!sub.documento || sub.documento.trim() === '') {
               countContabilizar++;
               bodyContabilizar.innerHTML += `
-                <tr class="hover:bg-slate-50">
-                  <td class="p-3">${row.fecha}</td>
-                  <td class="p-3">${flujoBadge}</td>
-                  <td class="p-3">${sub.informacion}</td>
-                  <td class="p-3 text-right font-bold text-blue-600">${formatCurrency(sub.referencia)}</td>
-                  <td class="p-3 text-rose-600 font-bold">Sin Documento / RC</td>
-                  <td class="p-3"><span class="bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded text-[10px]">Pendiente Contabilizar</span></td>
+                <tr>
+                  <td>${row.fecha}</td>
+                  <td>${flujoBadge}</td>
+                  <td>${sub.informacion}</td>
+                  <td class="text-right" style="font-weight:bold; color:#2563eb;">${formatCurrency(sub.referencia)}</td>
+                  <td style="color:#dc2626; font-weight:bold;">Sin Documento / RC</td>
+                  <td><span class="badge" style="background:#dbeafe; color:#1e40af;">Pendiente Contabilizar</span></td>
                 </tr>`;
             }
           });
@@ -435,24 +433,24 @@
           const isGasto = row.informacion.toLowerCase().includes('gastos bancarios');
           if (isGasto) {
             bodyContabilizar.innerHTML += `
-              <tr class="opacity-60 hover:opacity-100 transition">
-                <td class="p-3">${row.fecha}</td>
-                <td class="p-3">${flujoBadge}</td>
-                <td class="p-3">${row.descripcion}</td>
-                <td class="p-3 text-right font-bold">${formatCurrency(montoGlobal)}</td>
-                <td class="p-3 text-slate-500">—</td>
-                <td class="p-3"><span class="bg-slate-200 text-slate-700 font-semibold px-2 py-0.5 rounded text-[10px]">Gasto Bancario (Excluido)</span></td>
+              <tr style="opacity:0.6;">
+                <td>${row.fecha}</td>
+                <td>${flujoBadge}</td>
+                <td>${row.descripcion}</td>
+                <td class="text-right" style="font-weight:bold;">${formatCurrency(montoGlobal)}</td>
+                <td style="color:#64748b;">—</td>
+                <td><span class="badge" style="background:#e2e8f0; color:#475569;">Gasto Bancario (Excluido)</span></td>
               </tr>`;
           } else if (!row.documento || row.documento.trim() === '') {
             countContabilizar++;
             bodyContabilizar.innerHTML += `
-              <tr class="hover:bg-slate-50">
-                <td class="p-3">${row.fecha}</td>
-                <td class="p-3">${flujoBadge}</td>
-                <td class="p-3">${row.descripcion}</td>
-                <td class="p-3 text-right font-bold text-blue-600">${formatCurrency(montoGlobal)}</td>
-                <td class="p-3 text-rose-600 font-bold">Sin Documento / RC</td>
-                <td class="p-3"><span class="bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded text-[10px]">Pendiente Contabilizar</span></td>
+              <tr>
+                <td>${row.fecha}</td>
+                <td>${flujoBadge}</td>
+                <td>${row.descripcion}</td>
+                <td class="text-right" style="font-weight:bold; color:#2563eb;">${formatCurrency(montoGlobal)}</td>
+                <td style="color:#dc2626; font-weight:bold;">Sin Documento / RC</td>
+                <td><span class="badge" style="background:#dbeafe; color:#1e40af;">Pendiente Contabilizar</span></td>
               </tr>`;
           }
         }
