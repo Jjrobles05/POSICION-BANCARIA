@@ -8,8 +8,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: #f8fafc; color: #0f172a; display: flex; min-height: 100vh; }
 
-    /* BARRA LATERAL (SIDEBAR DE MÓDULOS) */
-    aside { width: 260px; background-color: #0f172a; color: #ffffff; display: flex; flex-col; flex-shrink: 0; border-r: 1px solid #1e293b; }
+    aside { width: 260px; background-color: #0f172a; color: #ffffff; display: flex; flex-direction: column; flex-shrink: 0; border-right: 1px solid #1e293b; }
     .sidebar-header { padding: 20px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; gap: 12px; }
     .sidebar-logo { background: #10b981; color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
     .sidebar-title h2 { font-size: 15px; font-weight: 800; color: #ffffff; }
@@ -21,10 +20,8 @@
     .mod-link:hover { background-color: #1e293b; color: #ffffff; }
     .mod-link.active { background-color: #059669; color: #ffffff; box-shadow: 0 4px 12px rgba(5,150,105,0.25); }
 
-    /* ZONA DE CONTENIDO PRINCIPAL */
     .app-viewport { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow-y: auto; }
 
-    /* CABECERA SUPERIOR DE ACCIONES */
     header { background: #ffffff; padding: 16px 32px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
     .top-info h1 { font-size: 20px; font-weight: 800; color: #0f172a; }
     .top-info p { font-size: 12px; color: #64748b; }
@@ -33,10 +30,8 @@
     .account-switcher select { background: transparent; border: none; font-size: 13px; font-weight: 700; color: #0f172a; outline: none; cursor: pointer; }
     .btn-add-acc { background: #0f172a; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
 
-    /* CONTENEDOR DE MODULOS */
     main { padding: 32px; max-width: 1400px; margin: 0 auto; width: 100%; }
 
-    /* TARJETAS KPIS */
     .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
     .kpi-card { background: #ffffff; padding: 20px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
     .kpi-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; }
@@ -47,25 +42,24 @@
     .kpi-card.emerald-highlight .kpi-label { color: #065f46; }
     .kpi-card.emerald-highlight .kpi-val { color: #064e3b; font-size: 24px; }
 
-    /* TABLAS EXCEL */
     .table-card { background: #ffffff; border-radius: 14px; border: 1px solid #cbd5e1; overflow-x: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
     table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
     th { background-color: #107c41 !important; color: #ffffff !important; font-weight: 700; padding: 14px 12px; text-transform: uppercase; border-bottom: 2px solid #084c27; }
     td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #334155; }
     tr:hover { background-color: #f8fafc; }
 
-    /* SUBTOTALES AMARILLOS */
     tr.bg-subtotal { background-color: #fef08a !important; }
     tr.bg-subtotal:hover { background-color: #fde047 !important; }
     td.subtotal-indent { padding-left: 28px !important; font-style: italic; color: #713f12; font-weight: 700; }
 
-    /* ETIQUETAS */
     .badge { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; display: inline-block; }
     .badge-in { background: #d1fae5; color: #065f46; }
     .badge-out { background: #ffe4e6; color: #9f1239; }
     .badge-gasto { background: #e2e8f0; color: #475569; }
+    .badge-reverso { background: #f3e8ff; color: #6b21a8; }
 
     .btn-action { background: #059669; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-bottom: 16px; }
+    .btn-toggle-reverso { background: #7e22ce; color: white; border: none; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
 
     .text-right { text-align: right; }
     .text-center { text-align: center; }
@@ -74,7 +68,6 @@
 </head>
 <body>
 
-  <!-- BARRA LATERAL CON MÓDULOS DEL SISTEMA -->
   <aside>
     <div class="sidebar-header">
       <div class="sidebar-logo">🏦</div>
@@ -106,10 +99,8 @@
     </nav>
   </aside>
 
-  <!-- VISTA DE TRABAJO -->
   <div class="app-viewport">
     
-    <!-- BARRA SUPERIOR DE ACCIONES -->
     <header>
       <div class="top-info">
         <h1 id="moduleTitle">1. Posición Bancaria y Movimientos</h1>
@@ -130,7 +121,7 @@
 
     <main>
 
-      <!-- MÓDULO 1: POSICIÓN BANCARIA Y MOVIMIENTOS -->
+      <!-- MÓDULO 1: POSICIÓN BANCARIA -->
       <section id="mod-posicion" class="module-section">
         <div class="kpi-grid">
           <div class="kpi-card"><div class="kpi-label">Saldo Inicial</div><div id="kpiSaldoInicial" class="kpi-val">$0</div></div>
@@ -145,7 +136,7 @@
           <table>
             <thead>
               <tr>
-                <th class="text-center" style="width: 50px;">Acción</th>
+                <th class="text-center" style="width: 80px;">Acción</th>
                 <th>Fecha</th>
                 <th>Descripción</th>
                 <th class="text-right">Referencia</th>
@@ -211,17 +202,17 @@
       <section id="mod-reversos" class="module-section hidden">
         <div class="table-card" style="padding: 24px;">
           <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">🔄 Seguimiento de Reversos, Devoluciones y Reembolsos</h3>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Control de transacciones en reclamación con entidades bancarias o proveedores.</p>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Control de transacciones marcadas en reclamación o devolución con entidades bancarias o pasarelas.</p>
 
           <table>
             <thead>
-              <tr style="background: #1e293b !important;">
+              <tr style="background: #6b21a8 !important;">
                 <th>Fecha</th>
                 <th>Flujo</th>
-                <th>Descripción</th>
+                <th>Descripción / Registro</th>
                 <th class="text-right">Monto</th>
-                <th>Observación</th>
-                <th>Estado</th>
+                <th>Motivo / Observación</th>
+                <th>Estado Reclamación</th>
               </tr>
             </thead>
             <tbody id="reportReversosBody"></tbody>
@@ -269,6 +260,7 @@
           informacion: 'Gastos Bancarios',
           documento: '',
           observaciones: 'este seria el movimiento de banco visual',
+          isReverso: false,
           subtotales: []
         },
         {
@@ -282,6 +274,7 @@
           informacion: 'Certificado de Existencia Camara de Comercio',
           documento: 'RP-999-4',
           observaciones: 'este seria el movimiento de banco visual',
+          isReverso: false,
           subtotales: []
         },
         {
@@ -295,6 +288,7 @@
           informacion: 'Traslados entre cuentas',
           documento: 'TD-126',
           observaciones: 'este seria el movimiento de banco visual',
+          isReverso: false,
           subtotales: []
         },
         {
@@ -308,12 +302,13 @@
           informacion: 'SE ABREN MOVIMIENTOS',
           documento: '',
           observaciones: 'este seria el movimiento de banco visual',
+          isReverso: false,
           subtotales: [
-            { id: '4-1', referencia: 47559, informacion: 'INVERSIONES EAMC SAS R-V-10016 | FVE 17524', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco' },
-            { id: '4-2', referencia: 285358, informacion: 'INVERSIONES EAMC SAS R-V-10019 | FVE 17516', documento: 'RC-1-3307', observaciones: 'este seria un subtotal movimiento banco' },
-            { id: '4-3', referencia: 142678, informacion: 'INVERSIONES EAMC SAS R-V-10255 | FVE 17674', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco' },
-            { id: '4-4', referencia: 47559, informacion: 'INVERSIONES EAMC SAS R-V-10004 | FVE 17511', documento: 'RC-1-3302', observaciones: 'este seria un subtotal movimiento banco' },
-            { id: '4-5', referencia: 95119, informacion: 'INVERSIONES EAMC SAS R-V-10011 | FVE 17515', documento: 'RC-1-3306', observaciones: 'este seria un subtotal movimiento banco' }
+            { id: '4-1', referencia: 47559, informacion: 'INVERSIONES EAMC SAS R-V-10016 | FVE 17524', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false },
+            { id: '4-2', referencia: 285358, informacion: 'INVERSIONES EAMC SAS R-V-10019 | FVE 17516', documento: 'RC-1-3307', observaciones: 'este seria un subtotal movimiento banco', isReverso: false },
+            { id: '4-3', referencia: 142678, informacion: 'INVERSIONES EAMC SAS R-V-10255 | FVE 17674', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false },
+            { id: '4-4', referencia: 47559, informacion: 'INVERSIONES EAMC SAS R-V-10004 | FVE 17511', documento: 'RC-1-3302', observaciones: 'este seria un subtotal movimiento banco', isReverso: false },
+            { id: '4-5', referencia: 95119, informacion: 'INVERSIONES EAMC SAS R-V-10011 | FVE 17515', documento: 'RC-1-3306', observaciones: 'este seria un subtotal movimiento banco', isReverso: false }
           ]
         }
       ],
@@ -325,7 +320,6 @@
       return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(num);
     }
 
-    // NAVEGACIÓN ENTRE MÓDULOS
     function switchModule(modId) {
       document.querySelectorAll('.module-section').forEach(s => s.classList.add('hidden'));
       document.querySelectorAll('.mod-link').forEach(l => l.classList.remove('active'));
@@ -376,9 +370,10 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td class="text-center">
-            <button onclick="addSubtotal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal">+</button>
+            <button onclick="addSubtotal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 6px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal">+</button>
+            <button onclick="toggleReversoParent('${row.id}')" class="btn-toggle-reverso" title="Marcar/Desmarcar Reverso">🔄</button>
           </td>
-          <td style="font-weight:600;">${row.fecha}</td>
+          <td style="font-weight:600;">${row.fecha} ${row.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
           <td style="font-weight:700; color:#0f172a;">${row.descripcion}</td>
           <td class="text-right" style="color:#94a3b8;">${row.referencia ? formatCurrency(row.referencia) : ''}</td>
           <td class="text-right" style="font-weight:600;">${index === 0 ? formatCurrency(row.saldoInicial) : ''}</td>
@@ -398,9 +393,10 @@
             trSub.innerHTML = `
               <td class="text-center">
                 <button onclick="deleteSubtotal('${row.id}', '${sub.id}')" style="background:transparent; color:#dc2626; border:none; font-weight:bold; cursor:pointer;" title="Eliminar Subtotal">✕</button>
+                <button onclick="toggleReversoSub('${row.id}', '${sub.id}')" class="btn-toggle-reverso" title="Marcar Reverso Subtotal">🔄</button>
               </td>
               <td class="text-center" style="color:#a1a1aa;">—</td>
-              <td class="subtotal-indent">↳ Subtotal Desglosado</td>
+              <td class="subtotal-indent">↳ Subtotal Desglosado ${sub.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
               <td class="text-right" style="font-weight:800; color:#713f12;">${formatCurrency(sub.referencia)}</td>
               <td></td>
               <td></td>
@@ -427,9 +423,7 @@
       body.innerHTML = '';
 
       data.forEach(row => {
-        const flujoBadge = row.entrada > 0 
-          ? '<span class="badge badge-in">ENTRADA</span>'
-          : '<span class="badge badge-out">SALIDA</span>';
+        const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
         const monto = row.entrada > 0 ? row.entrada : row.salida;
 
         if (row.subtotales.length > 0) {
@@ -476,8 +470,30 @@
     }
 
     function generateReportReversos() {
+      const data = appData[currentAccount] || [];
       const body = document.getElementById('reportReversosBody');
-      body.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b; padding:20px;">Sin casos de reversos o devoluciones registrados.</td></tr>`;
+      body.innerHTML = '';
+      let count = 0;
+
+      data.forEach(row => {
+        const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
+        
+        if (row.isReverso) {
+          count++;
+          body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(row.entrada > 0 ? row.entrada : row.salida)}</td><td>${row.observaciones}</td><td><span class="badge badge-reverso">En Reclamación</span></td></tr>`;
+        }
+
+        row.subtotales.forEach(sub => {
+          if (sub.isReverso) {
+            count++;
+            body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${sub.informacion} (Subtotal)</td><td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(sub.referencia)}</td><td>${sub.observaciones}</td><td><span class="badge badge-reverso">En Reclamación</span></td></tr>`;
+          }
+        });
+      });
+
+      if (count === 0) {
+        body.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b; padding:20px;">No hay registros marcados como reverso o reembolso. Puedes hacer clic en el botón 🔄 de cualquier fila para marcarlo.</td></tr>`;
+      }
     }
 
     function generateConsolidado() {
@@ -502,9 +518,27 @@
       });
     }
 
+    function toggleReversoParent(id) {
+      const row = appData[currentAccount].find(r => r.id === id);
+      if (row) {
+        row.isReverso = !row.isReverso;
+        renderApp();
+      }
+    }
+
+    function toggleReversoSub(parentId, subId) {
+      const parent = appData[currentAccount].find(r => r.id === parentId);
+      if (parent) {
+        const sub = parent.subtotales.find(s => s.id === subId);
+        if (sub) {
+          sub.isReverso = !sub.isReverso;
+          renderApp();
+        }
+      }
+    }
+
     function addSubtotal(parentId) {
-      const data = appData[currentAccount];
-      const parent = data.find(r => r.id === parentId);
+      const parent = appData[currentAccount].find(r => r.id === parentId);
       if (parent) {
         const subMonto = prompt("Monto del subtotal:");
         const subInfo = prompt("Información (Cliente / Factura FVE):");
@@ -515,7 +549,8 @@
             referencia: parseFloat(subMonto) || 0,
             informacion: subInfo || '',
             documento: subDoc || '',
-            observaciones: 'Subtotal desglosado'
+            observaciones: 'Subtotal desglosado',
+            isReverso: false
           });
           renderApp();
         }
@@ -549,6 +584,7 @@
           informacion: info || '',
           documento: '',
           observaciones: 'Ingresado manualmente',
+          isReverso: false,
           subtotales: []
         });
         renderApp();
@@ -561,7 +597,7 @@
     }
 
     function addNewAccount() {
-      const accName = prompt("Nombre de la nueva cuenta (ej: BOGOTA 1234):");
+      const accName = prompt("Nombre de la nueva cuenta:");
       if (accName) {
         appData[accName] = [];
         const select = document.getElementById('accountSelect');
