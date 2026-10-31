@@ -4,112 +4,151 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Control Diario de Tesorería</title>
-  <!-- CDN Tailwind CSS con versión para forzar actualización de caché -->
-  <script src="https://cdn.tailwindcss.com?v=2.0"></script>
   <style>
-    /* ESTILOS DE RESPALDO DIRECTOS (Sin depender de CDN) */
-    * { box-sizing: border-box; }
-    body { background-color: #f8fafc !important; font-family: system-ui, -apple-system, sans-serif !important; margin: 0; padding-bottom: 40px; }
-    
-    header { background-color: #0f172a !important; color: white !important; padding: 16px 24px !important; }
-    
-    /* TARJETAS */
-    .kpi-card { background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .kpi-card-emerald { background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 16px; padding: 20px; }
-    
-    /* TABLA Y ENCABEZADOS VERDES */
-    .table-container { background: white; border-radius: 16px; border: 1px solid #cbd5e1; overflow-x: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    th { background-color: #107c41 !important; color: white !important; font-weight: 700; padding: 12px 10px; text-transform: uppercase; text-align: left; border-bottom: 2px solid #0b582e; }
-    td { padding: 10px; border-bottom: 1px solid #f1f5f9; color: #334155; }
-    
-    /* FILA SUBTOTALES AMARILLA */
-    tr.tr-subtotal { background-color: #fef08a !important; }
-    tr.tr-subtotal:hover { background-color: #fde047 !important; }
-    
-    /* ETIQUETAS Y INFORMES */
-    .badge { padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; display: inline-block; }
-    .badge-entrada { background-color: #d1fae5; color: #065f46; }
-    .badge-salida { background-color: #ffe4e6; color: #9f1239; }
-    
-    .hidden { display: none !important; }
+    /* RESET Y BASES */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: #f1f5f9; color: #1e293b; padding-bottom: 50px; }
+
+    /* ENCABEZADO SUPERIOR TIPO EXECUTIVE */
+    header { background-color: #0f172a; color: #ffffff; padding: 16px 24px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .header-box { max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-icon { background: #10b981; color: white; padding: 8px 12px; border-radius: 10px; font-weight: bold; font-size: 18px; }
+    .brand-text h1 { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; color: #ffffff; }
+    .brand-text p { font-size: 11px; color: #94a3b8; }
+
+    /* CONTROLES Y CUENTAS */
+    .controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .select-acc { background-color: #1e293b; border: 1px solid #334155; color: white; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; outline: none; }
+    .btn-acc { background-color: #059669; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+    .btn-acc:hover { background-color: #047857; }
+
+    /* BOTONES CAMBIO DE VISTA */
+    .nav-tabs { display: flex; background: #1e293b; padding: 4px; border-radius: 10px; border: 1px solid #334155; }
+    .btn-tab { border: none; background: transparent; color: #94a3b8; padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .btn-tab.active { background: #334155; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+
+    /* CONTENEDOR PRINCIPAL */
+    main { max-width: 1280px; margin: 24px auto; padding: 0 16px; }
+
+    /* TARJETAS DE SALDO REAL (KPIS) */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .card-kpi { background: #ffffff; padding: 20px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .card-kpi .label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; }
+    .card-kpi .val { font-size: 22px; font-weight: 800; margin-top: 6px; color: #0f172a; }
+    .card-kpi .val.green { color: #059669; }
+    .card-kpi .val.red { color: #dc2626; }
+
+    .card-kpi.highlight { background: #ecfdf5; border-color: #a7f3d0; }
+    .card-kpi.highlight .label { color: #065f46; }
+    .card-kpi.highlight .val { color: #064e3b; font-size: 24px; }
+
+    /* BARRA TABLA Y BOTÓN AGREGAR */
+    .action-bar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 14px 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+    .btn-add-mov { background: #059669; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 4px rgba(5,150,105,0.2); }
+    .btn-add-mov:hover { background: #047857; }
+    .hint { font-size: 12px; color: #64748b; font-style: italic; }
+
+    /* TABLA PRINCIPAL EXCEL REALISTA CON CABECERA VERDE */
+    .table-wrapper { background: white; border-radius: 14px; border: 1px solid #cbd5e1; overflow-x: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+    th { background-color: #107c41 !important; color: #ffffff !important; font-weight: 700; padding: 14px 12px; text-transform: uppercase; border-bottom: 2px solid #084c27; letter-spacing: 0.3px; }
+    td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #334155; }
+    tr:hover { background-color: #f8fafc; }
+
+    /* SUBTOTALES AMARILLOS */
+    tr.subtotal-row { background-color: #fef08a !important; }
+    tr.subtotal-row:hover { background-color: #fde047 !important; }
+    td.subtotal-tag { padding-left: 28px !important; font-style: italic; color: #713f12; font-weight: 700; }
+
+    /* INFORMES DE AUDITORÍA */
+    .reports-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .rep-box { padding: 20px; border-radius: 14px; border: 1px solid #cbd5e1; }
+    .rep-box.amber { background: #fffbeb; border-color: #fde68a; }
+    .rep-box.blue { background: #eff6ff; border-color: #bfdbfe; }
+    .rep-box .title { font-size: 12px; font-weight: 800; text-transform: uppercase; }
+    .rep-box.amber .title { color: #92400e; }
+    .rep-box.blue .title { color: #1e40af; }
+    .rep-box .num { font-size: 28px; font-weight: 900; margin-top: 6px; }
+    .rep-box.amber .num { color: #78350f; }
+    .rep-box.blue .num { color: #1e3a8a; }
+    .rep-box .sub { font-size: 12px; color: #64748b; margin-top: 4px; }
+
+    .detail-card { background: white; padding: 20px; border-radius: 14px; border: 1px solid #e2e8f0; margin-bottom: 24px; }
+    .detail-card h3 { font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 14px; }
+
+    /* BADGES */
+    .badge { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; display: inline-block; }
+    .badge-in { background: #d1fae5; color: #065f46; }
+    .badge-out { background: #ffe4e6; color: #9f1239; }
+    .badge-sub { background: #fef08a; color: #713f12; }
+    .badge-gasto { background: #e2e8f0; color: #475569; }
+
     .text-right { text-align: right; }
     .text-center { text-align: center; }
+    .hidden { display: none !important; }
   </style>
 </head>
-<body class="text-slate-800 antialiased">
+<body>
 
-  <!-- ENCABEZADO SUPERIOR -->
-  <header class="shadow-lg sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-      <div class="flex items-center space-x-3">
-        <div class="bg-emerald-500 text-white p-2 rounded-xl font-bold text-lg">🏦</div>
-        <div>
-          <h1 class="text-lg font-bold text-white">Control Diario de Tesorería</h1>
-          <p class="text-xs text-slate-400">Conciliación Bancaria y Reportes de Auditoría</p>
+  <!-- CABECERA DE LA APP -->
+  <header>
+    <div class="header-box">
+      <div class="brand">
+        <div class="brand-icon">🏦</div>
+        <div class="brand-text">
+          <h1>Control Diario de Tesorería</h1>
+          <p>Conciliación Bancaria y Reportes de Auditoría</p>
         </div>
       </div>
 
-      <!-- SELECCIÓN DE CUENTA -->
-      <div class="flex items-center space-x-2">
-        <label for="accountSelect" class="text-xs font-semibold text-slate-300">CUENTA:</label>
-        <select id="accountSelect" onchange="changeAccount()" class="bg-slate-800 border border-slate-700 text-white rounded-lg text-xs px-3 py-2 outline-none">
+      <div class="controls">
+        <label style="font-size: 12px; font-weight: 700; color: #94a3b8;">CUENTA:</label>
+        <select id="accountSelect" onchange="changeAccount()" class="select-acc">
           <option value="DAVIVIENDA 5152">DAVIVIENDA 5152</option>
           <option value="BANCOLOMBIA 9015">BANCOLOMBIA 9015</option>
         </select>
-        <button onclick="addNewAccount()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-2 rounded-lg font-semibold transition">
-          + Nueva Cuenta
-        </button>
-      </div>
+        <button onclick="addNewAccount()" class="btn-acc">+ Nueva Cuenta</button>
 
-      <!-- BOTONES DE NAVEGACIÓN -->
-      <div class="flex bg-slate-800 p-1 rounded-xl border border-slate-700 text-xs font-semibold">
-        <button id="tab-table" onclick="switchView('table')" class="px-4 py-2 rounded-lg text-white bg-slate-700 shadow-sm transition">
-          📊 Movimientos
-        </button>
-        <button id="tab-reports" onclick="switchView('reports')" class="px-4 py-2 rounded-lg text-slate-400 hover:text-white transition">
-          📋 Informes Auditoría
-        </button>
+        <div class="nav-tabs">
+          <button id="tab-table" onclick="switchView('table')" class="btn-tab active">📊 Movimientos</button>
+          <button id="tab-reports" onclick="switchView('reports')" class="btn-tab">📋 Informes Auditoría</button>
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- CONTENIDO PRINCIPAL -->
-  <main class="max-w-7xl mx-auto px-4 mt-6 space-y-6">
+  <!-- CONTENIDO -->
+  <main>
 
-    <!-- TARJETAS MÉRICA SALDO REAL -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="kpi-card">
-        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Saldo Inicial</span>
-        <div id="kpiSaldoInicial" class="text-xl font-extrabold text-slate-800 mt-1">$0</div>
+    <!-- METRICAS DE TESORERÍA -->
+    <div class="kpi-grid">
+      <div class="card-kpi">
+        <div class="label">Saldo Inicial</div>
+        <div id="kpiSaldoInicial" class="val">$0</div>
       </div>
-      <div class="kpi-card">
-        <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Entradas Totales</span>
-        <div id="kpiEntradas" class="text-xl font-extrabold text-emerald-600 mt-1">$0</div>
+      <div class="card-kpi">
+        <div class="label">Entradas Totales</div>
+        <div id="kpiEntradas" class="val green">$0</div>
       </div>
-      <div class="kpi-card">
-        <span class="text-xs font-bold text-rose-600 uppercase tracking-wider">Salidas Totales</span>
-        <div id="kpiSalidas" class="text-xl font-extrabold text-rose-600 mt-1">$0</div>
+      <div class="card-kpi">
+        <div class="label">Salidas Totales</div>
+        <div id="kpiSalidas" class="val red">$0</div>
       </div>
-      <div class="kpi-card-emerald">
-        <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider">Saldo Final Real Banco</span>
-        <div id="kpiSaldoFinal" class="text-2xl font-black text-emerald-950 mt-1">$0</div>
+      <div class="card-kpi highlight">
+        <div class="label">Saldo Final Real Banco</div>
+        <div id="kpiSaldoFinal" class="val">$0</div>
       </div>
     </div>
 
-    <!-- VISTA 1: TABLA POSICIÓN BANCARIA -->
-    <div id="view-table" class="space-y-4">
-      <div class="flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-2xl border border-slate-200 gap-2">
-        <button onclick="addNewRow()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition">
-          + Agregar Movimiento Banco
-        </button>
-        <span class="text-xs text-slate-500 font-medium italic">
-          💡 Las filas amarillas desglosan los subtotales individuales de cada movimiento global.
-        </span>
+    <!-- VISTA 1: TABLA PRINCIPAL DE MOVIMIENTOS -->
+    <div id="view-table">
+      <div class="action-bar">
+        <button onclick="addNewRow()" class="btn-add-mov">+ Agregar Movimiento Banco</button>
+        <div class="hint">💡 Las filas amarillas desglosan los subtotales individuales de cada movimiento global.</div>
       </div>
 
-      <!-- TABLA PRINCIPAL EXCEL -->
-      <div class="table-container">
+      <div class="table-wrapper">
         <table>
           <thead>
             <tr>
@@ -126,36 +165,34 @@
               <th>Observaciones</th>
             </tr>
           </thead>
-          <tbody id="bankTableBody">
-            <!-- Renderizado JS -->
-          </tbody>
+          <tbody id="bankTableBody"></tbody>
         </table>
       </div>
     </div>
 
-    <!-- VISTA 2: INFORMES DE AUDITORÍA -->
-    <div id="view-reports" class="hidden space-y-6">
+    <!-- VISTA 2: INFORMES DE AUDITORÍA Y PENDIENTES -->
+    <div id="view-reports" class="hidden">
       
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="bg-amber-50 border border-amber-200 p-6 rounded-2xl">
-          <span class="text-xs font-bold text-amber-800 uppercase tracking-wider">Pendientes por Identificar</span>
-          <div id="repCountIdentificar" class="text-3xl font-black text-amber-950 mt-2">0 Registros</div>
-          <p class="text-xs text-amber-800/80 mt-1">Columna INFORMACION vacía o no identificada.</p>
+      <div class="reports-grid">
+        <div class="rep-box amber">
+          <div class="title">Pendientes por Identificar</div>
+          <div id="repCountIdentificar" class="num">0 Registros</div>
+          <div class="sub">Columna INFORMACION vacía o no identificada.</div>
         </div>
 
-        <div class="bg-blue-50 border border-blue-200 p-6 rounded-2xl">
-          <span class="text-xs font-bold text-blue-800 uppercase tracking-wider">Pendientes por Contabilizar</span>
-          <div id="repCountContabilizar" class="text-3xl font-black text-blue-950 mt-2">0 Registros</div>
-          <p class="text-xs text-blue-800/80 mt-1">Columna DOCUMENTO sin RC/FVE (Excluye Gastos Bancarios).</p>
+        <div class="rep-box blue">
+          <div class="title">Pendientes por Contabilizar</div>
+          <div id="repCountContabilizar" class="num">0 Registros</div>
+          <div class="sub">Columna DOCUMENTO sin RC/FVE (Excluye Gastos Bancarios).</div>
         </div>
       </div>
 
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 space-y-3">
-        <h3 class="text-sm font-bold text-slate-800">🔍 Detalle de Pendientes por Identificar</h3>
-        <div class="table-container">
+      <div class="detail-card">
+        <h3>🔍 Detalle de Pendientes por Identificar</h3>
+        <div class="table-wrapper">
           <table>
             <thead>
-              <tr style="background:#64748b !important;">
+              <tr style="background-color: #475569 !important;">
                 <th>Fecha</th>
                 <th>Flujo</th>
                 <th>Descripción</th>
@@ -169,12 +206,12 @@
         </div>
       </div>
 
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 space-y-3">
-        <h3 class="text-sm font-bold text-slate-800">📝 Detalle de Pendientes por Contabilizar</h3>
-        <div class="table-container">
+      <div class="detail-card">
+        <h3>📝 Detalle de Pendientes por Contabilizar</h3>
+        <div class="table-wrapper">
           <table>
             <thead>
-              <tr style="background:#475569 !important;">
+              <tr style="background-color: #334155 !important;">
                 <th>Fecha</th>
                 <th>Flujo</th>
                 <th>Descripción / Información</th>
@@ -272,13 +309,13 @@
       if (view === 'table') {
         viewTable.classList.remove('hidden');
         viewReports.classList.add('hidden');
-        btnTable.className = 'px-4 py-2 rounded-lg text-white bg-slate-700 shadow-sm transition';
-        btnReports.className = 'px-4 py-2 rounded-lg text-slate-400 hover:text-white transition';
+        btnTable.classList.add('active');
+        btnReports.classList.remove('active');
       } else {
         viewTable.classList.add('hidden');
         viewReports.classList.remove('hidden');
-        btnReports.className = 'px-4 py-2 rounded-lg text-white bg-slate-700 shadow-sm transition';
-        btnTable.className = 'px-4 py-2 rounded-lg text-slate-400 hover:text-white transition';
+        btnReports.classList.add('active');
+        btnTable.classList.remove('active');
         generateReports();
       }
     }
@@ -307,10 +344,9 @@
         runningBalance = runningBalance + entrada - salida;
 
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 transition";
         tr.innerHTML = `
           <td class="text-center">
-            <button onclick="addSubtotal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:3px 8px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal">+</button>
+            <button onclick="addSubtotal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal">+</button>
           </td>
           <td style="font-weight:600;">${row.fecha}</td>
           <td style="font-weight:700; color:#0f172a;">${row.descripcion}</td>
@@ -328,13 +364,13 @@
         if (row.subtotales && row.subtotales.length > 0) {
           row.subtotales.forEach((sub) => {
             const trSub = document.createElement('tr');
-            trSub.className = "tr-subtotal";
+            trSub.className = "subtotal-row";
             trSub.innerHTML = `
               <td class="text-center">
                 <button onclick="deleteSubtotal('${row.id}', '${sub.id}')" style="background:transparent; color:#dc2626; border:none; font-weight:bold; cursor:pointer;" title="Eliminar Subtotal">✕</button>
               </td>
               <td class="text-center" style="color:#a1a1aa;">—</td>
-              <td style="padding-left: 24px; font-style: italic; color: #854d0e; font-weight: 600;">↳ Subtotal Desglosado</td>
+              <td class="subtotal-tag">↳ Subtotal Desglosado</td>
               <td class="text-right" style="font-weight:800; color:#713f12;">${formatCurrency(sub.referencia)}</td>
               <td></td>
               <td></td>
@@ -368,8 +404,8 @@
 
       data.forEach(row => {
         const flujoBadge = row.entrada > 0 
-          ? '<span class="badge badge-entrada">ENTRADA</span>'
-          : '<span class="badge badge-salida">SALIDA</span>';
+          ? '<span class="badge badge-in">ENTRADA</span>'
+          : '<span class="badge badge-out">SALIDA</span>';
         
         const montoGlobal = row.entrada > 0 ? row.entrada : row.salida;
 
@@ -384,7 +420,7 @@
                   <td>${row.descripcion} (Subtotal)</td>
                   <td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td>
                   <td style="color:#dc2626; font-weight:bold;">Sin información</td>
-                  <td><span class="badge" style="background:#fef08a; color:#854d0e;">Subtotal</span></td>
+                  <td><span class="badge badge-sub">Subtotal</span></td>
                 </tr>`;
             }
           });
@@ -414,7 +450,7 @@
                   <td>${sub.informacion}</td>
                   <td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td>
                   <td style="color:#64748b;">—</td>
-                  <td><span class="badge" style="background:#e2e8f0; color:#475569;">Gasto Bancario (Excluido)</span></td>
+                  <td><span class="badge badge-gasto">Gasto Bancario (Excluido)</span></td>
                 </tr>`;
             } else if (!sub.documento || sub.documento.trim() === '') {
               countContabilizar++;
@@ -439,7 +475,7 @@
                 <td>${row.descripcion}</td>
                 <td class="text-right" style="font-weight:bold;">${formatCurrency(montoGlobal)}</td>
                 <td style="color:#64748b;">—</td>
-                <td><span class="badge" style="background:#e2e8f0; color:#475569;">Gasto Bancario (Excluido)</span></td>
+                <td><span class="badge badge-gasto">Gasto Bancario (Excluido)</span></td>
               </tr>`;
           } else if (!row.documento || row.documento.trim() === '') {
             countContabilizar++;
