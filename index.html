@@ -4,75 +4,68 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Control y Conciliación Diario de Tesorería</title>
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Supabase JS Client -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body { background-color: #f8fafc; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body { background-color: #f1f5f9; font-family: system-ui, -apple-system, sans-serif; }
     .excel-header { background-color: #107c41; color: white; }
-    .bg-subtotal { background-color: #fef08a; } /* Fila amarilla de subtotales */
+    .bg-subtotal { background-color: #fef08a !important; }
   </style>
 </head>
 <body class="text-slate-800">
 
-  <!-- ENCABEZADO -->
+  <!-- ENCABEZADO PRINCIPAL -->
   <header class="bg-slate-900 text-white p-4 shadow-md sticky top-0 z-50">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
       <div class="flex items-center space-x-3">
-        <i data-lucide="building-2" class="w-7 h-7 text-emerald-400"></i>
+        <div class="bg-emerald-500 text-white p-2 rounded-lg font-bold text-lg">🏦</div>
         <div>
-          <h1 class="text-xl font-bold tracking-wide">Control Diario de Tesorería</h1>
+          <h1 class="text-xl font-bold">Control Diario de Tesorería</h1>
           <p class="text-xs text-slate-400">Conciliación Bancaria y Reportes de Auditoría</p>
         </div>
       </div>
 
-      <!-- Selección de Cuenta -->
+      <!-- SELECCIÓN DE CUENTA -->
       <div class="flex items-center space-x-2">
         <label for="accountSelect" class="text-xs font-semibold text-slate-300">CUENTA:</label>
-        <select id="accountSelect" onchange="changeAccount()" class="bg-slate-800 border border-slate-700 text-white rounded-lg text-sm px-3 py-1.5 focus:ring-2 focus:ring-emerald-500 outline-none">
+        <select id="accountSelect" onchange="changeAccount()" class="bg-slate-800 border border-slate-700 text-white rounded-lg text-sm px-3 py-1.5 outline-none">
           <option value="DAVIVIENDA 5152">DAVIVIENDA 5152</option>
           <option value="BANCOLOMBIA 9015">BANCOLOMBIA 9015</option>
         </select>
-        <button onclick="addNewAccount()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg flex items-center space-x-1 font-medium transition">
-          <i data-lucide="plus" class="w-4 h-4"></i>
-          <span>Nueva Cuenta</span>
+        <button onclick="addNewAccount()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg font-medium">
+          + Nueva Cuenta
         </button>
       </div>
 
-      <!-- Navegación de Vistas -->
+      <!-- BOTONES DE NAVEGACIÓN -->
       <div class="flex bg-slate-800 p-1 rounded-lg border border-slate-700 text-sm">
         <button id="tab-table" onclick="switchView('table')" class="px-4 py-1.5 rounded-md font-medium text-white bg-slate-700 shadow">
-          <i data-lucide="table" class="w-4 h-4 inline mr-1"></i> Movimientos
+          📊 Movimientos
         </button>
-        <button id="tab-reports" onclick="switchView('reports')" class="px-4 py-1.5 rounded-md font-medium text-slate-400 hover:text-white transition">
-          <i data-lucide="bar-chart-3" class="w-4 h-4 inline mr-1"></i> Informes Auditoría
+        <button id="tab-reports" onclick="switchView('reports')" class="px-4 py-1.5 rounded-md font-medium text-slate-400 hover:text-white">
+          📋 Informes Auditoría
         </button>
       </div>
     </div>
   </header>
 
-  <!-- CONTENIDO PRINCIPAL -->
-  <main class="max-w-7xl mx-auto p-4 md:p-6">
+  <main class="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
 
-    <!-- KPI TARJETAS BANCO -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <!-- TARJETAS DE MÉTICAS / KPI -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Saldo Inicial</span>
+        <span class="text-xs font-bold text-slate-500 uppercase">Saldo Inicial</span>
         <div id="kpiSaldoInicial" class="text-xl font-extrabold text-slate-800 mt-1">$0,00</div>
       </div>
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-        <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Entradas Totales</span>
+        <span class="text-xs font-bold text-emerald-600 uppercase">Entradas Totales</span>
         <div id="kpiEntradas" class="text-xl font-extrabold text-emerald-600 mt-1">$0,00</div>
       </div>
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-        <span class="text-xs font-bold text-rose-600 uppercase tracking-wider">Salidas Totales</span>
+        <span class="text-xs font-bold text-rose-600 uppercase">Salidas Totales</span>
         <div id="kpiSalidas" class="text-xl font-extrabold text-rose-600 mt-1">$0,00</div>
       </div>
       <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl shadow-sm">
-        <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider">Saldo Final en Banco</span>
+        <span class="text-xs font-bold text-emerald-800 uppercase">Saldo Final en Banco</span>
         <div id="kpiSaldoFinal" class="text-2xl font-black text-emerald-900 mt-1">$0,00</div>
       </div>
     </div>
@@ -80,22 +73,19 @@
     <!-- VISTA 1: TABLA PRINCIPAL DE MOVIMIENTOS -->
     <div id="view-table" class="space-y-4">
       <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-        <div class="flex items-center space-x-2">
-          <button onclick="addNewRow()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1">
-            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-            <span>Agregar Movimiento</span>
-          </button>
-        </div>
+        <button onclick="addNewRow()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">
+          + Agregar Movimiento
+        </button>
         <div class="text-xs text-slate-500 italic">
           * Las filas amarillas representan los subtotales desglosados del movimiento global.
         </div>
       </div>
 
-      <!-- Tabla Estilo Excel -->
+      <!-- TABLA TIPO EXCEL -->
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
         <table class="w-full text-xs text-left border-collapse">
           <thead>
-            <tr class="excel-header uppercase font-bold text-slate-100 border-b border-slate-300">
+            <tr class="excel-header uppercase font-bold border-b border-slate-300">
               <th class="p-2.5 w-10 text-center">Acción</th>
               <th class="p-2.5">Fecha</th>
               <th class="p-2.5">Descripción</th>
@@ -119,31 +109,21 @@
     <!-- VISTA 2: INFORMES DE AUDITORÍA -->
     <div id="view-reports" class="hidden space-y-6">
 
-      <!-- TARJETAS DE INFORMES -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-white p-5 rounded-xl border border-amber-200 shadow-sm bg-amber-50/30">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-bold text-amber-800 uppercase">Pendientes por Identificar</span>
-            <i data-lucide="search" class="w-5 h-5 text-amber-600"></i>
-          </div>
+        <div class="bg-amber-50 p-5 rounded-xl border border-amber-200 shadow-sm">
+          <span class="text-xs font-bold text-amber-800 uppercase">Pendientes por Identificar</span>
           <div id="repCountIdentificar" class="text-2xl font-black text-amber-900 mt-2">0 Registros</div>
-          <p class="text-xs text-amber-700 mt-1">Columna INFORMACION vacía o no identificada.</p>
+          <p class="text-xs text-amber-700 mt-1">Columna INFORMACION vacía o sin identificar.</p>
         </div>
 
-        <div class="bg-white p-5 rounded-xl border border-blue-200 shadow-sm bg-blue-50/30">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-bold text-blue-800 uppercase">Pendientes por Contabilizar</span>
-            <i data-lucide="file-spreadsheet" class="w-5 h-5 text-blue-600"></i>
-          </div>
+        <div class="bg-blue-50 p-5 rounded-xl border border-blue-200 shadow-sm">
+          <span class="text-xs font-bold text-blue-800 uppercase">Pendientes por Contabilizar</span>
           <div id="repCountContabilizar" class="text-2xl font-black text-blue-900 mt-2">0 Registros</div>
           <p class="text-xs text-blue-700 mt-1">Columna DOCUMENTO sin RC/FVE (Excluye Gastos Bancarios).</p>
         </div>
 
-        <div class="bg-white p-5 rounded-xl border border-purple-200 shadow-sm bg-purple-50/30">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-bold text-purple-800 uppercase">Reversos y Reembolsos</span>
-            <i data-lucide="rotate-ccw" class="w-5 h-5 text-purple-600"></i>
-          </div>
+        <div class="bg-purple-50 p-5 rounded-xl border border-purple-200 shadow-sm">
+          <span class="text-xs font-bold text-purple-800 uppercase">Reversos y Reembolsos</span>
           <div id="repCountReversos" class="text-2xl font-black text-purple-900 mt-2">0 Registros</div>
           <p class="text-xs text-purple-700 mt-1">En seguimiento con el banco o proveedor.</p>
         </div>
@@ -151,10 +131,7 @@
 
       <!-- DETALLE INFORME 1: PENDIENTES POR IDENTIFICAR -->
       <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-        <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center space-x-2">
-          <i data-lucide="search" class="w-4 h-4 text-amber-600"></i>
-          <span>Detalle de Pendientes por Identificar (Evaluación de INFORMACION)</span>
-        </h3>
+        <h3 class="text-sm font-bold text-slate-800 mb-3">🔍 Detalle de Pendientes por Identificar</h3>
         <div class="overflow-x-auto">
           <table class="w-full text-xs text-left">
             <thead class="bg-slate-100 text-slate-600 uppercase font-bold border-b">
@@ -167,19 +144,14 @@
                 <th class="p-2">Tipo</th>
               </tr>
             </thead>
-            <tbody id="reportIdentificarBody" class="divide-y divide-slate-100">
-              <!-- Carga dinámica por JS -->
-            </tbody>
+            <tbody id="reportIdentificarBody" class="divide-y divide-slate-100"></tbody>
           </table>
         </div>
       </div>
 
       <!-- DETALLE INFORME 2: PENDIENTES POR CONTABILIZAR -->
       <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-        <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center space-x-2">
-          <i data-lucide="file-spreadsheet" class="w-4 h-4 text-blue-600"></i>
-          <span>Detalle de Pendientes por Contabilizar (Evaluación de DOCUMENTO en Subtotales)</span>
-        </h3>
+        <h3 class="text-sm font-bold text-slate-800 mb-3">📝 Detalle de Pendientes por Contabilizar</h3>
         <div class="overflow-x-auto">
           <table class="w-full text-xs text-left">
             <thead class="bg-slate-100 text-slate-600 uppercase font-bold border-b">
@@ -192,34 +164,7 @@
                 <th class="p-2">Clasificación</th>
               </tr>
             </thead>
-            <tbody id="reportContabilizarBody" class="divide-y divide-slate-100">
-              <!-- Carga dinámica por JS -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- DETALLE INFORME 3: REVERSOS Y REEMBOLSOS -->
-      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-        <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center space-x-2">
-          <i data-lucide="rotate-ccw" class="w-4 h-4 text-purple-600"></i>
-          <span>Seguimiento de Reversos y Reembolsos</span>
-        </h3>
-        <div class="overflow-x-auto">
-          <table class="w-full text-xs text-left">
-            <thead class="bg-slate-100 text-slate-600 uppercase font-bold border-b">
-              <tr>
-                <th class="p-2">Fecha</th>
-                <th class="p-2">Flujo</th>
-                <th class="p-2">Descripción</th>
-                <th class="p-2 text-right">Monto</th>
-                <th class="p-2">Observaciones / Motivo</th>
-                <th class="p-2">Estado</th>
-              </tr>
-            </thead>
-            <tbody id="reportReversosBody" class="divide-y divide-slate-100">
-              <!-- Carga dinámica por JS -->
-            </tbody>
+            <tbody id="reportContabilizarBody" class="divide-y divide-slate-100"></tbody>
           </table>
         </div>
       </div>
@@ -228,21 +173,9 @@
 
   </main>
 
-  <!-- LÓGICA JAVASCRIPT -->
   <script>
-    // CONFIGURACIÓN DE SUPABASE
-    const SUPABASE_URL = 'https://qzixmsvxuqtxwmmlkdfb.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6aXhtc3Z4dXF0eHdtbWxrZGZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzOTg1MTcsImV4cCI6MjEwODk3NDUxN30.lbLBo1bOZdZyaQIyNmaoPlEFuq3kwiOeJNrA1dieHRY';
-    let supabase = null;
-
-    if (SUPABASE_URL !== 'https://TU-PROYECTO.supabase.co') {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    }
-
-    // BASE DE DATOS LOCAL Y ESTADO DE LA APLICACIÓN
     let currentAccount = 'DAVIVIENDA 5152';
     
-    // Datos precargados exactamente como la plantilla Excel provista
     let appData = {
       'DAVIVIENDA 5152': [
         {
@@ -256,8 +189,6 @@
           informacion: 'Gastos Bancarios',
           documento: '',
           observaciones: 'este seria el movimiento de banco visual',
-          isReverso: false,
-          reversoEstado: 'Pendiente',
           subtotales: []
         },
         {
@@ -271,8 +202,6 @@
           informacion: 'Certificado de Existencia Camara de Comercio',
           documento: 'RP-999-4',
           observaciones: 'este seria el movimiento de banco visual',
-          isReverso: false,
-          reversoEstado: 'Pendiente',
           subtotales: []
         },
         {
@@ -286,8 +215,6 @@
           informacion: 'Traslados entre cuentas',
           documento: 'TD-126',
           observaciones: 'este seria el movimiento de banco visual',
-          isReverso: false,
-          reversoEstado: 'Pendiente',
           subtotales: []
         },
         {
@@ -301,26 +228,22 @@
           informacion: 'SE ABREN MOVIMIENTOS',
           documento: '',
           observaciones: 'este seria el movimiento de banco visual',
-          isReverso: false,
-          reversoEstado: 'Pendiente',
           subtotales: [
-            { id: '4-1', referencia: 47559, informacion: 'INVERSIONES EAMC SAS R-V-10016 | FVE 17524', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false },
-            { id: '4-2', referencia: 285358, informacion: 'INVERSIONES EAMC SAS R-V-10019 | FVE 17516', documento: 'RC-1-3307', observaciones: 'este seria un subtotal movimiento banco', isReverso: false },
-            { id: '4-3', referencia: 142678, informacion: 'INVERSIONES EAMC SAS R-V-10255 | FVE 17674', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false },
-            { id: '4-4', referencia: 47559, informacion: 'INVERSIONES EAMC SAS R-V-10004 | FVE 17511', documento: 'RC-1-3302', observaciones: 'este seria un subtotal movimiento banco', isReverso: false },
-            { id: '4-5', referencia: 95119, informacion: 'INVERSIONES EAMC SAS R-V-10011 | FVE 17515', documento: 'RC-1-3306', observaciones: 'este seria un subtotal movimiento banco', isReverso: false }
+            { id: '4-1', referencia: 47559, informacion: 'INVERSIONES EAMC SAS R-V-10016 | FVE 17524', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco' },
+            { id: '4-2', referencia: 285358, informacion: 'INVERSIONES EAMC SAS R-V-10019 | FVE 17516', documento: 'RC-1-3307', observaciones: 'este seria un subtotal movimiento banco' },
+            { id: '4-3', referencia: 142678, informacion: 'INVERSIONES EAMC SAS R-V-10255 | FVE 17674', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco' },
+            { id: '4-4', referencia: 47559, informacion: 'INVERSIONES EAMC SAS R-V-10004 | FVE 17511', documento: 'RC-1-3302', observaciones: 'este seria un subtotal movimiento banco' },
+            { id: '4-5', referencia: 95119, informacion: 'INVERSIONES EAMC SAS R-V-10011 | FVE 17515', documento: 'RC-1-3306', observaciones: 'este seria un subtotal movimiento banco' }
           ]
         }
       ]
     };
 
-    // FORMATEADORES DE MONEDA
     const formatCurrency = (val) => {
       const num = parseFloat(val) || 0;
       return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(num);
     };
 
-    // CAMBIO DE VISTAS (TABLA / INFORMES)
     function switchView(view) {
       const btnTable = document.getElementById('tab-table');
       const btnReports = document.getElementById('tab-reports');
@@ -331,19 +254,19 @@
         viewTable.classList.remove('hidden');
         viewReports.classList.add('hidden');
         btnTable.className = 'px-4 py-1.5 rounded-md font-medium text-white bg-slate-700 shadow';
-        btnReports.className = 'px-4 py-1.5 rounded-md font-medium text-slate-400 hover:text-white transition';
+        btnReports.className = 'px-4 py-1.5 rounded-md font-medium text-slate-400 hover:text-white';
       } else {
         viewTable.classList.add('hidden');
         viewReports.classList.remove('hidden');
         btnReports.className = 'px-4 py-1.5 rounded-md font-medium text-white bg-slate-700 shadow';
-        btnTable.className = 'px-4 py-1.5 rounded-md font-medium text-slate-400 hover:text-white transition';
+        btnTable.className = 'px-4 py-1.5 rounded-md font-medium text-slate-400 hover:text-white';
         generateReports();
       }
     }
 
-    // DIBUJAR LA TABLA Y CALCULAR SALDOS REALES
     function renderApp() {
       const tbody = document.getElementById('bankTableBody');
+      if (!tbody) return;
       tbody.innerHTML = '';
 
       const data = appData[currentAccount] || [];
@@ -364,12 +287,11 @@
         totalSalidas += salida;
         runningBalance = runningBalance + entrada - salida;
 
-        // FILA PADRE (BANCO GLOBAL)
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 border-b border-slate-200 transition";
+        tr.className = "hover:bg-slate-50 border-b border-slate-200";
         tr.innerHTML = `
           <td class="p-2 text-center">
-            <button onclick="addSubtotal('${row.id}')" class="text-emerald-600 hover:text-emerald-800 font-bold text-sm" title="Agregar Subtotal / Desglose">+</button>
+            <button onclick="addSubtotal('${row.id}')" class="bg-emerald-100 text-emerald-800 hover:bg-emerald-200 px-2 py-0.5 rounded font-bold text-xs" title="Agregar Subtotal">+</button>
           </td>
           <td class="p-2 font-semibold text-slate-700">${row.fecha}</td>
           <td class="p-2 font-bold text-slate-800">${row.descripcion}</td>
@@ -384,17 +306,16 @@
         `;
         tbody.appendChild(tr);
 
-        // FILAS HIJAS (SUBTOTALES EN AMARILLO)
         if (row.subtotales && row.subtotales.length > 0) {
           row.subtotales.forEach((sub) => {
             const trSub = document.createElement('tr');
-            trSub.className = "bg-subtotal border-b border-yellow-200 hover:bg-yellow-200/80 transition";
+            trSub.className = "bg-subtotal border-b border-yellow-300";
             trSub.innerHTML = `
               <td class="p-2 text-center">
-                <button onclick="deleteSubtotal('${row.id}', '${sub.id}')" class="text-rose-600 hover:text-rose-800 font-bold" title="Eliminar Subtotal">✕</button>
+                <button onclick="deleteSubtotal('${row.id}', '${sub.id}')" class="text-rose-600 font-bold px-1" title="Eliminar Subtotal">✕</button>
               </td>
               <td class="p-2 text-slate-400 text-center">—</td>
-              <td class="p-2 text-slate-600 text-xs italic pl-6">↳ Subtotal Desglosado</td>
+              <td class="p-2 text-slate-700 text-xs italic pl-6">↳ Subtotal Desglosado</td>
               <td class="p-2 text-right font-bold text-amber-900">${formatCurrency(sub.referencia)}</td>
               <td class="p-2"></td>
               <td class="p-2"></td>
@@ -402,37 +323,29 @@
               <td class="p-2"></td>
               <td class="p-2 font-medium text-slate-800">${sub.informacion}</td>
               <td class="p-2 font-bold text-slate-900">${sub.documento}</td>
-              <td class="p-2 text-slate-600 italic">${sub.observaciones}</td>
+              <td class="p-2 text-slate-700 italic">${sub.observaciones}</td>
             `;
             tbody.appendChild(trSub);
           });
         }
       });
 
-      // ACTUALIZAR TARJETAS KPI
       document.getElementById('kpiSaldoInicial').innerText = formatCurrency(initialBalance);
       document.getElementById('kpiEntradas').innerText = formatCurrency(totalEntradas);
       document.getElementById('kpiSalidas').innerText = formatCurrency(totalSalidas);
       document.getElementById('kpiSaldoFinal').innerText = formatCurrency(runningBalance);
-
-      lucide.createIcons();
     }
 
-    // GENERAR INFORMES DE AUDITORÍA
     function generateReports() {
       const data = appData[currentAccount] || [];
-      
       const bodyIdentificar = document.getElementById('reportIdentificarBody');
       const bodyContabilizar = document.getElementById('reportContabilizarBody');
-      const bodyReversos = document.getElementById('reportReversosBody');
 
       bodyIdentificar.innerHTML = '';
       bodyContabilizar.innerHTML = '';
-      bodyReversos.innerHTML = '';
 
       let countIdentificar = 0;
       let countContabilizar = 0;
-      let countReversos = 0;
 
       data.forEach(row => {
         const flujoBadge = row.entrada > 0 
@@ -441,13 +354,12 @@
         
         const montoGlobal = row.entrada > 0 ? row.entrada : row.salida;
 
-        // 1. INFORME PENDIENTE POR IDENTIFICAR
         if (row.subtotales.length > 0) {
           row.subtotales.forEach(sub => {
             if (!sub.informacion || sub.informacion.trim() === '') {
               countIdentificar++;
               bodyIdentificar.innerHTML += `
-                <tr class="hover:bg-slate-50">
+                <tr>
                   <td class="p-2">${row.fecha}</td>
                   <td class="p-2">${flujoBadge}</td>
                   <td class="p-2">${row.descripcion} (Subtotal)</td>
@@ -461,7 +373,7 @@
           if (!row.informacion || row.informacion.trim() === '' || row.informacion.toLowerCase().includes('pendiente')) {
             countIdentificar++;
             bodyIdentificar.innerHTML += `
-              <tr class="hover:bg-slate-50">
+              <tr>
                 <td class="p-2">${row.fecha}</td>
                 <td class="p-2">${flujoBadge}</td>
                 <td class="p-2">${row.descripcion}</td>
@@ -472,13 +384,12 @@
           }
         }
 
-        // 2. INFORME PENDIENTE POR CONTABILIZAR
         if (row.subtotales.length > 0) {
           row.subtotales.forEach(sub => {
             const isGasto = (row.informacion + ' ' + sub.informacion).toLowerCase().includes('gastos bancarios');
             if (isGasto) {
               bodyContabilizar.innerHTML += `
-                <tr class="hover:bg-slate-50 opacity-70">
+                <tr class="opacity-70">
                   <td class="p-2">${row.fecha}</td>
                   <td class="p-2">${flujoBadge}</td>
                   <td class="p-2">${sub.informacion}</td>
@@ -489,7 +400,7 @@
             } else if (!sub.documento || sub.documento.trim() === '') {
               countContabilizar++;
               bodyContabilizar.innerHTML += `
-                <tr class="hover:bg-slate-50">
+                <tr>
                   <td class="p-2">${row.fecha}</td>
                   <td class="p-2">${flujoBadge}</td>
                   <td class="p-2">${sub.informacion}</td>
@@ -503,7 +414,7 @@
           const isGasto = row.informacion.toLowerCase().includes('gastos bancarios');
           if (isGasto) {
             bodyContabilizar.innerHTML += `
-              <tr class="hover:bg-slate-50 opacity-70">
+              <tr class="opacity-70">
                 <td class="p-2">${row.fecha}</td>
                 <td class="p-2">${flujoBadge}</td>
                 <td class="p-2">${row.descripcion}</td>
@@ -514,7 +425,7 @@
           } else if (!row.documento || row.documento.trim() === '') {
             countContabilizar++;
             bodyContabilizar.innerHTML += `
-              <tr class="hover:bg-slate-50">
+              <tr>
                 <td class="p-2">${row.fecha}</td>
                 <td class="p-2">${flujoBadge}</td>
                 <td class="p-2">${row.descripcion}</td>
@@ -528,10 +439,8 @@
 
       document.getElementById('repCountIdentificar').innerText = countIdentificar + ' Registros';
       document.getElementById('repCountContabilizar').innerText = countContabilizar + ' Registros';
-      document.getElementById('repCountReversos').innerText = countReversos + ' Registros';
     }
 
-    // OPERACIONES DE LA APLICACIÓN
     function addSubtotal(parentId) {
       const data = appData[currentAccount];
       const parent = data.find(r => r.id === parentId);
@@ -546,8 +455,7 @@
             referencia: parseFloat(subMonto) || 0,
             informacion: subInfo || '',
             documento: subDoc || '',
-            observaciones: 'Subtotal desglosado',
-            isReverso: false
+            observaciones: 'Subtotal desglosado'
           });
           renderApp();
         }
@@ -583,8 +491,6 @@
           informacion: info || '',
           documento: '',
           observaciones: 'Ingresado manualmente',
-          isReverso: false,
-          reversoEstado: 'Pendiente',
           subtotales: []
         });
         renderApp();
@@ -597,7 +503,7 @@
     }
 
     function addNewAccount() {
-      const accName = prompt("Ingrese el nombre de la nueva cuenta (ej: BANCOLOMBIA 1234):");
+      const accName = prompt("Ingrese el nombre de la nueva cuenta:");
       if (accName) {
         appData[accName] = [];
         const select = document.getElementById('accountSelect');
@@ -611,10 +517,9 @@
       }
     }
 
-    // INICIALIZACIÓN
-    window.onload = () => {
+    document.addEventListener("DOMContentLoaded", function() {
       renderApp();
-    };
+    });
   </script>
 </body>
 </html>
