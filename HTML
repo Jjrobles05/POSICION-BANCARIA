@@ -231,9 +231,8 @@
   <!-- LÓGICA JAVASCRIPT -->
   <script>
     // CONFIGURACIÓN DE SUPABASE
-    // (Reemplaza con tus llaves reales de tu proyecto Supabase)
-    const SUPABASE_URL = 'https://TU-PROYECTO.supabase.co';
-    const SUPABASE_KEY = 'TU-LLAVE-ANON-PUBLIC-KEY';
+    const SUPABASE_URL = 'https://qzixmsvxuqtxwmmlkdfb.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6aXhtc3Z4dXF0eHdtbWxrZGZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzOTg1MTcsImV4cCI6MjEwODk3NDUxN30.lbLBo1bOZdZyaQIyNmaoPlEFuq3kwiOeJNrA1dieHRY';
     let supabase = null;
 
     if (SUPABASE_URL !== 'https://TU-PROYECTO.supabase.co') {
@@ -436,7 +435,6 @@
       let countReversos = 0;
 
       data.forEach(row => {
-        const flujo = row.entrada > 0 ? 'ENTRADA' : 'SALIDA';
         const flujoBadge = row.entrada > 0 
           ? '<span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-[10px]">ENTRADA</span>'
           : '<span class="bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded text-[10px]">SALIDA</span>';
