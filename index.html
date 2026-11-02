@@ -8,6 +8,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: #f8fafc; color: #0f172a; display: flex; min-height: 100vh; }
 
+    /* NAVEGACIÓN LATERAL */
     aside { width: 260px; background-color: #0f172a; color: #ffffff; display: flex; flex-direction: column; flex-shrink: 0; border-right: 1px solid #1e293b; }
     .sidebar-header { padding: 20px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; gap: 12px; }
     .sidebar-logo { background: #10b981; color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
@@ -32,6 +33,7 @@
 
     main { padding: 32px; max-width: 1400px; margin: 0 auto; width: 100%; }
 
+    /* TARJETAS KPI */
     .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
     .kpi-card { background: #ffffff; padding: 20px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
     .kpi-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; }
@@ -42,11 +44,15 @@
     .kpi-card.emerald-highlight .kpi-label { color: #065f46; }
     .kpi-card.emerald-highlight .kpi-val { color: #064e3b; font-size: 24px; }
 
+    /* TABLA ESTILO EXCEL */
     .table-card { background: #ffffff; border-radius: 14px; border: 1px solid #cbd5e1; overflow-x: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
     table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
     th { background-color: #107c41 !important; color: #ffffff !important; font-weight: 700; padding: 14px 12px; text-transform: uppercase; border-bottom: 2px solid #084c27; }
     td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #334155; }
     tr:hover { background-color: #f8fafc; }
+
+    td[contenteditable="true"] { outline: none; }
+    td[contenteditable="true"]:focus { background-color: #fffbe6; border: 1px solid #eab308; border-radius: 4px; }
 
     tr.bg-subtotal { background-color: #fef08a !important; }
     tr.bg-subtotal:hover { background-color: #fde047 !important; }
@@ -58,8 +64,27 @@
     .badge-gasto { background: #e2e8f0; color: #475569; }
     .badge-reverso { background: #f3e8ff; color: #6b21a8; }
 
-    .btn-action { background: #059669; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-bottom: 16px; }
-    .btn-toggle-reverso { background: #7e22ce; color: white; border: none; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
+    .btn-action { background: #059669; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-bottom: 16px; margin-right: 8px; transition: 0.2s; }
+    .btn-action:hover { background: #047857; }
+    .btn-secondary { background: #0f172a; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-bottom: 16px; }
+    .btn-toggle-reverso { background: #7e22ce; color: white; border: none; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
+
+    textarea.paste-area { width: 100%; height: 200px; padding: 14px; border: 2px dashed #cbd5e1; border-radius: 10px; font-size: 12px; font-family: monospace; outline: none; margin-bottom: 16px; }
+    textarea.paste-area:focus { border-color: #059669; background: #f0fdf4; }
+
+    /* MODAL FLOTANTE */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 999; }
+    .modal-box { background: white; border-radius: 16px; width: 100%; max-width: 520px; padding: 28px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); border: 1px solid #e2e8f0; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-title { font-size: 16px; font-weight: 800; color: #0f172a; }
+    .modal-close { background: transparent; border: none; font-size: 18px; font-weight: bold; color: #94a3b8; cursor: pointer; }
+    
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #475569; margin-bottom: 6px; }
+    .form-control { width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; font-weight: 500; }
+    .form-control:focus { border-color: #059669; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15); }
+
+    .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
 
     .text-right { text-align: right; }
     .text-center { text-align: center; }
@@ -68,6 +93,7 @@
 </head>
 <body>
 
+  <!-- BARRA LATERAL -->
   <aside>
     <div class="sidebar-header">
       <div class="sidebar-logo">🏦</div>
@@ -81,6 +107,9 @@
       <div class="nav-section-label">Módulos Principales</div>
       <div id="link-mod-posicion" onclick="switchModule('mod-posicion')" class="mod-link active">
         <span>📊</span> <span>1. Posición Bancaria</span>
+      </div>
+      <div id="link-mod-importar" onclick="switchModule('mod-importar')" class="mod-link">
+        <span>📋</span> <span>Carga Masiva Excel</span>
       </div>
       <div id="link-mod-identificar" onclick="switchModule('mod-identificar')" class="mod-link">
         <span>🔍</span> <span>2. Por Identificar</span>
@@ -99,6 +128,7 @@
     </nav>
   </aside>
 
+  <!-- CONTENEDOR PRINCIPAL -->
   <div class="app-viewport">
     
     <header>
@@ -115,7 +145,7 @@
             <option value="BANCOLOMBIA 9015">BANCOLOMBIA 9015</option>
           </select>
         </div>
-        <button onclick="addNewAccount()" class="btn-add-acc">+ Cuenta</button>
+        <button onclick="openAccountModal()" class="btn-add-acc">+ Cuenta</button>
       </div>
     </header>
 
@@ -130,13 +160,16 @@
           <div class="kpi-card emerald-highlight"><div class="kpi-label">Saldo Real en Banco</div><div id="kpiSaldoFinal" class="kpi-val">$0</div></div>
         </div>
 
-        <button onclick="addNewRow()" class="btn-action">+ Agregar Movimiento al Banco</button>
+        <div>
+          <button onclick="openMovModal()" class="btn-action">+ Agregar Movimiento Banco</button>
+          <button onclick="switchModule('mod-importar')" class="btn-secondary">📋 Copiar y Pegar desde Excel</button>
+        </div>
 
         <div class="table-card">
           <table>
             <thead>
               <tr>
-                <th class="text-center" style="width: 80px;">Acción</th>
+                <th class="text-center" style="width: 75px;">Acción</th>
                 <th>Fecha</th>
                 <th>Descripción</th>
                 <th class="text-right">Referencia</th>
@@ -151,6 +184,25 @@
             </thead>
             <tbody id="bankTableBody"></tbody>
           </table>
+        </div>
+      </section>
+
+      <!-- MÓDULO CARGA MASIVA EXCEL (MODIFICADO PARA PEGADO DIRECTO BÁSICO) -->
+      <section id="mod-importar" class="module-section hidden">
+        <div class="table-card" style="padding: 24px;">
+          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 8px;">📋 Pegado Masivo de Extracto Bancario</h3>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 16px;">
+            Copia y pega únicamente las 5 columnas básicas de tu extracto de banco:
+            <br><code>FECHA | DESCRIPCIÓN | REFERENCIA | ENTRADA | SALIDA</code>
+            <br><span style="color:#059669; font-weight:bold;">* El Saldo Inicial y el Saldo Real se calcularán automáticamente por el sistema.</span>
+          </p>
+
+          <textarea id="pasteInput" class="paste-area" placeholder="Pega aquí tu bloque de celdas de Excel (Ctrl + V)..."></textarea>
+          
+          <div style="display: flex; gap: 10px;">
+            <button onclick="processExcelPaste()" class="btn-action">✅ Cargar Movimientos a la Tabla</button>
+            <button onclick="switchModule('mod-posicion')" class="btn-secondary">Cancelar</button>
+          </div>
         </div>
       </section>
 
@@ -202,7 +254,7 @@
       <section id="mod-reversos" class="module-section hidden">
         <div class="table-card" style="padding: 24px;">
           <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">🔄 Seguimiento de Reversos, Devoluciones y Reembolsos</h3>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Control de transacciones marcadas en reclamación o devolución con entidades bancarias o pasarelas.</p>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Control de transacciones marcadas en reclamación con entidades bancarias o pasarelas.</p>
 
           <table>
             <thead>
@@ -242,6 +294,78 @@
       </section>
 
     </main>
+  </div>
+
+  <!-- MODAL MOVIMIENTO BANCO -->
+  <div id="modalMov" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">🏦 Nuevo Movimiento de Banco</h3>
+        <button onclick="closeMovModal()" class="modal-close">✕</button>
+      </div>
+      
+      <div class="form-group">
+        <label>Fecha</label>
+        <input type="date" id="inputMovFecha" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>Descripción del Movimiento</label>
+        <input type="text" id="inputMovDesc" placeholder="Ej: Pago de Cliente" class="form-control">
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div class="form-group">
+          <label>Entrada ($)</label>
+          <input type="number" id="inputMovEntrada" placeholder="0" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Salida ($)</label>
+          <input type="number" id="inputMovSalida" placeholder="0" class="form-control">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Información</label>
+        <input type="text" id="inputMovInfo" placeholder="Ej: Gastos Bancarios" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>Documento</label>
+        <input type="text" id="inputMovDoc" placeholder="Ej: RP-999-4" class="form-control">
+      </div>
+
+      <div class="modal-footer">
+        <button onclick="closeMovModal()" class="btn-secondary">Cancelar</button>
+        <button onclick="saveNewMov()" class="btn-action">Guardar Movimiento</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL SUBTOTAL AMARILLO -->
+  <div id="modalSub" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">↳ Agregar Subtotal Desglosado</h3>
+        <button onclick="closeSubModal()" class="modal-close">✕</button>
+      </div>
+      
+      <input type="hidden" id="subParentId">
+
+      <div class="form-group">
+        <label>Monto Subtotal ($)</label>
+        <input type="number" id="inputSubMonto" placeholder="Ej: 47559" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>Información (Cliente / Factura FVE)</label>
+        <input type="text" id="inputSubInfo" placeholder="Ej: INVERSIONES EAMC SAS | FVE 17524" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>Documento (Recibo de Caja RC)</label>
+        <input type="text" id="inputSubDoc" placeholder="Ej: RC-1-3308" class="form-control">
+      </div>
+
+      <div class="modal-footer">
+        <button onclick="closeSubModal()" class="btn-secondary">Cancelar</button>
+        <button onclick="saveSubtotal()" class="btn-action">Guardar Subtotal</button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -325,10 +449,13 @@
       document.querySelectorAll('.mod-link').forEach(l => l.classList.remove('active'));
 
       document.getElementById(modId).classList.remove('hidden');
-      document.getElementById('link-' + modId).classList.add('active');
+      if (document.getElementById('link-' + modId)) {
+        document.getElementById('link-' + modId).classList.add('active');
+      }
 
       const titles = {
         'mod-posicion': ['1. Posición Bancaria y Movimientos', 'Control diario de tesorería y subtotales desglosados de adquirencia'],
+        'mod-importar': ['Carga Masiva desde Excel', 'Copia y pega bloques enteros de datos desde tu hoja de cálculo'],
         'mod-identificar': ['2. Pendientes por Identificar', 'Partidas sin cliente o información asignada en la columna INFORMACION'],
         'mod-contabilizar': ['3. Pendientes por Contabilizar', 'Control de Recibos de Caja (RC) y Facturas (FVE)'],
         'mod-reversos': ['4. Reversos y Reembolsos', 'Seguimiento a devoluciones y notas crédito bancarias'],
@@ -370,19 +497,19 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td class="text-center">
-            <button onclick="addSubtotal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 6px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal">+</button>
-            <button onclick="toggleReversoParent('${row.id}')" class="btn-toggle-reverso" title="Marcar/Desmarcar Reverso">🔄</button>
+            <button onclick="openSubModal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 5px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal">+</button>
+            <button onclick="toggleReversoParent('${row.id}')" class="btn-toggle-reverso" title="Marcar Reverso">🔄</button>
           </td>
-          <td style="font-weight:600;">${row.fecha} ${row.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
-          <td style="font-weight:700; color:#0f172a;">${row.descripcion}</td>
-          <td class="text-right" style="color:#94a3b8;">${row.referencia ? formatCurrency(row.referencia) : ''}</td>
-          <td class="text-right" style="font-weight:600;">${index === 0 ? formatCurrency(row.saldoInicial) : ''}</td>
-          <td class="text-right" style="font-weight:800; color:#059669;">${entrada > 0 ? formatCurrency(entrada) : ''}</td>
-          <td class="text-right" style="font-weight:800; color:#dc2626;">${salida > 0 ? formatCurrency(salida) : ''}</td>
+          <td contenteditable="true" onblur="updateCell('${row.id}', 'fecha', this.innerText)">${row.fecha} ${row.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
+          <td contenteditable="true" onblur="updateCell('${row.id}', 'descripcion', this.innerText)" style="font-weight:700; color:#0f172a;">${row.descripcion}</td>
+          <td contenteditable="true" onblur="updateCell('${row.id}', 'referencia', this.innerText)" class="text-right" style="color:#94a3b8;">${row.referencia ? formatCurrency(row.referencia) : ''}</td>
+          <td contenteditable="true" onblur="updateCell('${row.id}', 'saldoInicial', this.innerText)" class="text-right" style="font-weight:600;">${index === 0 ? formatCurrency(row.saldoInicial) : ''}</td>
+          <td contenteditable="true" onblur="updateCell('${row.id}', 'entrada', this.innerText)" class="text-right" style="font-weight:800; color:#059669;">${entrada > 0 ? formatCurrency(entrada) : ''}</td>
+          <td contenteditable="true" onblur="updateCell('${row.id}', 'salida', this.innerText)" class="text-right" style="font-weight:800; color:#dc2626;">${salida > 0 ? formatCurrency(salida) : ''}</td>
           <td class="text-right" style="font-weight:900; color:#0f172a;">${formatCurrency(runningBalance)}</td>
-          <td style="font-weight:500;">${row.informacion}</td>
-          <td style="font-weight:700;">${row.documento}</td>
-          <td style="font-style:italic; color:#64748b;">${row.observaciones}</td>
+          <td contenteditable="true" onblur="updateCell('${row.id}', 'informacion', this.innerText)" style="font-weight:500;">${row.informacion}</td>
+          <td contenteditable="true" onblur="updateCell('${row.id}', 'documento', this.innerText)" style="font-weight:700;">${row.documento}</td>
+          <td contenteditable="true" onblur="updateCell('${row.id}', 'observaciones', this.innerText)" style="font-style:italic; color:#64748b;">${row.observaciones}</td>
         `;
         tbody.appendChild(tr);
 
@@ -397,14 +524,14 @@
               </td>
               <td class="text-center" style="color:#a1a1aa;">—</td>
               <td class="subtotal-indent">↳ Subtotal Desglosado ${sub.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
-              <td class="text-right" style="font-weight:800; color:#713f12;">${formatCurrency(sub.referencia)}</td>
+              <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'referencia', this.innerText)" class="text-right" style="font-weight:800; color:#713f12;">${formatCurrency(sub.referencia)}</td>
               <td></td>
               <td></td>
               <td></td>
               <td></td>
-              <td style="font-weight:600; color:#451a03;">${sub.informacion}</td>
-              <td style="font-weight:800; color:#451a03;">${sub.documento}</td>
-              <td style="font-style:italic; color:#78350f;">${sub.observaciones}</td>
+              <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'informacion', this.innerText)" style="font-weight:600; color:#451a03;">${sub.informacion}</td>
+              <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'documento', this.innerText)" style="font-weight:800; color:#451a03;">${sub.documento}</td>
+              <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'observaciones', this.innerText)" style="font-style:italic; color:#78350f;">${sub.observaciones}</td>
             `;
             tbody.appendChild(trSub);
           });
@@ -415,6 +542,159 @@
       document.getElementById('kpiEntradas').innerText = formatCurrency(totalEntradas);
       document.getElementById('kpiSalidas').innerText = formatCurrency(totalSalidas);
       document.getElementById('kpiSaldoFinal').innerText = formatCurrency(runningBalance);
+    }
+
+    /* PROCESAMIENTO DE PEGADO BASADO ÚNICAMENTE EN LAS 5 COLUMNAS DEL BASTÓN */
+    function processExcelPaste() {
+      const rawText = document.getElementById('pasteInput').value.trim();
+      if (!rawText) return alert("Pega primero tus filas de Excel.");
+
+      const lines = rawText.split('\n');
+      const data = appData[currentAccount];
+
+      lines.forEach((line, index) => {
+        const cols = line.split('\t');
+        if (cols.length >= 2) {
+          // Omitir si es fila de títulos
+          if (index === 0 && (cols[0].toUpperCase().includes('FECHA') || cols[1].toUpperCase().includes('DESC'))) return;
+
+          const cleanNum = (str) => {
+            if (!str) return 0;
+            return parseFloat(str.replace(/[^0-9.-]/g, '')) || 0;
+          };
+
+          // 1. FECHA | 2. DESCRIPCION | 3. REFERENCIA | 4. ENTRADA | 5. SALIDA
+          data.push({
+            id: Date.now().toString() + index,
+            fecha: cols[0] ? cols[0].trim() : new Date().toISOString().split('T')[0],
+            descripcion: cols[1] ? cols[1].trim() : '',
+            referencia: cols[2] ? cols[2].trim() : '',
+            saldoInicial: 0, // Se encadena dinámicamente
+            entrada: cleanNum(cols[3]),
+            salida: cleanNum(cols[4]),
+            informacion: '', // Queda libre para asignar gestión
+            documento: '',   // Queda libre para asignar gestión
+            observaciones: 'Importado de Extracto',
+            isReverso: false,
+            subtotales: []
+          });
+        }
+      });
+
+      document.getElementById('pasteInput').value = '';
+      switchModule('mod-posicion');
+      renderApp();
+    }
+
+    function openMovModal() {
+      document.getElementById('inputMovFecha').value = new Date().toISOString().split('T')[0];
+      document.getElementById('inputMovDesc').value = '';
+      document.getElementById('inputMovEntrada').value = '';
+      document.getElementById('inputMovSalida').value = '';
+      document.getElementById('inputMovInfo').value = '';
+      document.getElementById('inputMovDoc').value = '';
+      document.getElementById('modalMov').classList.remove('hidden');
+    }
+
+    function closeMovModal() {
+      document.getElementById('modalMov').classList.add('hidden');
+    }
+
+    function saveNewMov() {
+      const desc = document.getElementById('inputMovDesc').value.trim();
+      if (!desc) return alert("Por favor ingresa una descripción para el movimiento.");
+
+      appData[currentAccount].push({
+        id: Date.now().toString(),
+        fecha: document.getElementById('inputMovFecha').value || new Date().toISOString().split('T')[0],
+        descripcion: desc,
+        referencia: '',
+        saldoInicial: 0,
+        entrada: parseFloat(document.getElementById('inputMovEntrada').value) || 0,
+        salida: parseFloat(document.getElementById('inputMovSalida').value) || 0,
+        informacion: document.getElementById('inputMovInfo').value.trim(),
+        documento: document.getElementById('inputMovDoc').value.trim(),
+        observaciones: 'Ingresado por formulario',
+        isReverso: false,
+        subtotales: []
+      });
+
+      closeMovModal();
+      renderApp();
+    }
+
+    function openSubModal(parentId) {
+      document.getElementById('subParentId').value = parentId;
+      document.getElementById('inputSubMonto').value = '';
+      document.getElementById('inputSubInfo').value = '';
+      document.getElementById('inputSubDoc').value = '';
+      document.getElementById('modalSub').classList.remove('hidden');
+    }
+
+    function closeSubModal() {
+      document.getElementById('modalSub').classList.add('hidden');
+    }
+
+    function saveSubtotal() {
+      const parentId = document.getElementById('subParentId').value;
+      const parent = appData[currentAccount].find(r => r.id === parentId);
+      const monto = parseFloat(document.getElementById('inputSubMonto').value) || 0;
+
+      if (parent && monto > 0) {
+        parent.subtotales.push({
+          id: parentId + '-' + (parent.subtotales.length + 1),
+          referencia: monto,
+          informacion: document.getElementById('inputSubInfo').value.trim() || 'Subtotal Desglosado',
+          documento: document.getElementById('inputSubDoc').value.trim(),
+          observaciones: 'Subtotal desglosado',
+          isReverso: false
+        });
+        closeSubModal();
+        renderApp();
+      } else {
+        alert("Ingresa un monto válido para el subtotal.");
+      }
+    }
+
+    function openAccountModal() {
+      const name = prompt("Nombre de la nueva cuenta bancaria:");
+      if (name) {
+        appData[name] = [];
+        const select = document.getElementById('accountSelect');
+        const opt = document.createElement('option');
+        opt.value = name; opt.innerText = name;
+        select.appendChild(opt);
+        select.value = name;
+        currentAccount = name;
+        renderApp();
+      }
+    }
+
+    function updateCell(id, field, val) {
+      const row = appData[currentAccount].find(r => r.id === id);
+      if (row) {
+        if (['entrada', 'salida', 'saldoInicial'].includes(field)) {
+          row[field] = parseFloat(val.replace(/[^0-9.-]/g, '')) || 0;
+        } else {
+          row[field] = val.trim();
+        }
+        renderApp();
+      }
+    }
+
+    function updateSubCell(parentId, subId, field, val) {
+      const parent = appData[currentAccount].find(r => r.id === parentId);
+      if (parent) {
+        const sub = parent.subtotales.find(s => s.id === subId);
+        if (sub) {
+          if (field === 'referencia') {
+            sub[field] = parseFloat(val.replace(/[^0-9.-]/g, '')) || 0;
+          } else {
+            sub[field] = val.trim();
+          }
+          renderApp();
+        }
+      }
     }
 
     function generateReportIdentificar() {
@@ -520,40 +800,14 @@
 
     function toggleReversoParent(id) {
       const row = appData[currentAccount].find(r => r.id === id);
-      if (row) {
-        row.isReverso = !row.isReverso;
-        renderApp();
-      }
+      if (row) { row.isReverso = !row.isReverso; renderApp(); }
     }
 
     function toggleReversoSub(parentId, subId) {
       const parent = appData[currentAccount].find(r => r.id === parentId);
       if (parent) {
         const sub = parent.subtotales.find(s => s.id === subId);
-        if (sub) {
-          sub.isReverso = !sub.isReverso;
-          renderApp();
-        }
-      }
-    }
-
-    function addSubtotal(parentId) {
-      const parent = appData[currentAccount].find(r => r.id === parentId);
-      if (parent) {
-        const subMonto = prompt("Monto del subtotal:");
-        const subInfo = prompt("Información (Cliente / Factura FVE):");
-        const subDoc = prompt("Documento (Recibo de Caja RC):");
-        if (subMonto) {
-          parent.subtotales.push({
-            id: parentId + '-' + (parent.subtotales.length + 1),
-            referencia: parseFloat(subMonto) || 0,
-            informacion: subInfo || '',
-            documento: subDoc || '',
-            observaciones: 'Subtotal desglosado',
-            isReverso: false
-          });
-          renderApp();
-        }
+        if (sub) { sub.isReverso = !sub.isReverso; renderApp(); }
       }
     }
 
@@ -565,49 +819,9 @@
       }
     }
 
-    function addNewRow() {
-      const data = appData[currentAccount];
-      const desc = prompt("Descripción del movimiento:");
-      const entrada = prompt("Entrada ($):", "0");
-      const salida = prompt("Salida ($):", "0");
-      const info = prompt("Información:");
-
-      if (desc) {
-        data.push({
-          id: Date.now().toString(),
-          fecha: new Date().toISOString().split('T')[0],
-          descripcion: desc,
-          referencia: '',
-          saldoInicial: 0,
-          entrada: parseFloat(entrada) || 0,
-          salida: parseFloat(salida) || 0,
-          informacion: info || '',
-          documento: '',
-          observaciones: 'Ingresado manualmente',
-          isReverso: false,
-          subtotales: []
-        });
-        renderApp();
-      }
-    }
-
     function changeAccount() {
       currentAccount = document.getElementById('accountSelect').value;
       renderApp();
-    }
-
-    function addNewAccount() {
-      const accName = prompt("Nombre de la nueva cuenta:");
-      if (accName) {
-        appData[accName] = [];
-        const select = document.getElementById('accountSelect');
-        const opt = document.createElement('option');
-        opt.value = accName; opt.innerText = accName;
-        select.appendChild(opt);
-        select.value = accName;
-        currentAccount = accName;
-        renderApp();
-      }
     }
 
     window.onload = function() {
