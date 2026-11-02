@@ -44,7 +44,7 @@
     .kpi-card.emerald-highlight .kpi-label { color: #065f46; }
     .kpi-card.emerald-highlight .kpi-val { color: #064e3b; font-size: 24px; }
 
-    /* TABLA ESTILO EXCEL */
+    /* TABLA PRINCIPAL ESTILO EXCEL */
     .table-card { background: #ffffff; border-radius: 14px; border: 1px solid #cbd5e1; overflow-x: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
     table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
     th { background-color: #107c41 !important; color: #ffffff !important; font-weight: 700; padding: 14px 12px; text-transform: uppercase; border-bottom: 2px solid #084c27; }
@@ -69,22 +69,22 @@
     .btn-secondary { background: #0f172a; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-bottom: 16px; }
     .btn-toggle-reverso { background: #7e22ce; color: white; border: none; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
 
-    textarea.paste-area { width: 100%; height: 200px; padding: 14px; border: 2px dashed #cbd5e1; border-radius: 10px; font-size: 12px; font-family: monospace; outline: none; margin-bottom: 16px; }
-    textarea.paste-area:focus { border-color: #059669; background: #f0fdf4; }
-
-    /* MODAL FLOTANTE */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 999; }
-    .modal-box { background: white; border-radius: 16px; width: 100%; max-width: 520px; padding: 28px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); border: 1px solid #e2e8f0; }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .modal-title { font-size: 16px; font-weight: 800; color: #0f172a; }
-    .modal-close { background: transparent; border: none; font-size: 18px; font-weight: bold; color: #94a3b8; cursor: pointer; }
+    /* VENTANA MODAL ESTILO HOJA DE CÁLCULO EXCEL */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 999; }
+    .modal-excel-box { background: white; border-radius: 16px; width: 90%; max-width: 900px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid #cbd5e1; display: flex; flex-direction: column; max-height: 85vh; }
     
-    .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #475569; margin-bottom: 6px; }
-    .form-control { width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; font-weight: 500; }
-    .form-control:focus { border-color: #059669; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; }
+    .modal-title { font-size: 16px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px; }
+    .modal-close { background: transparent; border: none; font-size: 20px; font-weight: bold; color: #94a3b8; cursor: pointer; }
 
-    .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+    .excel-grid-container { flex: 1; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 16px; background: #ffffff; }
+    .excel-grid-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .excel-grid-table th { background: #107c41; color: white; font-weight: 700; padding: 10px; border: 1px solid #084c27; text-align: left; }
+    .excel-grid-table td { border: 1px solid #cbd5e1; padding: 4px 8px; }
+    .excel-grid-table input { width: 100%; border: none; outline: none; background: transparent; font-size: 12px; font-family: inherit; }
+    .excel-grid-table input:focus { background: #ecfdf5; font-weight: 600; }
+
+    .modal-footer { display: flex; justify-content: space-between; align-items: center; }
 
     .text-right { text-align: right; }
     .text-center { text-align: center; }
@@ -107,9 +107,6 @@
       <div class="nav-section-label">Módulos Principales</div>
       <div id="link-mod-posicion" onclick="switchModule('mod-posicion')" class="mod-link active">
         <span>📊</span> <span>1. Posición Bancaria</span>
-      </div>
-      <div id="link-mod-importar" onclick="switchModule('mod-importar')" class="mod-link">
-        <span>📋</span> <span>Carga Masiva Excel</span>
       </div>
       <div id="link-mod-identificar" onclick="switchModule('mod-identificar')" class="mod-link">
         <span>🔍</span> <span>2. Por Identificar</span>
@@ -161,8 +158,7 @@
         </div>
 
         <div>
-          <button onclick="openMovModal()" class="btn-action">+ Agregar Movimiento Banco</button>
-          <button onclick="switchModule('mod-importar')" class="btn-secondary">📋 Copiar y Pegar desde Excel</button>
+          <button onclick="openExcelModal()" class="btn-action">📊 + Agregar Movimientos (Ventana Excel)</button>
         </div>
 
         <div class="table-card">
@@ -184,25 +180,6 @@
             </thead>
             <tbody id="bankTableBody"></tbody>
           </table>
-        </div>
-      </section>
-
-      <!-- MÓDULO CARGA MASIVA EXCEL (MODIFICADO PARA PEGADO DIRECTO BÁSICO) -->
-      <section id="mod-importar" class="module-section hidden">
-        <div class="table-card" style="padding: 24px;">
-          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 8px;">📋 Pegado Masivo de Extracto Bancario</h3>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 16px;">
-            Copia y pega únicamente las 5 columnas básicas de tu extracto de banco:
-            <br><code>FECHA | DESCRIPCIÓN | REFERENCIA | ENTRADA | SALIDA</code>
-            <br><span style="color:#059669; font-weight:bold;">* El Saldo Inicial y el Saldo Real se calcularán automáticamente por el sistema.</span>
-          </p>
-
-          <textarea id="pasteInput" class="paste-area" placeholder="Pega aquí tu bloque de celdas de Excel (Ctrl + V)..."></textarea>
-          
-          <div style="display: flex; gap: 10px;">
-            <button onclick="processExcelPaste()" class="btn-action">✅ Cargar Movimientos a la Tabla</button>
-            <button onclick="switchModule('mod-posicion')" class="btn-secondary">Cancelar</button>
-          </div>
         </div>
       </section>
 
@@ -296,51 +273,50 @@
     </main>
   </div>
 
-  <!-- MODAL MOVIMIENTO BANCO -->
-  <div id="modalMov" class="modal-overlay hidden">
-    <div class="modal-box">
+  <!-- VENTANA MODAL EMERGENTE TIPO EXCEL -->
+  <div id="modalExcel" class="modal-overlay hidden">
+    <div class="modal-excel-box">
       <div class="modal-header">
-        <h3 class="modal-title">🏦 Nuevo Movimiento de Banco</h3>
-        <button onclick="closeMovModal()" class="modal-close">✕</button>
+        <h3 class="modal-title">📊 Ventana de Pegado / Carga Tipo Excel</h3>
+        <button onclick="closeExcelModal()" class="modal-close">✕</button>
       </div>
       
-      <div class="form-group">
-        <label>Fecha</label>
-        <input type="date" id="inputMovFecha" class="form-control">
-      </div>
-      <div class="form-group">
-        <label>Descripción del Movimiento</label>
-        <input type="text" id="inputMovDesc" placeholder="Ej: Pago de Cliente" class="form-control">
-      </div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-        <div class="form-group">
-          <label>Entrada ($)</label>
-          <input type="number" id="inputMovEntrada" placeholder="0" class="form-control">
-        </div>
-        <div class="form-group">
-          <label>Salida ($)</label>
-          <input type="number" id="inputMovSalida" placeholder="0" class="form-control">
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Información</label>
-        <input type="text" id="inputMovInfo" placeholder="Ej: Gastos Bancarios" class="form-control">
-      </div>
-      <div class="form-group">
-        <label>Documento</label>
-        <input type="text" id="inputMovDoc" placeholder="Ej: RP-999-4" class="form-control">
+      <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">
+        Haz clic en cualquier celda para escribir o <strong>pega directamente un bloque copiado de Excel (Ctrl + V)</strong> en las columnas:
+        <br><code>FECHA | DESCRIPCIÓN | ENTRADA | SALIDA</code>
+      </p>
+
+      <div class="excel-grid-container" onpaste="handleGridPaste(event)">
+        <table class="excel-grid-table">
+          <thead>
+            <tr>
+              <th style="width: 40px; text-align: center;">#</th>
+              <th style="width: 140px;">Fecha</th>
+              <th>Descripción</th>
+              <th style="width: 140px;" class="text-right">Entrada ($)</th>
+              <th style="width: 140px;" class="text-right">Salida ($)</th>
+            </tr>
+          </thead>
+          <tbody id="excelGridBody"></tbody>
+        </table>
       </div>
 
       <div class="modal-footer">
-        <button onclick="closeMovModal()" class="btn-secondary">Cancelar</button>
-        <button onclick="saveNewMov()" class="btn-action">Guardar Movimiento</button>
+        <div>
+          <button onclick="addExcelGridRow()" class="btn-secondary" style="margin-bottom:0;">+ Fila</button>
+          <button onclick="clearExcelGrid()" style="background:#ef4444; color:white; border:none; padding:10px 14px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;">Limpiar</button>
+        </div>
+        <div>
+          <button onclick="closeExcelModal()" class="btn-secondary" style="margin-bottom:0;">Cancelar</button>
+          <button onclick="saveExcelGridData()" class="btn-action" style="margin-bottom:0; margin-right:0;">✅ Insertar a la Tabla Principal</button>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- MODAL SUBTOTAL AMARILLO -->
   <div id="modalSub" class="modal-overlay hidden">
-    <div class="modal-box">
+    <div class="modal-excel-box" style="max-width: 500px;">
       <div class="modal-header">
         <h3 class="modal-title">↳ Agregar Subtotal Desglosado</h3>
         <button onclick="closeSubModal()" class="modal-close">✕</button>
@@ -348,22 +324,22 @@
       
       <input type="hidden" id="subParentId">
 
-      <div class="form-group">
-        <label>Monto Subtotal ($)</label>
-        <input type="number" id="inputSubMonto" placeholder="Ej: 47559" class="form-control">
+      <div style="margin-bottom: 12px;">
+        <label style="font-size:11px; font-weight:bold; color:#475569; display:block; margin-bottom:4px;">Monto Subtotal ($)</label>
+        <input type="number" id="inputSubMonto" placeholder="Ej: 47559" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
       </div>
-      <div class="form-group">
-        <label>Información (Cliente / Factura FVE)</label>
-        <input type="text" id="inputSubInfo" placeholder="Ej: INVERSIONES EAMC SAS | FVE 17524" class="form-control">
+      <div style="margin-bottom: 12px;">
+        <label style="font-size:11px; font-weight:bold; color:#475569; display:block; margin-bottom:4px;">Información (Cliente / Factura FVE)</label>
+        <input type="text" id="inputSubInfo" placeholder="Ej: INVERSIONES EAMC SAS | FVE 17524" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
       </div>
-      <div class="form-group">
-        <label>Documento (Recibo de Caja RC)</label>
-        <input type="text" id="inputSubDoc" placeholder="Ej: RC-1-3308" class="form-control">
+      <div style="margin-bottom: 16px;">
+        <label style="font-size:11px; font-weight:bold; color:#475569; display:block; margin-bottom:4px;">Documento (Recibo de Caja RC)</label>
+        <input type="text" id="inputSubDoc" placeholder="Ej: RC-1-3308" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
       </div>
 
-      <div class="modal-footer">
-        <button onclick="closeSubModal()" class="btn-secondary">Cancelar</button>
-        <button onclick="saveSubtotal()" class="btn-action">Guardar Subtotal</button>
+      <div style="display:flex; justify-content:flex-end; gap:8px;">
+        <button onclick="closeSubModal()" class="btn-secondary" style="margin-bottom:0;">Cancelar</button>
+        <button onclick="saveSubtotal()" class="btn-action" style="margin-bottom:0; margin-right:0;">Guardar Subtotal</button>
       </div>
     </div>
   </div>
@@ -455,7 +431,6 @@
 
       const titles = {
         'mod-posicion': ['1. Posición Bancaria y Movimientos', 'Control diario de tesorería y subtotales desglosados de adquirencia'],
-        'mod-importar': ['Carga Masiva desde Excel', 'Copia y pega bloques enteros de datos desde tu hoja de cálculo'],
         'mod-identificar': ['2. Pendientes por Identificar', 'Partidas sin cliente o información asignada en la columna INFORMACION'],
         'mod-contabilizar': ['3. Pendientes por Contabilizar', 'Control de Recibos de Caja (RC) y Facturas (FVE)'],
         'mod-reversos': ['4. Reversos y Reembolsos', 'Seguimiento a devoluciones y notas crédito bancarias'],
@@ -544,85 +519,101 @@
       document.getElementById('kpiSaldoFinal').innerText = formatCurrency(runningBalance);
     }
 
-    /* PROCESAMIENTO DE PEGADO BASADO ÚNICAMENTE EN LAS 5 COLUMNAS DEL BASTÓN */
-    function processExcelPaste() {
-      const rawText = document.getElementById('pasteInput').value.trim();
-      if (!rawText) return alert("Pega primero tus filas de Excel.");
+    /* LÓGICA DE LA VENTANA MODAL EMERGENTE EXCEL GRIDS */
+    function openExcelModal() {
+      document.getElementById('modalExcel').classList.remove('hidden');
+      clearExcelGrid();
+      for (let i = 0; i < 5; i++) addExcelGridRow();
+    }
 
-      const lines = rawText.split('\n');
-      const data = appData[currentAccount];
+    function closeExcelModal() {
+      document.getElementById('modalExcel').classList.add('hidden');
+    }
 
-      lines.forEach((line, index) => {
+    function clearExcelGrid() {
+      document.getElementById('excelGridBody').innerHTML = '';
+    }
+
+    function addExcelGridRow(fecha = '', desc = '', entrada = '', salida = '') {
+      const tbody = document.getElementById('excelGridBody');
+      const rowCount = tbody.children.length + 1;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="text-center" style="color:#94a3b8; font-weight:bold;">${rowCount}</td>
+        <td><input type="text" class="grid-cell-fecha" value="${fecha}" placeholder="AAAA-MM-DD"></td>
+        <td><input type="text" class="grid-cell-desc" value="${desc}" placeholder="Descripción del movimiento"></td>
+        <td><input type="text" class="grid-cell-entrada text-right" value="${entrada}" placeholder="0"></td>
+        <td><input type="text" class="grid-cell-salida text-right" value="${salida}" placeholder="0"></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    function handleGridPaste(e) {
+      e.preventDefault();
+      const clipboardData = e.clipboardData || window.clipboardData;
+      const pastedData = clipboardData.getData('Text');
+      if (!pastedData) return;
+
+      const lines = pastedData.trim().split('\n');
+      clearExcelGrid();
+
+      lines.forEach((line) => {
         const cols = line.split('\t');
         if (cols.length >= 2) {
           // Omitir si es fila de títulos
-          if (index === 0 && (cols[0].toUpperCase().includes('FECHA') || cols[1].toUpperCase().includes('DESC'))) return;
+          if (cols[0].toUpperCase().includes('FECHA') || cols[1].toUpperCase().includes('DESC')) return;
 
-          const cleanNum = (str) => {
-            if (!str) return 0;
-            return parseFloat(str.replace(/[^0-9.-]/g, '')) || 0;
-          };
+          addExcelGridRow(
+            cols[0] ? cols[0].trim() : '',
+            cols[1] ? cols[1].trim() : '',
+            cols[2] ? cols[2].trim() : '0',
+            cols[3] ? cols[3].trim() : '0'
+          );
+        }
+      });
+    }
 
-          // 1. FECHA | 2. DESCRIPCION | 3. REFERENCIA | 4. ENTRADA | 5. SALIDA
+    function saveExcelGridData() {
+      const rows = document.querySelectorAll('#excelGridBody tr');
+      const data = appData[currentAccount];
+      let insertedCount = 0;
+
+      rows.forEach(tr => {
+        const fecha = tr.querySelector('.grid-cell-fecha').value.trim();
+        const desc = tr.querySelector('.grid-cell-desc').value.trim();
+        const entradaStr = tr.querySelector('.grid-cell-entrada').value;
+        const salidaStr = tr.querySelector('.grid-cell-salida').value;
+
+        if (desc !== '' || fecha !== '') {
+          const cleanNum = (str) => parseFloat((str || '').replace(/[^0-9.-]/g, '')) || 0;
+
           data.push({
-            id: Date.now().toString() + index,
-            fecha: cols[0] ? cols[0].trim() : new Date().toISOString().split('T')[0],
-            descripcion: cols[1] ? cols[1].trim() : '',
-            referencia: cols[2] ? cols[2].trim() : '',
-            saldoInicial: 0, // Se encadena dinámicamente
-            entrada: cleanNum(cols[3]),
-            salida: cleanNum(cols[4]),
-            informacion: '', // Queda libre para asignar gestión
-            documento: '',   // Queda libre para asignar gestión
-            observaciones: 'Importado de Extracto',
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
+            fecha: fecha || new Date().toISOString().split('T')[0],
+            descripcion: desc || 'Movimiento de Banco',
+            referencia: '',
+            saldoInicial: 0,
+            entrada: cleanNum(entradaStr),
+            salida: cleanNum(salidaStr),
+            informacion: '',
+            documento: '',
+            observaciones: 'Cargado en Grid Excel',
             isReverso: false,
             subtotales: []
           });
+          insertedCount++;
         }
       });
 
-      document.getElementById('pasteInput').value = '';
-      switchModule('mod-posicion');
-      renderApp();
+      if (insertedCount > 0) {
+        closeExcelModal();
+        renderApp();
+      } else {
+        alert("Ingresa al menos una fila válida con información.");
+      }
     }
 
-    function openMovModal() {
-      document.getElementById('inputMovFecha').value = new Date().toISOString().split('T')[0];
-      document.getElementById('inputMovDesc').value = '';
-      document.getElementById('inputMovEntrada').value = '';
-      document.getElementById('inputMovSalida').value = '';
-      document.getElementById('inputMovInfo').value = '';
-      document.getElementById('inputMovDoc').value = '';
-      document.getElementById('modalMov').classList.remove('hidden');
-    }
-
-    function closeMovModal() {
-      document.getElementById('modalMov').classList.add('hidden');
-    }
-
-    function saveNewMov() {
-      const desc = document.getElementById('inputMovDesc').value.trim();
-      if (!desc) return alert("Por favor ingresa una descripción para el movimiento.");
-
-      appData[currentAccount].push({
-        id: Date.now().toString(),
-        fecha: document.getElementById('inputMovFecha').value || new Date().toISOString().split('T')[0],
-        descripcion: desc,
-        referencia: '',
-        saldoInicial: 0,
-        entrada: parseFloat(document.getElementById('inputMovEntrada').value) || 0,
-        salida: parseFloat(document.getElementById('inputMovSalida').value) || 0,
-        informacion: document.getElementById('inputMovInfo').value.trim(),
-        documento: document.getElementById('inputMovDoc').value.trim(),
-        observaciones: 'Ingresado por formulario',
-        isReverso: false,
-        subtotales: []
-      });
-
-      closeMovModal();
-      renderApp();
-    }
-
+    /* CONTROL DE SUBTOTALES Y CUENTAS */
     function openSubModal(parentId) {
       document.getElementById('subParentId').value = parentId;
       document.getElementById('inputSubMonto').value = '';
