@@ -8,7 +8,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: #f8fafc; color: #0f172a; display: flex; min-height: 100vh; }
 
-    /* NAVEGACIÓN LATERAL */
+    /* NAVEGACIÓN LATERAL POR MÓDULOS REESTRUCTURADOS */
     aside { width: 270px; background-color: #0f172a; color: #ffffff; display: flex; flex-direction: column; flex-shrink: 0; border-right: 1px solid #1e293b; }
     .sidebar-header { padding: 20px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; gap: 12px; }
     .sidebar-logo { background: #10b981; color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
@@ -42,9 +42,11 @@
     .kpi-val { font-size: 22px; font-weight: 800; margin-top: 6px; color: #0f172a; }
     .kpi-val.green { color: #059669; }
     .kpi-val.red { color: #dc2626; }
+    .kpi-val.purple { color: #7e22ce; }
     .kpi-card.emerald-highlight { background: #ecfdf5; border-color: #a7f3d0; }
     .kpi-card.emerald-highlight .kpi-label { color: #065f46; }
     .kpi-card.emerald-highlight .kpi-val { color: #064e3b; font-size: 24px; }
+    .kpi-card.purple-highlight { background: #faf5ff; border-color: #e9d5ff; }
 
     /* ALERTA CUENTAS DESACTUALIZADAS */
     .alert-card { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
@@ -71,6 +73,11 @@
     .badge-gasto { background: #e2e8f0; color: #475569; }
     .badge-reverso { background: #f3e8ff; color: #6b21a8; }
     .badge-alert { background: #ffe4e6; color: #9f1239; }
+
+    .status-select { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; border: 1px solid #cbd5e1; outline: none; cursor: pointer; }
+    .status-select.pending { background: #f3e8ff; color: #6b21a8; border-color: #d8b4fe; }
+    .status-select.recovered { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+    .status-select.rejected { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
 
     .btn-action { background: #059669; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-bottom: 16px; margin-right: 8px; transition: 0.2s; }
     .btn-action:hover { background: #047857; }
@@ -158,7 +165,7 @@
         <div class="account-switcher">
           <label>MES:</label>
           <select id="monthSelect" onchange="changeMonth()">
-            <option value="2025-04">Abril 2025</option>
+            <option value="2025-04" selected>Abril 2025</option>
             <option value="2025-05">Mayo 2025</option>
             <option value="2025-06">Junio 2025</option>
             <option value="2025-07">Julio 2025</option>
@@ -177,7 +184,7 @@
             <option value="2026-08">Agosto 2026</option>
             <option value="2026-09">Septiembre 2026</option>
             <option value="2026-10">Octubre 2026</option>
-            <option value="2026-11" selected>Noviembre 2026</option>
+            <option value="2026-11">Noviembre 2026</option>
           </select>
         </div>
 
@@ -341,11 +348,28 @@
         </div>
       </section>
 
-      <!-- MÓDULO 3: REVERSO O DEVOLUCIÓN -->
+      <!-- MÓDULO 3: REVERSO O DEVOLUCIÓN CON KPIS EJECUTIVOS -->
       <section id="mod-reversos" class="module-section hidden">
+        <!-- TARJETAS DE PREGUNTAS CLAVE -->
+        <div class="kpi-grid">
+          <div class="kpi-card purple-highlight">
+            <div class="kpi-label">1. ¿Cuánto Dinero Está Reclamado?</div>
+            <div id="kpiTotalReclamado" class="kpi-val purple">$0</div>
+          </div>
+          <div class="kpi-card emerald-highlight">
+            <div class="kpi-label">2. ¿Cuánto Hemos Recuperado?</div>
+            <div id="kpiTotalRecuperado" class="kpi-val green">$0</div>
+          </div>
+          <div class="kpi-card" style="background:#fff7ed; border-color:#ffedd5;">
+            <div class="kpi-label">3. ¿Qué Casos Siguen Pendientes?</div>
+            <div id="kpiTotalPendiente" class="kpi-val" style="color:#c2410c;">$0</div>
+            <p id="kpiCountPendiente" style="font-size:11px; font-weight:bold; color:#ea580c; margin-top:4px;">0 casos activos</p>
+          </div>
+        </div>
+
         <div class="table-card" style="padding: 24px;">
-          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">🔄 Auditoría de Reversos y Devoluciones</h3>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Control de transacciones marcadas en reclamación con pasarelas o entidades bancarias.</p>
+          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">🔄 Auditoría de Reversos, Devoluciones y Reclamaciones</h3>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Gestiona y actualiza el estado de las reclamaciones activas con entidades financieras o pasarelas.</p>
 
           <table>
             <thead>
@@ -455,6 +479,7 @@
           documento: '',
           observaciones: 'este seria el movimiento de banco visual',
           isReverso: false,
+          reversoState: 'PENDIENTE', // PENDIENTE | RECUPERADO | RECHAZADO
           subtotales: []
         },
         {
@@ -469,6 +494,7 @@
           documento: 'RP-999-4',
           observaciones: 'este seria el movimiento de banco visual',
           isReverso: false,
+          reversoState: 'PENDIENTE',
           subtotales: []
         },
         {
@@ -483,6 +509,7 @@
           documento: 'TD-126',
           observaciones: 'este seria el movimiento de banco visual',
           isReverso: false,
+          reversoState: 'PENDIENTE',
           subtotales: []
         },
         {
@@ -497,12 +524,13 @@
           documento: '',
           observaciones: 'este seria el movimiento de banco visual',
           isReverso: false,
+          reversoState: 'PENDIENTE',
           subtotales: [
-            { id: '4-1', referencia: 47559, informacion: 'INVERSIONES EAMC SAS R-V-10016 | FVE 17524', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false },
-            { id: '4-2', referencia: 285358, informacion: 'INVERSIONES EAMC SAS R-V-10019 | FVE 17516', documento: 'RC-1-3307', observaciones: 'este seria un subtotal movimiento banco', isReverso: false },
-            { id: '4-3', referencia: 142678, informacion: 'INVERSIONES EAMC SAS R-V-10255 | FVE 17674', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false },
-            { id: '4-4', referencia: 47559, informacion: 'INVERSIONES EAMC SAS R-V-10004 | FVE 17511', documento: 'RC-1-3302', observaciones: 'este seria un subtotal movimiento banco', isReverso: false },
-            { id: '4-5', referencia: 95119, informacion: 'INVERSIONES EAMC SAS R-V-10011 | FVE 17515', documento: 'RC-1-3306', observaciones: 'este seria un subtotal movimiento banco', isReverso: false }
+            { id: '4-1', referencia: 47559, informacion: 'INVERSIONES EAMC SAS R-V-10016 | FVE 17524', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'PENDIENTE' },
+            { id: '4-2', referencia: 285358, informacion: 'INVERSIONES EAMC SAS R-V-10019 | FVE 17516', documento: 'RC-1-3307', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'PENDIENTE' },
+            { id: '4-3', referencia: 142678, informacion: 'INVERSIONES EAMC SAS R-V-10255 | FVE 17674', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'PENDIENTE' },
+            { id: '4-4', referencia: 47559, informacion: 'INVERSIONES EAMC SAS R-V-10004 | FVE 17511', documento: 'RC-1-3302', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'PENDIENTE' },
+            { id: '4-5', referencia: 95119, informacion: 'INVERSIONES EAMC SAS R-V-10011 | FVE 17515', documento: 'RC-1-3306', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'PENDIENTE' }
           ]
         }
       ],
@@ -530,7 +558,7 @@
         'mod-identificar': ['Pendiente por Identificar', 'Partidas sin cliente o información asignada en la columna INFORMACION'],
         'mod-contabilizar': ['Pendiente por Contabilizar', 'Control de Recibos de Caja (RC) y Facturas (FVE)'],
         'mod-gastos': ['Gasto Bancario Global', 'Acumulado de Gravamen (4x1000), comisiones y cuotas de manejo'],
-        'mod-reversos': ['Reverso o Devolución', 'Seguimiento a devoluciones y notas crédito bancarias']
+        'mod-reversos': ['Reverso o Devolución', 'Auditoría de reclamaciones, dinero recuperado y casos pendientes']
       };
 
       document.getElementById('moduleTitle').innerText = titles[modId][0];
@@ -560,8 +588,6 @@
       tbody.innerHTML = '';
 
       const data = appData[currentAccount] || [];
-      
-      // Ordenar por fecha cronológicamente
       data.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 
       let runningBalance = 0;
@@ -570,7 +596,6 @@
       let monthSalidas = 0;
       let foundFirstMonthRow = false;
 
-      // Calcular saldo inicial acumulado antes del mes seleccionado
       data.forEach((row) => {
         const rowMonth = row.fecha.substring(0, 7);
         const entrada = parseFloat(row.entrada) || 0;
@@ -586,7 +611,6 @@
 
       monthInitialBalance = runningBalance;
 
-      // Renderizar filas pertenecientes al mes seleccionado
       data.forEach((row) => {
         const rowMonth = row.fecha.substring(0, 7);
         const entrada = parseFloat(row.entrada) || 0;
@@ -660,7 +684,97 @@
       document.getElementById('kpiSaldoFinal').innerText = formatCurrency(runningBalance);
     }
 
-    /* MÓDULO 1.3: ALERTA DE CUENTAS POR ACTUALIZAR */
+    /* MÓDULO 3: AUDITORÍA DE REVERSOS CON KPIS DEDICADOS */
+    function generateReportReversos() {
+      const data = appData[currentAccount] || [];
+      const body = document.getElementById('reportReversosBody');
+      body.innerHTML = '';
+      
+      let totalReclamado = 0;
+      let totalRecuperado = 0;
+      let totalPendiente = 0;
+      let countPendiente = 0;
+
+      data.forEach(row => {
+        if (row.fecha.substring(0, 7) === currentMonth) {
+          const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
+          
+          if (row.isReverso) {
+            const monto = row.entrada > 0 ? row.entrada : row.salida;
+            const state = row.reversoState || 'PENDIENTE';
+            totalReclamado += monto;
+            if (state === 'RECUPERADO') totalRecuperado += monto;
+            if (state === 'PENDIENTE') { totalPendiente += monto; countPendiente++; }
+
+            body.innerHTML += `
+              <tr>
+                <td>${row.fecha}</td>
+                <td>${flujoBadge}</td>
+                <td>${row.descripcion}</td>
+                <td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(monto)}</td>
+                <td>${row.observaciones}</td>
+                <td>
+                  <select class="status-select ${state === 'RECUPERADO' ? 'recovered' : state === 'RECHAZADO' ? 'rejected' : 'pending'}" onchange="updateReversoState('${row.id}', null, this.value)">
+                    <option value="PENDIENTE" ${state === 'PENDIENTE' ? 'selected' : ''}>⏳ Pendiente</option>
+                    <option value="RECUPERADO" ${state === 'RECUPERADO' ? 'selected' : ''}>✅ Recuperado</option>
+                    <option value="RECHAZADO" ${state === 'RECHAZADO' ? 'selected' : ''}>❌ Rechazado</option>
+                  </select>
+                </td>
+              </tr>`;
+          }
+
+          row.subtotales.forEach(sub => {
+            if (sub.isReverso) {
+              const monto = sub.referencia;
+              const state = sub.reversoState || 'PENDIENTE';
+              totalReclamado += monto;
+              if (state === 'RECUPERADO') totalRecuperado += monto;
+              if (state === 'PENDIENTE') { totalPendiente += monto; countPendiente++; }
+
+              body.innerHTML += `
+                <tr class="bg-subtotal">
+                  <td>${row.fecha}</td>
+                  <td>${flujoBadge}</td>
+                  <td class="subtotal-indent">↳ ${sub.informacion} (Subtotal)</td>
+                  <td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(monto)}</td>
+                  <td>${sub.observaciones}</td>
+                  <td>
+                    <select class="status-select ${state === 'RECUPERADO' ? 'recovered' : state === 'RECHAZADO' ? 'rejected' : 'pending'}" onchange="updateReversoState('${row.id}', '${sub.id}', this.value)">
+                      <option value="PENDIENTE" ${state === 'PENDIENTE' ? 'selected' : ''}>⏳ Pendiente</option>
+                      <option value="RECUPERADO" ${state === 'RECUPERADO' ? 'selected' : ''}>✅ Recuperado</option>
+                      <option value="RECHAZADO" ${state === 'RECHAZADO' ? 'selected' : ''}>❌ Rechazado</option>
+                    </select>
+                  </td>
+                </tr>`;
+            }
+          });
+        }
+      });
+
+      if (totalReclamado === 0) {
+        body.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b; padding:20px;">No hay registros marcados como reverso o reembolso en el mes de ${currentMonth}. Haz clic en 🔄 en la Posición Bancaria para marcar una fila.</td></tr>`;
+      }
+
+      document.getElementById('kpiTotalReclamado').innerText = formatCurrency(totalReclamado);
+      document.getElementById('kpiTotalRecuperado').innerText = formatCurrency(totalRecuperado);
+      document.getElementById('kpiTotalPendiente').innerText = formatCurrency(totalPendiente);
+      document.getElementById('kpiCountPendiente').innerText = `${countPendiente} caso(s) en trámite`;
+    }
+
+    function updateReversoState(parentId, subId, newState) {
+      const parent = appData[currentAccount].find(r => r.id === parentId);
+      if (parent) {
+        if (subId) {
+          const sub = parent.subtotales.find(s => s.id === subId);
+          if (sub) sub.reversoState = newState;
+        } else {
+          parent.reversoState = newState;
+        }
+        generateReportReversos();
+      }
+    }
+
+    /* OTROS INFORMES */
     function generateAlertas() {
       const body = document.getElementById('alertasBody');
       body.innerHTML = '';
@@ -699,7 +813,6 @@
       });
     }
 
-    /* MÓDULO 2.3: GASTOS BANCARIOS GLOBALES */
     function generateReportGastos() {
       const data = appData[currentAccount] || [];
       const body = document.getElementById('reportGastosBody');
@@ -726,6 +839,84 @@
       if (totalGastos === 0) {
         body.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b; padding:20px;">No se registran gastos bancarios en la cuenta para el mes seleccionado (${currentMonth}).</td></tr>`;
       }
+    }
+
+    function generateReportIdentificar() {
+      const data = appData[currentAccount] || [];
+      const body = document.getElementById('reportIdentificarBody');
+      body.innerHTML = '';
+
+      data.forEach(row => {
+        if (row.fecha.substring(0, 7) === currentMonth) {
+          const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
+          const monto = row.entrada > 0 ? row.entrada : row.salida;
+
+          if (row.subtotales.length > 0) {
+            row.subtotales.forEach(sub => {
+              if (!sub.informacion || sub.informacion.trim() === '') {
+                body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion} (Subtotal)</td><td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td><td style="color:#dc2626; font-weight:bold;">Sin información</td><td><span class="badge" style="background:#fef08a;">Subtotal</span></td></tr>`;
+              }
+            });
+          } else {
+            if (!row.informacion || row.informacion.trim() === '' || row.informacion.toLowerCase().includes('pendiente')) {
+              body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(monto)}</td><td style="color:#dc2626; font-weight:bold;">${row.informacion || 'Sin información'}</td><td><span class="badge" style="background:#e2e8f0;">Movimiento Banco</span></td></tr>`;
+            }
+          }
+        }
+      });
+    }
+
+    function generateReportContabilizar() {
+      const data = appData[currentAccount] || [];
+      const body = document.getElementById('reportContabilizarBody');
+      body.innerHTML = '';
+
+      data.forEach(row => {
+        if (row.fecha.substring(0, 7) === currentMonth) {
+          const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
+          const monto = row.entrada > 0 ? row.entrada : row.salida;
+
+          if (row.subtotales.length > 0) {
+            row.subtotales.forEach(sub => {
+              const isGasto = (row.informacion + ' ' + sub.informacion).toLowerCase().includes('gastos bancarios');
+              if (isGasto) {
+                body.innerHTML += `<tr style="opacity:0.6;"><td>${row.fecha}</td><td>${flujoBadge}</td><td>${sub.informacion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td><td style="color:#64748b;">—</td><td><span class="badge badge-gasto">Gasto Bancario (Excluido)</span></td></tr>`;
+              } else if (!sub.documento || sub.documento.trim() === '') {
+                body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${sub.informacion}</td><td class="text-right" style="font-weight:bold; color:#2563eb;">${formatCurrency(sub.referencia)}</td><td style="color:#dc2626; font-weight:bold;">Sin Documento / RC</td><td><span class="badge" style="background:#dbeafe; color:#1e40af;">Pendiente Contabilizar</span></td></tr>`;
+              }
+            });
+          } else {
+            const isGasto = row.informacion.toLowerCase().includes('gastos bancarios');
+            if (isGasto) {
+              body.innerHTML += `<tr style="opacity:0.6;"><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(monto)}</td><td style="color:#64748b;">—</td><td><span class="badge badge-gasto">Gasto Bancario (Excluido)</span></td></tr>`;
+            } else if (!row.documento || row.documento.trim() === '') {
+              body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold; color:#2563eb;">${formatCurrency(monto)}</td><td style="color:#dc2626; font-weight:bold;">Sin Documento / RC</td><td><span class="badge" style="background:#dbeafe; color:#1e40af;">Pendiente Contabilizar</span></td></tr>`;
+            }
+          }
+        }
+      });
+    }
+
+    function generateConsolidado() {
+      const body = document.getElementById('consolidadoBody');
+      body.innerHTML = '';
+      
+      Object.keys(appData).forEach(acc => {
+        const rows = appData[acc];
+        let init = rows.length > 0 ? rows[0].saldoInicial : 0;
+        let inTotal = rows.reduce((s, r) => s + (parseFloat(r.entrada)||0), 0);
+        let outTotal = rows.reduce((s, r) => s + (parseFloat(r.salida)||0), 0);
+        let finalBal = init + inTotal - outTotal;
+
+        body.innerHTML += `
+          <tr>
+            <td style="font-weight:800;">${acc}</td>
+            <td class="text-right">${formatCurrency(init)}</td>
+            <td class="text-right" style="color:#059669; font-weight:bold;">${formatCurrency(inTotal)}</td>
+            <td class="text-right" style="color:#dc2626; font-weight:bold;">${formatCurrency(outTotal)}</td>
+            <td class="text-right" style="font-weight:900;">${formatCurrency(finalBal)}</td>
+          </tr>`;
+      });
     }
 
     /* VENTANA MODAL EXCEL GRIDS */
@@ -807,6 +998,7 @@
             documento: '',
             observaciones: 'Cargado en Grid Excel',
             isReverso: false,
+            reversoState: 'PENDIENTE',
             subtotales: []
           });
           insertedCount++;
@@ -846,7 +1038,8 @@
           informacion: document.getElementById('inputSubInfo').value.trim() || 'Subtotal Desglosado',
           documento: document.getElementById('inputSubDoc').value.trim(),
           observaciones: 'Subtotal desglosado',
-          isReverso: false
+          isReverso: false,
+          reversoState: 'PENDIENTE'
         });
         closeSubModal();
         renderApp();
@@ -894,113 +1087,6 @@
           renderApp();
         }
       }
-    }
-
-    function generateReportIdentificar() {
-      const data = appData[currentAccount] || [];
-      const body = document.getElementById('reportIdentificarBody');
-      body.innerHTML = '';
-
-      data.forEach(row => {
-        if (row.fecha.substring(0, 7) === currentMonth) {
-          const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
-          const monto = row.entrada > 0 ? row.entrada : row.salida;
-
-          if (row.subtotales.length > 0) {
-            row.subtotales.forEach(sub => {
-              if (!sub.informacion || sub.informacion.trim() === '') {
-                body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion} (Subtotal)</td><td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td><td style="color:#dc2626; font-weight:bold;">Sin información</td><td><span class="badge" style="background:#fef08a;">Subtotal</span></td></tr>`;
-              }
-            });
-          } else {
-            if (!row.informacion || row.informacion.trim() === '' || row.informacion.toLowerCase().includes('pendiente')) {
-              body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(monto)}</td><td style="color:#dc2626; font-weight:bold;">${row.informacion || 'Sin información'}</td><td><span class="badge" style="background:#e2e8f0;">Movimiento Banco</span></td></tr>`;
-            }
-          }
-        }
-      });
-    }
-
-    function generateReportContabilizar() {
-      const data = appData[currentAccount] || [];
-      const body = document.getElementById('reportContabilizarBody');
-      body.innerHTML = '';
-
-      data.forEach(row => {
-        if (row.fecha.substring(0, 7) === currentMonth) {
-          const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
-          const monto = row.entrada > 0 ? row.entrada : row.salida;
-
-          if (row.subtotales.length > 0) {
-            row.subtotales.forEach(sub => {
-              const isGasto = (row.informacion + ' ' + sub.informacion).toLowerCase().includes('gastos bancarios');
-              if (isGasto) {
-                body.innerHTML += `<tr style="opacity:0.6;"><td>${row.fecha}</td><td>${flujoBadge}</td><td>${sub.informacion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td><td style="color:#64748b;">—</td><td><span class="badge badge-gasto">Gasto Bancario (Excluido)</span></td></tr>`;
-              } else if (!sub.documento || sub.documento.trim() === '') {
-                body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${sub.informacion}</td><td class="text-right" style="font-weight:bold; color:#2563eb;">${formatCurrency(sub.referencia)}</td><td style="color:#dc2626; font-weight:bold;">Sin Documento / RC</td><td><span class="badge" style="background:#dbeafe; color:#1e40af;">Pendiente Contabilizar</span></td></tr>`;
-              }
-            });
-          } else {
-            const isGasto = row.informacion.toLowerCase().includes('gastos bancarios');
-            if (isGasto) {
-              body.innerHTML += `<tr style="opacity:0.6;"><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(monto)}</td><td style="color:#64748b;">—</td><td><span class="badge badge-gasto">Gasto Bancario (Excluido)</span></td></tr>`;
-            } else if (!row.documento || row.documento.trim() === '') {
-              body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold; color:#2563eb;">${formatCurrency(monto)}</td><td style="color:#dc2626; font-weight:bold;">Sin Documento / RC</td><td><span class="badge" style="background:#dbeafe; color:#1e40af;">Pendiente Contabilizar</span></td></tr>`;
-            }
-          }
-        }
-      });
-    }
-
-    function generateReportReversos() {
-      const data = appData[currentAccount] || [];
-      const body = document.getElementById('reportReversosBody');
-      body.innerHTML = '';
-      let count = 0;
-
-      data.forEach(row => {
-        if (row.fecha.substring(0, 7) === currentMonth) {
-          const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
-          
-          if (row.isReverso) {
-            count++;
-            body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(row.entrada > 0 ? row.entrada : row.salida)}</td><td>${row.observaciones}</td><td><span class="badge badge-reverso">En Reclamación</span></td></tr>`;
-          }
-
-          row.subtotales.forEach(sub => {
-            if (sub.isReverso) {
-              count++;
-              body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${sub.informacion} (Subtotal)</td><td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(sub.referencia)}</td><td>${sub.observaciones}</td><td><span class="badge badge-reverso">En Reclamación</span></td></tr>`;
-            }
-          });
-        }
-      });
-
-      if (count === 0) {
-        body.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b; padding:20px;">No hay registros marcados como reverso o reembolso en el mes de ${currentMonth}.</td></tr>`;
-      }
-    }
-
-    function generateConsolidado() {
-      const body = document.getElementById('consolidadoBody');
-      body.innerHTML = '';
-      
-      Object.keys(appData).forEach(acc => {
-        const rows = appData[acc];
-        let init = rows.length > 0 ? rows[0].saldoInicial : 0;
-        let inTotal = rows.reduce((s, r) => s + (parseFloat(r.entrada)||0), 0);
-        let outTotal = rows.reduce((s, r) => s + (parseFloat(r.salida)||0), 0);
-        let finalBal = init + inTotal - outTotal;
-
-        body.innerHTML += `
-          <tr>
-            <td style="font-weight:800;">${acc}</td>
-            <td class="text-right">${formatCurrency(init)}</td>
-            <td class="text-right" style="color:#059669; font-weight:bold;">${formatCurrency(inTotal)}</td>
-            <td class="text-right" style="color:#dc2626; font-weight:bold;">${formatCurrency(outTotal)}</td>
-            <td class="text-right" style="font-weight:900;">${formatCurrency(finalBal)}</td>
-          </tr>`;
-      });
     }
 
     function toggleReversoParent(id) {
