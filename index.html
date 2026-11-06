@@ -8,16 +8,16 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: #f8fafc; color: #0f172a; display: flex; min-height: 100vh; }
 
-    /* NAVEGACIÓN LATERAL */
-    aside { width: 260px; background-color: #0f172a; color: #ffffff; display: flex; flex-direction: column; flex-shrink: 0; border-right: 1px solid #1e293b; }
+    /* NAVEGACIÓN LATERAL POR MÓDULOS REESTRUCTURADOS */
+    aside { width: 270px; background-color: #0f172a; color: #ffffff; display: flex; flex-direction: column; flex-shrink: 0; border-right: 1px solid #1e293b; }
     .sidebar-header { padding: 20px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; gap: 12px; }
     .sidebar-logo { background: #10b981; color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
     .sidebar-title h2 { font-size: 15px; font-weight: 800; color: #ffffff; }
     .sidebar-title p { font-size: 11px; color: #64748b; }
 
-    .module-nav { padding: 16px 12px; flex: 1; }
-    .nav-section-label { font-size: 10px; font-weight: 800; text-transform: uppercase; color: #475569; padding: 8px 12px; letter-spacing: 0.5px; }
-    .mod-link { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 10px; color: #94a3b8; font-size: 13px; font-weight: 600; text-decoration: none; margin-bottom: 4px; cursor: pointer; transition: all 0.2s; }
+    .module-nav { padding: 16px 12px; flex: 1; overflow-y: auto; }
+    .nav-section-label { font-size: 10px; font-weight: 800; text-transform: uppercase; color: #38bdf8; padding: 12px 12px 6px; letter-spacing: 0.5px; }
+    .mod-link { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; color: #94a3b8; font-size: 13px; font-weight: 600; text-decoration: none; margin-bottom: 3px; cursor: pointer; transition: all 0.2s; }
     .mod-link:hover { background-color: #1e293b; color: #ffffff; }
     .mod-link.active { background-color: #059669; color: #ffffff; box-shadow: 0 4px 12px rgba(5,150,105,0.25); }
 
@@ -44,7 +44,12 @@
     .kpi-card.emerald-highlight .kpi-label { color: #065f46; }
     .kpi-card.emerald-highlight .kpi-val { color: #064e3b; font-size: 24px; }
 
-    /* TABLA PRINCIPAL ESTILO EXCEL */
+    /* ALERTA CUENTAS DESACTUALIZADAS */
+    .alert-card { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
+    .alert-title { font-size: 13px; font-weight: 800; color: #991b1b; display: flex; align-items: center; gap: 8px; }
+    .alert-desc { font-size: 12px; color: #7f1d1d; margin-top: 2px; }
+
+    /* TABLA ESTILO EXCEL */
     .table-card { background: #ffffff; border-radius: 14px; border: 1px solid #cbd5e1; overflow-x: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
     table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
     th { background-color: #107c41 !important; color: #ffffff !important; font-weight: 700; padding: 14px 12px; text-transform: uppercase; border-bottom: 2px solid #084c27; }
@@ -63,13 +68,14 @@
     .badge-out { background: #ffe4e6; color: #9f1239; }
     .badge-gasto { background: #e2e8f0; color: #475569; }
     .badge-reverso { background: #f3e8ff; color: #6b21a8; }
+    .badge-alert { background: #ffe4e6; color: #9f1239; }
 
     .btn-action { background: #059669; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-bottom: 16px; margin-right: 8px; transition: 0.2s; }
     .btn-action:hover { background: #047857; }
     .btn-secondary { background: #0f172a; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-bottom: 16px; }
     .btn-toggle-reverso { background: #7e22ce; color: white; border: none; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
 
-    /* VENTANA MODAL ESTILO HOJA DE CÁLCULO EXCEL */
+    /* VENTANA MODAL EXCEL */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 999; }
     .modal-excel-box { background: white; border-radius: 16px; width: 90%; max-width: 900px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid #cbd5e1; display: flex; flex-direction: column; max-height: 85vh; }
     
@@ -93,7 +99,7 @@
 </head>
 <body>
 
-  <!-- BARRA LATERAL -->
+  <!-- BARRA LATERAL CON MÓDULOS ESTRUCTURADOS -->
   <aside>
     <div class="sidebar-header">
       <div class="sidebar-logo">🏦</div>
@@ -104,23 +110,34 @@
     </div>
 
     <nav class="module-nav">
-      <div class="nav-section-label">Módulos Principales</div>
+      <!-- MÓDULO 1 -->
+      <div class="nav-section-label">Módulo 1: Posición y Saldos</div>
       <div id="link-mod-posicion" onclick="switchModule('mod-posicion')" class="mod-link active">
-        <span>📊</span> <span>1. Posición Bancaria</span>
-      </div>
-      <div id="link-mod-identificar" onclick="switchModule('mod-identificar')" class="mod-link">
-        <span>🔍</span> <span>2. Por Identificar</span>
-      </div>
-      <div id="link-mod-contabilizar" onclick="switchModule('mod-contabilizar')" class="mod-link">
-        <span>📝</span> <span>3. Por Contabilizar</span>
-      </div>
-
-      <div class="nav-section-label" style="margin-top: 16px;">Auditoría y Control</div>
-      <div id="link-mod-reversos" onclick="switchModule('mod-reversos')" class="mod-link">
-        <span>🔄</span> <span>4. Reversos y Reembolsos</span>
+        <span>📊</span> <span>Posición Bancaria</span>
       </div>
       <div id="link-mod-consolidado" onclick="switchModule('mod-consolidado')" class="mod-link">
-        <span>🌐</span> <span>5. Consolidado Multicuenta</span>
+        <span>🌐</span> <span>Consolidado de Cuentas</span>
+      </div>
+      <div id="link-mod-alertas" onclick="switchModule('mod-alertas')" class="mod-link">
+        <span>⚠️</span> <span>Alerta: Cuentas por Actualizar</span>
+      </div>
+
+      <!-- MÓDULO 2 -->
+      <div class="nav-section-label" style="margin-top: 14px;">Módulo 2: Seguimiento</div>
+      <div id="link-mod-identificar" onclick="switchModule('mod-identificar')" class="mod-link">
+        <span>🔍</span> <span>Pendiente por Identificar</span>
+      </div>
+      <div id="link-mod-contabilizar" onclick="switchModule('mod-contabilizar')" class="mod-link">
+        <span>📝</span> <span>Pendiente por Contabilizar</span>
+      </div>
+      <div id="link-mod-gastos" onclick="switchModule('mod-gastos')" class="mod-link">
+        <span>💸</span> <span>Gasto Bancario Global</span>
+      </div>
+
+      <!-- MÓDULO 3 -->
+      <div class="nav-section-label" style="margin-top: 14px;">Módulo 3: Auditoría & Control</div>
+      <div id="link-mod-reversos" onclick="switchModule('mod-reversos')" class="mod-link">
+        <span>🔄</span> <span>Reverso o Devolución</span>
       </div>
     </nav>
   </aside>
@@ -130,7 +147,7 @@
     
     <header>
       <div class="top-info">
-        <h1 id="moduleTitle">1. Posición Bancaria y Movimientos</h1>
+        <h1 id="moduleTitle">Posición Bancaria</h1>
         <p id="moduleSubtitle">Control diario de tesorería y subtotales desglosados de adquirencia</p>
       </div>
 
@@ -148,7 +165,7 @@
 
     <main>
 
-      <!-- MÓDULO 1: POSICIÓN BANCARIA -->
+      <!-- MÓDULO 1.1: POSICIÓN BANCARIA -->
       <section id="mod-posicion" class="module-section">
         <div class="kpi-grid">
           <div class="kpi-card"><div class="kpi-label">Saldo Inicial</div><div id="kpiSaldoInicial" class="kpi-val">$0</div></div>
@@ -183,7 +200,53 @@
         </div>
       </section>
 
-      <!-- MÓDULO 2: PENDIENTES POR IDENTIFICAR -->
+      <!-- MÓDULO 1.2: CONSOLIDADO DE CUENTAS -->
+      <section id="mod-consolidado" class="module-section hidden">
+        <div class="table-card" style="padding: 24px;">
+          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">🌐 Resumen Consolidado Global de Cuentas</h3>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Total de saldo disponible en la compañía a través de todas las cuentas bancarias configuradas.</p>
+
+          <table>
+            <thead>
+              <tr style="background: #0f172a !important;">
+                <th>Cuenta Bancaria</th>
+                <th class="text-right">Saldo Inicial</th>
+                <th class="text-right">Entradas</th>
+                <th class="text-right">Salidas</th>
+                <th class="text-right">Saldo Final</th>
+              </tr>
+            </thead>
+            <tbody id="consolidadoBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- MÓDULO 1.3: ALERTA CUENTAS DESACTUALIZADAS -->
+      <section id="mod-alertas" class="module-section hidden">
+        <div class="alert-card">
+          <div>
+            <div class="alert-title">⚠️ Panel de Control de Actualización de Extractos</div>
+            <div class="alert-desc">Evalúa la última fecha de movimiento registrada frente a la fecha de corte actual.</div>
+          </div>
+          <span class="badge badge-alert">Fecha Corte: 06 Nov 2026</span>
+        </div>
+
+        <div class="table-card" style="padding: 24px;">
+          <table>
+            <thead>
+              <tr style="background: #991b1b !important;">
+                <th>Cuenta Bancaria</th>
+                <th>Última Fecha Registrada</th>
+                <th>Días Transcurridos</th>
+                <th>Estado de Actualización</th>
+              </tr>
+            </thead>
+            <tbody id="alertasBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- MÓDULO 2.1: PENDIENTE POR IDENTIFICAR -->
       <section id="mod-identificar" class="module-section hidden">
         <div class="table-card" style="padding: 24px;">
           <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">🔍 Informe de Movimientos Pendientes por Identificar</h3>
@@ -205,7 +268,7 @@
         </div>
       </section>
 
-      <!-- MÓDULO 3: PENDIENTES POR CONTABILIZAR -->
+      <!-- MÓDULO 2.2: PENDIENTE POR CONTABILIZAR -->
       <section id="mod-contabilizar" class="module-section hidden">
         <div class="table-card" style="padding: 24px;">
           <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">📝 Informe de Partidas Pendientes por Contabilizar</h3>
@@ -227,11 +290,32 @@
         </div>
       </section>
 
-      <!-- MÓDULO 4: REVERSOS Y REEMBOLSOS -->
+      <!-- MÓDULO 2.3: GASTO BANCARIO GLOBAL -->
+      <section id="mod-gastos" class="module-section hidden">
+        <div class="table-card" style="padding: 24px;">
+          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">💸 Consolidado de Gastos Bancarios</h3>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Consolidado de gravámenes (4x1000), comisiones bancarias y notas débito clasificadas como gasto.</p>
+
+          <table>
+            <thead>
+              <tr style="background: #1e293b !important;">
+                <th>Fecha</th>
+                <th>Cuenta</th>
+                <th>Concepto / Descripción</th>
+                <th class="text-right">Valor Gasto</th>
+                <th>Clasificación</th>
+              </tr>
+            </thead>
+            <tbody id="reportGastosBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- MÓDULO 3: REVERSO O DEVOLUCIÓN -->
       <section id="mod-reversos" class="module-section hidden">
         <div class="table-card" style="padding: 24px;">
-          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">🔄 Seguimiento de Reversos, Devoluciones y Reembolsos</h3>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Control de transacciones marcadas en reclamación con entidades bancarias o pasarelas.</p>
+          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">🔄 Auditoría de Reversos y Devoluciones</h3>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Control de transacciones marcadas en reclamación con pasarelas o entidades bancarias.</p>
 
           <table>
             <thead>
@@ -245,27 +329,6 @@
               </tr>
             </thead>
             <tbody id="reportReversosBody"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- MÓDULO 5: CONSOLIDADO MULTICUENTA -->
-      <section id="mod-consolidado" class="module-section hidden">
-        <div class="table-card" style="padding: 24px;">
-          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">🌐 Resumen Consolidado Global de Cuentas</h3>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Total de saldo disponible en la compañía a través de todas las cuentas bancarias configuradas.</p>
-
-          <table>
-            <thead>
-              <tr style="background: #0f172a !important;">
-                <th>Cuenta Bancaria</th>
-                <th class="text-right">Saldo Inicial</th>
-                <th class="text-right">Entradas</th>
-                <th class="text-right">Salidas</th>
-                <th class="text-right">Saldo Final</th>
-              </tr>
-            </thead>
-            <tbody id="consolidadoBody"></tbody>
           </table>
         </div>
       </section>
@@ -430,20 +493,24 @@
       }
 
       const titles = {
-        'mod-posicion': ['1. Posición Bancaria y Movimientos', 'Control diario de tesorería y subtotales desglosados de adquirencia'],
-        'mod-identificar': ['2. Pendientes por Identificar', 'Partidas sin cliente o información asignada en la columna INFORMACION'],
-        'mod-contabilizar': ['3. Pendientes por Contabilizar', 'Control de Recibos de Caja (RC) y Facturas (FVE)'],
-        'mod-reversos': ['4. Reversos y Reembolsos', 'Seguimiento a devoluciones y notas crédito bancarias'],
-        'mod-consolidado': ['5. Consolidado Multicuenta', 'Resumen total de dinero disponible en la compañía']
+        'mod-posicion': ['Posición Bancaria', 'Control diario de tesorería y subtotales desglosados de adquirencia'],
+        'mod-consolidado': ['Consolidado de Cuentas', 'Resumen total de dinero disponible en la compañía'],
+        'mod-alertas': ['Alerta: Cuentas por Actualizar', 'Control de frescura y actualización de extractos bancarios'],
+        'mod-identificar': ['Pendiente por Identificar', 'Partidas sin cliente o información asignada en la columna INFORMACION'],
+        'mod-contabilizar': ['Pendiente por Contabilizar', 'Control de Recibos de Caja (RC) y Facturas (FVE)'],
+        'mod-gastos': ['Gasto Bancario Global', 'Acumulado de Gravamen (4x1000), comisiones y cuotas de manejo'],
+        'mod-reversos': ['Reverso o Devolución', 'Seguimiento a devoluciones y notas crédito bancarias']
       };
 
       document.getElementById('moduleTitle').innerText = titles[modId][0];
       document.getElementById('moduleSubtitle').innerText = titles[modId][1];
 
+      if (modId === 'mod-consolidado') generateConsolidado();
+      if (modId === 'mod-alertas') generateAlertas();
       if (modId === 'mod-identificar') generateReportIdentificar();
       if (modId === 'mod-contabilizar') generateReportContabilizar();
+      if (modId === 'mod-gastos') generateReportGastos();
       if (modId === 'mod-reversos') generateReportReversos();
-      if (modId === 'mod-consolidado') generateConsolidado();
     }
 
     function renderApp() {
@@ -519,7 +586,73 @@
       document.getElementById('kpiSaldoFinal').innerText = formatCurrency(runningBalance);
     }
 
-    /* LÓGICA DE LA VENTANA MODAL EMERGENTE EXCEL GRIDS */
+    /* MÓDULO 1.3: ALERTA DE CUENTAS POR ACTUALIZAR */
+    function generateAlertas() {
+      const body = document.getElementById('alertasBody');
+      body.innerHTML = '';
+      const hoy = new Date('2026-11-06');
+
+      Object.keys(appData).forEach(acc => {
+        const rows = appData[acc];
+        if (rows.length === 0) {
+          body.innerHTML += `
+            <tr>
+              <td style="font-weight:bold;">${acc}</td>
+              <td style="color:#dc2626;">Sin datos cargados</td>
+              <td>—</td>
+              <td><span class="badge badge-alert">⚠️ Nivel Crítico: Sin Movimientos</span></td>
+            </tr>`;
+        } else {
+          const ultFecha = rows[rows.length - 1].fecha;
+          const fechaMov = new Date(ultFecha);
+          const diffDays = Math.floor((hoy - fechaMov) / (1000 * 60 * 60 * 24));
+
+          let badge = '';
+          if (diffDays > 30) {
+            badge = '<span class="badge badge-alert">⚠️ Desactualizada (Más de 30 días)</span>';
+          } else {
+            badge = '<span class="badge badge-in">✅ Al día</span>';
+          }
+
+          body.innerHTML += `
+            <tr>
+              <td style="font-weight:bold;">${acc}</td>
+              <td>${ultFecha}</td>
+              <td>${diffDays} días</td>
+              <td>${badge}</td>
+            </tr>`;
+        }
+      });
+    }
+
+    /* MÓDULO 2.3: GASTOS BANCARIOS GLOBALES */
+    function generateReportGastos() {
+      const data = appData[currentAccount] || [];
+      const body = document.getElementById('reportGastosBody');
+      body.innerHTML = '';
+      let totalGastos = 0;
+
+      data.forEach(row => {
+        const isGasto = (row.informacion || '').toLowerCase().includes('gastos bancarios') || (row.descripcion || '').toLowerCase().includes('gravamen');
+        if (isGasto) {
+          totalGastos += row.salida;
+          body.innerHTML += `
+            <tr>
+              <td>${row.fecha}</td>
+              <td style="font-weight:bold;">${currentAccount}</td>
+              <td>${row.descripcion}</td>
+              <td class="text-right" style="font-weight:bold; color:#dc2626;">${formatCurrency(row.salida)}</td>
+              <td><span class="badge badge-gasto">Gasto Bancario / GMF</span></td>
+            </tr>`;
+        }
+      });
+
+      if (totalGastos === 0) {
+        body.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b; padding:20px;">No se registran gastos bancarios en la cuenta seleccionada.</td></tr>`;
+      }
+    }
+
+    /* VENTANA MODAL EXCEL */
     function openExcelModal() {
       document.getElementById('modalExcel').classList.remove('hidden');
       clearExcelGrid();
@@ -560,7 +693,6 @@
       lines.forEach((line) => {
         const cols = line.split('\t');
         if (cols.length >= 2) {
-          // Omitir si es fila de títulos
           if (cols[0].toUpperCase().includes('FECHA') || cols[1].toUpperCase().includes('DESC')) return;
 
           addExcelGridRow(
