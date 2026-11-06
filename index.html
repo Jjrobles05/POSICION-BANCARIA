@@ -8,7 +8,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: #f8fafc; color: #0f172a; display: flex; min-height: 100vh; }
 
-    /* NAVEGACIÓN LATERAL POR MÓDULOS REESTRUCTURADOS */
+    /* NAVEGACIÓN LATERAL */
     aside { width: 270px; background-color: #0f172a; color: #ffffff; display: flex; flex-direction: column; flex-shrink: 0; border-right: 1px solid #1e293b; }
     .sidebar-header { padding: 20px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; gap: 12px; }
     .sidebar-logo { background: #10b981; color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
@@ -53,11 +53,11 @@
     .alert-title { font-size: 13px; font-weight: 800; color: #991b1b; display: flex; align-items: center; gap: 8px; }
     .alert-desc { font-size: 12px; color: #7f1d1d; margin-top: 2px; }
 
-    /* TABLA ESTILO EXCEL */
+    /* TABLA ESTILO EXCEL CON MULTICOLUMNAS */
     .table-card { background: #ffffff; border-radius: 14px; border: 1px solid #cbd5e1; overflow-x: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
     table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
-    th { background-color: #107c41 !important; color: #ffffff !important; font-weight: 700; padding: 14px 12px; text-transform: uppercase; border-bottom: 2px solid #084c27; }
-    td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #334155; }
+    th { background-color: #107c41 !important; color: #ffffff !important; font-weight: 700; padding: 12px 10px; text-transform: uppercase; border-bottom: 2px solid #084c27; white-space: nowrap; }
+    td { padding: 10px; border-bottom: 1px solid #f1f5f9; color: #334155; white-space: nowrap; }
     tr:hover { background-color: #f8fafc; }
 
     td[contenteditable="true"] { outline: none; }
@@ -65,19 +65,22 @@
 
     tr.bg-subtotal { background-color: #fef08a !important; }
     tr.bg-subtotal:hover { background-color: #fde047 !important; }
-    td.subtotal-indent { padding-left: 28px !important; font-style: italic; color: #713f12; font-weight: 700; }
+    td.subtotal-indent { padding-left: 20px !important; font-style: italic; color: #713f12; font-weight: 700; }
 
-    .badge { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; display: inline-block; }
+    .badge { padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; display: inline-block; }
     .badge-in { background: #d1fae5; color: #065f46; }
     .badge-out { background: #ffe4e6; color: #9f1239; }
     .badge-gasto { background: #e2e8f0; color: #475569; }
     .badge-reverso { background: #f3e8ff; color: #6b21a8; }
     .badge-alert { background: #ffe4e6; color: #9f1239; }
 
-    .status-select { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; border: 1px solid #cbd5e1; outline: none; cursor: pointer; }
-    .status-select.pending { background: #f3e8ff; color: #6b21a8; border-color: #d8b4fe; }
-    .status-select.recovered { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
-    .status-select.rejected { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+    /* ESTADOS DE RECLAMACIÓN */
+    .status-select { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; border: 1px solid #cbd5e1; outline: none; cursor: pointer; }
+    .status-select.st-nuevo { background: #fef9c3; color: #854d0e; border-color: #fef08a; }
+    .status-select.st-proceso { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+    .status-select.st-validacion { background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff; }
+    .status-select.st-reintegrado { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+    .status-select.st-noprocedente { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
 
     .btn-action { background: #059669; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-bottom: 16px; margin-right: 8px; transition: 0.2s; }
     .btn-action:hover { background: #047857; }
@@ -348,9 +351,9 @@
         </div>
       </section>
 
-      <!-- MÓDULO 3: REVERSO O DEVOLUCIÓN CON KPIS EJECUTIVOS -->
+      <!-- MÓDULO 3: REVERSO O DEVOLUCIÓN AMPLIA A 12 COLUMNAS -->
       <section id="mod-reversos" class="module-section hidden">
-        <!-- TARJETAS DE PREGUNTAS CLAVE -->
+        <!-- KPIS EJECUTIVOS -->
         <div class="kpi-grid">
           <div class="kpi-card purple-highlight">
             <div class="kpi-label">1. ¿Cuánto Dinero Está Reclamado?</div>
@@ -359,27 +362,34 @@
           <div class="kpi-card emerald-highlight">
             <div class="kpi-label">2. ¿Cuánto Hemos Recuperado?</div>
             <div id="kpiTotalRecuperado" class="kpi-val green">$0</div>
+            <p style="font-size:10px; font-weight:bold; color:#047857; margin-top:4px;">* Validado con abono real en extracto</p>
           </div>
           <div class="kpi-card" style="background:#fff7ed; border-color:#ffedd5;">
             <div class="kpi-label">3. ¿Qué Casos Siguen Pendientes?</div>
             <div id="kpiTotalPendiente" class="kpi-val" style="color:#c2410c;">$0</div>
-            <p id="kpiCountPendiente" style="font-size:11px; font-weight:bold; color:#ea580c; margin-top:4px;">0 casos activos</p>
+            <p id="kpiCountPendiente" style="font-size:11px; font-weight:bold; color:#ea580c; margin-top:4px;">0 casos en trámite</p>
           </div>
         </div>
 
-        <div class="table-card" style="padding: 24px;">
-          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">🔄 Auditoría de Reversos, Devoluciones y Reclamaciones</h3>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Gestiona y actualiza el estado de las reclamaciones activas con entidades financieras o pasarelas.</p>
+        <div class="table-card" style="padding: 20px;">
+          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 8px;">🔄 Matriz Completa de Reclamaciones y Devoluciones</h3>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 16px;">Trazabilidad completa de trámites de contracargo, reversos y reclamaciones ante entidades financieras.</p>
 
           <table>
             <thead>
               <tr style="background: #6b21a8 !important;">
                 <th>Fecha</th>
+                <th>Referencia</th>
                 <th>Flujo</th>
-                <th>Descripción / Registro</th>
-                <th class="text-right">Monto</th>
-                <th>Motivo / Observación</th>
-                <th>Estado Reclamación</th>
+                <th>Tercero</th>
+                <th>Descripción</th>
+                <th class="text-right">Valor</th>
+                <th>Entidad</th>
+                <th>Motivo</th>
+                <th>Estado Flujo</th>
+                <th>Responsable</th>
+                <th class="text-center">Días Pend.</th>
+                <th class="text-center">Acción</th>
               </tr>
             </thead>
             <tbody id="reportReversosBody"></tbody>
@@ -471,7 +481,11 @@
           id: '1',
           fecha: '2025-04-01',
           descripcion: 'Ajuste X Gravamen Movimiento Financier',
-          referencia: '',
+          referencia: 'REF-001',
+          tercero: 'DIAN / Banco Davivienda',
+          entidad: 'Davivienda',
+          motivo: 'Reclamación GMF exento',
+          responsable: 'Stephany Castro',
           saldoInicial: 9321711255,
           entrada: 0,
           salida: 800464,
@@ -479,14 +493,18 @@
           documento: '',
           observaciones: 'este seria el movimiento de banco visual',
           isReverso: false,
-          reversoState: 'PENDIENTE', // PENDIENTE | RECUPERADO | RECHAZADO
+          reversoState: 'NUEVO', // NUEVO | PROCESO | VALIDACION | REINTEGRADO | NOPROCEDENTE
           subtotales: []
         },
         {
           id: '2',
           fecha: '2025-04-01',
           descripcion: 'Pagos por Internet CAMARA DE COMERCIO DE B',
-          referencia: '',
+          referencia: 'REF-002',
+          tercero: 'Cámara de Comercio',
+          entidad: 'Davivienda',
+          motivo: 'Certificado duplicado',
+          responsable: 'Stephany Castro',
           saldoInicial: 0,
           entrada: 0,
           salida: 11600,
@@ -494,14 +512,18 @@
           documento: 'RP-999-4',
           observaciones: 'este seria el movimiento de banco visual',
           isReverso: false,
-          reversoState: 'PENDIENTE',
+          reversoState: 'NUEVO',
           subtotales: []
         },
         {
           id: '3',
           fecha: '2025-04-01',
           descripcion: 'Descuento Transferencia otra entidad BANCOLOMBIA 901514952',
-          referencia: '',
+          referencia: 'TD-126',
+          tercero: 'WeTravel Colombia SAS',
+          entidad: 'Bancolombia',
+          motivo: 'Traslado entre cuentas',
+          responsable: 'Stephany Castro',
           saldoInicial: 0,
           entrada: 0,
           salida: 20000000,
@@ -509,14 +531,18 @@
           documento: 'TD-126',
           observaciones: 'este seria el movimiento de banco visual',
           isReverso: false,
-          reversoState: 'PENDIENTE',
+          reversoState: 'NUEVO',
           subtotales: []
         },
         {
           id: '4',
           fecha: '2025-04-01',
           descripcion: 'Nc Visa T Credito Credibanco',
-          referencia: '',
+          referencia: 'CRED-902',
+          tercero: 'Credibanco',
+          entidad: 'Credibanco / Davivienda',
+          motivo: 'Abono de adquirencia desglosado',
+          responsable: 'Stephany Castro',
           saldoInicial: 0,
           entrada: 618273,
           salida: 0,
@@ -524,13 +550,13 @@
           documento: '',
           observaciones: 'este seria el movimiento de banco visual',
           isReverso: false,
-          reversoState: 'PENDIENTE',
+          reversoState: 'NUEVO',
           subtotales: [
-            { id: '4-1', referencia: 47559, informacion: 'INVERSIONES EAMC SAS R-V-10016 | FVE 17524', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'PENDIENTE' },
-            { id: '4-2', referencia: 285358, informacion: 'INVERSIONES EAMC SAS R-V-10019 | FVE 17516', documento: 'RC-1-3307', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'PENDIENTE' },
-            { id: '4-3', referencia: 142678, informacion: 'INVERSIONES EAMC SAS R-V-10255 | FVE 17674', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'PENDIENTE' },
-            { id: '4-4', referencia: 47559, informacion: 'INVERSIONES EAMC SAS R-V-10004 | FVE 17511', documento: 'RC-1-3302', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'PENDIENTE' },
-            { id: '4-5', referencia: 95119, informacion: 'INVERSIONES EAMC SAS R-V-10011 | FVE 17515', documento: 'RC-1-3306', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'PENDIENTE' }
+            { id: '4-1', referencia: 47559, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Doble cobro pasarela', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10016 | FVE 17524', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO' },
+            { id: '4-2', referencia: 285358, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Contracargo tarjeta', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10019 | FVE 17516', documento: 'RC-1-3307', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO' },
+            { id: '4-3', referencia: 142678, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Error en comisión', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10255 | FVE 17674', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO' },
+            { id: '4-4', referencia: 47559, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Devolución venta', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10004 | FVE 17511', documento: 'RC-1-3302', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO' },
+            { id: '4-5', referencia: 95119, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Reembolso autorizado', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10011 | FVE 17515', documento: 'RC-1-3306', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO' }
           ]
         }
       ],
@@ -558,7 +584,7 @@
         'mod-identificar': ['Pendiente por Identificar', 'Partidas sin cliente o información asignada en la columna INFORMACION'],
         'mod-contabilizar': ['Pendiente por Contabilizar', 'Control de Recibos de Caja (RC) y Facturas (FVE)'],
         'mod-gastos': ['Gasto Bancario Global', 'Acumulado de Gravamen (4x1000), comisiones y cuotas de manejo'],
-        'mod-reversos': ['Reverso o Devolución', 'Auditoría de reclamaciones, dinero recuperado y casos pendientes']
+        'mod-reversos': ['Reverso o Devolución', 'Matriz formal de auditoría de reclamaciones y contracargos']
       };
 
       document.getElementById('moduleTitle').innerText = titles[modId][0];
@@ -684,7 +710,7 @@
       document.getElementById('kpiSaldoFinal').innerText = formatCurrency(runningBalance);
     }
 
-    /* MÓDULO 3: AUDITORÍA DE REVERSOS CON KPIS DEDICADOS */
+    /* MÓDULO 3: AUDITORÍA CON FLUJO DE 5 ESTADOS Y 12 COLUMNAS */
     function generateReportReversos() {
       const data = appData[currentAccount] || [];
       const body = document.getElementById('reportReversosBody');
@@ -694,77 +720,88 @@
       let totalRecuperado = 0;
       let totalPendiente = 0;
       let countPendiente = 0;
+      const fechaHoy = new Date('2026-11-06');
 
       data.forEach(row => {
         if (row.fecha.substring(0, 7) === currentMonth) {
-          const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
+          const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">INGRESO</span>' : '<span class="badge badge-out">EGRESO</span>';
           
           if (row.isReverso) {
             const monto = row.entrada > 0 ? row.entrada : row.salida;
-            const state = row.reversoState || 'PENDIENTE';
-            totalReclamado += monto;
-            if (state === 'RECUPERADO') totalRecuperado += monto;
-            if (state === 'PENDIENTE') { totalPendiente += monto; countPendiente++; }
+            const state = row.reversoState || 'NUEVO';
+            const diasPend = Math.max(0, Math.floor((fechaHoy - new Date(row.fecha)) / (1000 * 60 * 60 * 24)));
 
-            body.innerHTML += `
-              <tr>
-                <td>${row.fecha}</td>
-                <td>${flujoBadge}</td>
-                <td>${row.descripcion}</td>
-                <td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(monto)}</td>
-                <td>${row.observaciones}</td>
-                <td>
-                  <select class="status-select ${state === 'RECUPERADO' ? 'recovered' : state === 'RECHAZADO' ? 'rejected' : 'pending'}" onchange="updateReversoState('${row.id}', null, this.value)">
-                    <option value="PENDIENTE" ${state === 'PENDIENTE' ? 'selected' : ''}>⏳ Pendiente</option>
-                    <option value="RECUPERADO" ${state === 'RECUPERADO' ? 'selected' : ''}>✅ Recuperado</option>
-                    <option value="RECHAZADO" ${state === 'RECHAZADO' ? 'selected' : ''}>❌ Rechazado</option>
-                  </select>
-                </td>
-              </tr>`;
+            totalReclamado += monto;
+            if (state === 'REINTEGRADO') totalRecuperado += monto;
+            if (['NUEVO', 'PROCESO', 'VALIDACION'].includes(state)) { totalPendiente += monto; countPendiente++; }
+
+            body.innerHTML += buildReversoRow(row.fecha, row.referencia || 'SIN-REF', flujoBadge, row.tercero || 'Pendiente', row.descripcion, monto, row.entidad || currentAccount, row.motivo || 'Devolución', state, row.responsable || 'Stephany Castro', diasPend, row.id, null);
           }
 
           row.subtotales.forEach(sub => {
             if (sub.isReverso) {
               const monto = sub.referencia;
-              const state = sub.reversoState || 'PENDIENTE';
-              totalReclamado += monto;
-              if (state === 'RECUPERADO') totalRecuperado += monto;
-              if (state === 'PENDIENTE') { totalPendiente += monto; countPendiente++; }
+              const state = sub.reversoState || 'NUEVO';
+              const diasPend = Math.max(0, Math.floor((fechaHoy - new Date(row.fecha)) / (1000 * 60 * 60 * 24)));
 
-              body.innerHTML += `
-                <tr class="bg-subtotal">
-                  <td>${row.fecha}</td>
-                  <td>${flujoBadge}</td>
-                  <td class="subtotal-indent">↳ ${sub.informacion} (Subtotal)</td>
-                  <td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(monto)}</td>
-                  <td>${sub.observaciones}</td>
-                  <td>
-                    <select class="status-select ${state === 'RECUPERADO' ? 'recovered' : state === 'RECHAZADO' ? 'rejected' : 'pending'}" onchange="updateReversoState('${row.id}', '${sub.id}', this.value)">
-                      <option value="PENDIENTE" ${state === 'PENDIENTE' ? 'selected' : ''}>⏳ Pendiente</option>
-                      <option value="RECUPERADO" ${state === 'RECUPERADO' ? 'selected' : ''}>✅ Recuperado</option>
-                      <option value="RECHAZADO" ${state === 'RECHAZADO' ? 'selected' : ''}>❌ Rechazado</option>
-                    </select>
-                  </td>
-                </tr>`;
+              totalReclamado += monto;
+              if (state === 'REINTEGRADO') totalRecuperado += monto;
+              if (['NUEVO', 'PROCESO', 'VALIDACION'].includes(state)) { totalPendiente += monto; countPendiente++; }
+
+              body.innerHTML += buildReversoRow(row.fecha, sub.documento || 'SUB-REF', flujoBadge, sub.tercero || 'Cliente', sub.informacion, monto, sub.entidad || 'Pasarela', sub.motivo || 'Desglose Reclamado', state, sub.responsable || 'Stephany Castro', diasPend, row.id, sub.id);
             }
           });
         }
       });
 
       if (totalReclamado === 0) {
-        body.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b; padding:20px;">No hay registros marcados como reverso o reembolso en el mes de ${currentMonth}. Haz clic en 🔄 en la Posición Bancaria para marcar una fila.</td></tr>`;
+        body.innerHTML = `<tr><td colspan="12" style="text-align:center; color:#64748b; padding:20px;">No hay movimientos marcados como reverso en ${currentMonth}. Marca una fila con 🔄 en la Posición Bancaria.</td></tr>`;
       }
 
       document.getElementById('kpiTotalReclamado').innerText = formatCurrency(totalReclamado);
       document.getElementById('kpiTotalRecuperado').innerText = formatCurrency(totalRecuperado);
       document.getElementById('kpiTotalPendiente').innerText = formatCurrency(totalPendiente);
-      document.getElementById('kpiCountPendiente').innerText = `${countPendiente} caso(s) en trámite`;
+      document.getElementById('kpiCountPendiente').innerText = `${countPendiente} caso(s) en trámite activo`;
+    }
+
+    function buildReversoRow(fecha, ref, flujo, tercero, desc, monto, entidad, motivo, state, resp, dias, parentId, subId) {
+      const getStyleClass = (s) => {
+        if (s === 'NUEVO') return 'st-nuevo';
+        if (s === 'PROCESO') return 'st-proceso';
+        if (s === 'VALIDACION') return 'st-validacion';
+        if (s === 'REINTEGRADO') return 'st-reintegrado';
+        return 'st-noprocedente';
+      };
+
+      return `
+        <tr>
+          <td>${fecha}</td>
+          <td style="font-weight:bold;">${ref}</td>
+          <td>${flujo}</td>
+          <td>${tercero}</td>
+          <td>${desc}</td>
+          <td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(monto)}</td>
+          <td>${entidad}</td>
+          <td>${motivo}</td>
+          <td>
+            <select class="status-select ${getStyleClass(state)}" onchange="updateReversoState('${parentId}', ${subId ? `'${subId}'` : 'null'}, this.value)">
+              <option value="NUEVO" ${state === 'NUEVO' ? 'selected' : ''}>🟡 1. Nuevo / Identificado</option>
+              <option value="PROCESO" ${state === 'PROCESO' ? 'selected' : ''}>🔵 2. En reclamación</option>
+              <option value="VALIDACION" ${state === 'VALIDACION' ? 'selected' : ''}>🟣 3. En validación</option>
+              <option value="REINTEGRADO" ${state === 'REINTEGRADO' ? 'selected' : ''}>🟢 4. Reintegrado en extracto</option>
+              <option value="NOPROCEDENTE" ${state === 'NOPROCEDENTE' ? 'selected' : ''}>🔴 5. No procedente / Cerrado</option>
+            </select>
+          </td>
+          <td>${resp}</td>
+          <td class="text-center" style="font-weight:bold; color:${dias > 30 ? '#dc2626' : '#0f172a'};">${dias} d</td>
+          <td class="text-center"><button onclick="alert('Detalle del caso: ${desc}')" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; font-size:10px; cursor:pointer; padding:2px 6px;">🔍 Ver</button></td>
+        </tr>`;
     }
 
     function updateReversoState(parentId, subId, newState) {
       const parent = appData[currentAccount].find(r => r.id === parentId);
       if (parent) {
-        if (subId) {
+        if (subId && subId !== 'null') {
           const sub = parent.subtotales.find(s => s.id === subId);
           if (sub) sub.reversoState = newState;
         } else {
@@ -998,7 +1035,7 @@
             documento: '',
             observaciones: 'Cargado en Grid Excel',
             isReverso: false,
-            reversoState: 'PENDIENTE',
+            reversoState: 'NUEVO',
             subtotales: []
           });
           insertedCount++;
@@ -1039,7 +1076,7 @@
           documento: document.getElementById('inputSubDoc').value.trim(),
           observaciones: 'Subtotal desglosado',
           isReverso: false,
-          reversoState: 'PENDIENTE'
+          reversoState: 'NUEVO'
         });
         closeSubModal();
         renderApp();
