@@ -35,7 +35,7 @@
 
     main { padding: 32px; max-width: 1400px; margin: 0 auto; width: 100%; }
 
-    /* TARJETAS KPI */
+    /* TARJETAS KPI GERENCIALES */
     .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
     .kpi-card { background: #ffffff; padding: 20px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
     .kpi-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; }
@@ -53,7 +53,7 @@
     .alert-title { font-size: 13px; font-weight: 800; color: #991b1b; display: flex; align-items: center; gap: 8px; }
     .alert-desc { font-size: 12px; color: #7f1d1d; margin-top: 2px; }
 
-    /* TABLA ESTILO EXCEL CON MULTICOLUMNAS */
+    /* TABLA ESTILO EXCEL */
     .table-card { background: #ffffff; border-radius: 14px; border: 1px solid #cbd5e1; overflow-x: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
     table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
     th { background-color: #107c41 !important; color: #ffffff !important; font-weight: 700; padding: 12px 10px; text-transform: uppercase; border-bottom: 2px solid #084c27; white-space: nowrap; }
@@ -74,7 +74,7 @@
     .badge-reverso { background: #f3e8ff; color: #6b21a8; }
     .badge-alert { background: #ffe4e6; color: #9f1239; }
 
-    /* ESTADOS DE RECLAMACIÓN */
+    /* ESTADOS CONTROLADOS */
     .status-select { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; border: 1px solid #cbd5e1; outline: none; cursor: pointer; }
     .status-select.st-nuevo { background: #fef9c3; color: #854d0e; border-color: #fef08a; }
     .status-select.st-proceso { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
@@ -82,12 +82,15 @@
     .status-select.st-reintegrado { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
     .status-select.st-noprocedente { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
 
+    .cruce-select { padding: 3px 6px; font-size: 10px; border-radius: 4px; border: 1px solid #94a3b8; outline: none; background: #ffffff; max-width: 140px; }
+
     .btn-action { background: #059669; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-bottom: 16px; margin-right: 8px; transition: 0.2s; }
     .btn-action:hover { background: #047857; }
     .btn-secondary { background: #0f172a; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-bottom: 16px; }
     .btn-toggle-reverso { background: #7e22ce; color: white; border: none; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
+    .btn-support { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: bold; cursor: pointer; }
 
-    /* VENTANA MODAL EXCEL */
+    /* MODAL */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 999; }
     .modal-excel-box { background: white; border-radius: 16px; width: 90%; max-width: 900px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid #cbd5e1; display: flex; flex-direction: column; max-height: 85vh; }
     
@@ -103,6 +106,9 @@
     .excel-grid-table input:focus { background: #ecfdf5; font-weight: 600; }
 
     .modal-footer { display: flex; justify-content: space-between; align-items: center; }
+
+    .history-log { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; max-height: 180px; overflow-y: auto; font-size: 11px; font-family: monospace; }
+    .log-item { border-bottom: 1px solid #cbd5e1; padding: 4px 0; color: #334155; }
 
     .text-right { text-align: right; }
     .text-center { text-align: center; }
@@ -351,29 +357,29 @@
         </div>
       </section>
 
-      <!-- MÓDULO 3: REVERSO O DEVOLUCIÓN AMPLIA A 12 COLUMNAS -->
+      <!-- MÓDULO 3: AUDITORÍA DE REVERSO O DEVOLUCIÓN -->
       <section id="mod-reversos" class="module-section hidden">
-        <!-- KPIS EJECUTIVOS -->
+        <!-- 1. INDICADORES GERENCIALES -->
         <div class="kpi-grid">
           <div class="kpi-card purple-highlight">
-            <div class="kpi-label">1. ¿Cuánto Dinero Está Reclamado?</div>
+            <div class="kpi-label">1. Dinero Reclamado Total</div>
             <div id="kpiTotalReclamado" class="kpi-val purple">$0</div>
           </div>
           <div class="kpi-card emerald-highlight">
-            <div class="kpi-label">2. ¿Cuánto Hemos Recuperado?</div>
+            <div class="kpi-label">2. Dinero Reintegrado y Cruce Ok</div>
             <div id="kpiTotalRecuperado" class="kpi-val green">$0</div>
-            <p style="font-size:10px; font-weight:bold; color:#047857; margin-top:4px;">* Validado con abono real en extracto</p>
+            <p style="font-size:10px; font-weight:bold; color:#047857; margin-top:4px;">* Cruce validado con abono real</p>
           </div>
           <div class="kpi-card" style="background:#fff7ed; border-color:#ffedd5;">
-            <div class="kpi-label">3. ¿Qué Casos Siguen Pendientes?</div>
+            <div class="kpi-label">3. Casos Activos Pendientes</div>
             <div id="kpiTotalPendiente" class="kpi-val" style="color:#c2410c;">$0</div>
             <p id="kpiCountPendiente" style="font-size:11px; font-weight:bold; color:#ea580c; margin-top:4px;">0 casos en trámite</p>
           </div>
         </div>
 
         <div class="table-card" style="padding: 20px;">
-          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 8px;">🔄 Matriz Completa de Reclamaciones y Devoluciones</h3>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 16px;">Trazabilidad completa de trámites de contracargo, reversos y reclamaciones ante entidades financieras.</p>
+          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 8px;">🔄 Matriz Completa de Auditoría, Cruce y Soportes</h3>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 16px;">Permite relacionar el abono devuelto con el movimiento original y auditar soportes y responsables.</p>
 
           <table>
             <thead>
@@ -382,14 +388,15 @@
                 <th>Referencia</th>
                 <th>Flujo</th>
                 <th>Tercero</th>
-                <th>Descripción</th>
-                <th class="text-right">Valor</th>
+                <th>Descripción / Registro</th>
+                <th class="text-right">Valor ($)</th>
                 <th>Entidad</th>
                 <th>Motivo</th>
-                <th>Estado Flujo</th>
-                <th>Responsable</th>
+                <th>4. Cruce Automático (Abono Relacionado)</th>
+                <th>2. Estado Flujo</th>
+                <th>5. Responsable</th>
                 <th class="text-center">Días Pend.</th>
-                <th class="text-center">Acción</th>
+                <th class="text-center">3. Soportes</th>
               </tr>
             </thead>
             <tbody id="reportReversosBody"></tbody>
@@ -400,7 +407,7 @@
     </main>
   </div>
 
-  <!-- VENTANA MODAL EMERGENTE TIPO EXCEL -->
+  <!-- VENTANA MODAL EXCEL -->
   <div id="modalExcel" class="modal-overlay hidden">
     <div class="modal-excel-box">
       <div class="modal-header">
@@ -441,16 +448,14 @@
     </div>
   </div>
 
-  <!-- MODAL SUBTOTAL AMARILLO -->
+  <!-- MODAL SUBTOTAL -->
   <div id="modalSub" class="modal-overlay hidden">
     <div class="modal-excel-box" style="max-width: 500px;">
       <div class="modal-header">
         <h3 class="modal-title">↳ Agregar Subtotal Desglosado</h3>
         <button onclick="closeSubModal()" class="modal-close">✕</button>
       </div>
-      
       <input type="hidden" id="subParentId">
-
       <div style="margin-bottom: 12px;">
         <label style="font-size:11px; font-weight:bold; color:#475569; display:block; margin-bottom:4px;">Monto Subtotal ($)</label>
         <input type="number" id="inputSubMonto" placeholder="Ej: 47559" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
@@ -463,7 +468,6 @@
         <label style="font-size:11px; font-weight:bold; color:#475569; display:block; margin-bottom:4px;">Documento (Recibo de Caja RC)</label>
         <input type="text" id="inputSubDoc" placeholder="Ej: RC-1-3308" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
       </div>
-
       <div style="display:flex; justify-content:flex-end; gap:8px;">
         <button onclick="closeSubModal()" class="btn-secondary" style="margin-bottom:0;">Cancelar</button>
         <button onclick="saveSubtotal()" class="btn-action" style="margin-bottom:0; margin-right:0;">Guardar Subtotal</button>
@@ -471,9 +475,42 @@
     </div>
   </div>
 
+  <!-- MODAL DE DETALLE, SOPORTES E HISTORIAL (MEJORAS 3 Y 5) -->
+  <div id="modalDetail" class="modal-overlay hidden">
+    <div class="modal-excel-box" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="detailTitle">📎 Detalle de Transacción y Soportes</h3>
+        <button onclick="closeDetailModal()" class="modal-close">✕</button>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <h4 style="font-size:12px; font-weight:bold; color:#0f172a; margin-bottom:6px;">Archivos y Soportes Adjuntos:</h4>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input type="file" id="fileInputSupport" style="font-size:11px;">
+          <button onclick="addSupportFile()" class="btn-action" style="padding:4px 10px; font-size:11px; margin:0;">+ Adjuntar Soporte</button>
+        </div>
+        <ul id="supportFileList" style="margin-top:8px; font-size:11px; color:#2563eb; padding-left:16px;">
+          <li>📄 Radicado_Reclamacion_Credibanco_88192.pdf</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 style="font-size:12px; font-weight:bold; color:#0f172a; margin-bottom:6px;">📜 5. Historial de Auditoría y Responsables:</h4>
+        <div id="historyLogContainer" class="history-log">
+          <!-- Historial de cambios dinámico -->
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; margin-top:16px;">
+        <button onclick="closeDetailModal()" class="btn-secondary" style="margin:0;">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     let currentAccount = 'DAVIVIENDA 5152';
     let currentMonth = '2025-04'; // Formato AAAA-MM
+    let activeDetailItem = null;
 
     let appData = {
       'DAVIVIENDA 5152': [
@@ -486,6 +523,7 @@
           entidad: 'Davivienda',
           motivo: 'Reclamación GMF exento',
           responsable: 'Stephany Castro',
+          linkedEntradaId: '',
           saldoInicial: 9321711255,
           entrada: 0,
           salida: 800464,
@@ -493,7 +531,8 @@
           documento: '',
           observaciones: 'este seria el movimiento de banco visual',
           isReverso: false,
-          reversoState: 'NUEVO', // NUEVO | PROCESO | VALIDACION | REINTEGRADO | NOPROCEDENTE
+          reversoState: 'NUEVO',
+          history: ['[2026-11-06 09:00] Caso registrado por Stephany Castro'],
           subtotales: []
         },
         {
@@ -505,6 +544,7 @@
           entidad: 'Davivienda',
           motivo: 'Certificado duplicado',
           responsable: 'Stephany Castro',
+          linkedEntradaId: '',
           saldoInicial: 0,
           entrada: 0,
           salida: 11600,
@@ -513,6 +553,7 @@
           observaciones: 'este seria el movimiento de banco visual',
           isReverso: false,
           reversoState: 'NUEVO',
+          history: ['[2026-11-06 09:10] Caso registrado por Stephany Castro'],
           subtotales: []
         },
         {
@@ -524,6 +565,7 @@
           entidad: 'Bancolombia',
           motivo: 'Traslado entre cuentas',
           responsable: 'Stephany Castro',
+          linkedEntradaId: '',
           saldoInicial: 0,
           entrada: 0,
           salida: 20000000,
@@ -532,6 +574,7 @@
           observaciones: 'este seria el movimiento de banco visual',
           isReverso: false,
           reversoState: 'NUEVO',
+          history: [],
           subtotales: []
         },
         {
@@ -543,6 +586,7 @@
           entidad: 'Credibanco / Davivienda',
           motivo: 'Abono de adquirencia desglosado',
           responsable: 'Stephany Castro',
+          linkedEntradaId: '',
           saldoInicial: 0,
           entrada: 618273,
           salida: 0,
@@ -551,12 +595,13 @@
           observaciones: 'este seria el movimiento de banco visual',
           isReverso: false,
           reversoState: 'NUEVO',
+          history: [],
           subtotales: [
-            { id: '4-1', referencia: 47559, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Doble cobro pasarela', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10016 | FVE 17524', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO' },
-            { id: '4-2', referencia: 285358, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Contracargo tarjeta', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10019 | FVE 17516', documento: 'RC-1-3307', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO' },
-            { id: '4-3', referencia: 142678, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Error en comisión', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10255 | FVE 17674', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO' },
-            { id: '4-4', referencia: 47559, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Devolución venta', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10004 | FVE 17511', documento: 'RC-1-3302', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO' },
-            { id: '4-5', referencia: 95119, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Reembolso autorizado', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10011 | FVE 17515', documento: 'RC-1-3306', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO' }
+            { id: '4-1', referencia: 47559, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Doble cobro pasarela', responsable: 'Stephany Castro', linkedEntradaId: '', informacion: 'INVERSIONES EAMC SAS R-V-10016 | FVE 17524', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO', history: ['[2026-11-06 10:00] Creado por Stephany Castro'] },
+            { id: '4-2', referencia: 285358, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Contracargo tarjeta', responsable: 'Stephany Castro', linkedEntradaId: '', informacion: 'INVERSIONES EAMC SAS R-V-10019 | FVE 17516', documento: 'RC-1-3307', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO', history: ['[2026-11-06 10:15] Creado por Stephany Castro'] },
+            { id: '4-3', referencia: 142678, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Error en comisión', responsable: 'Stephany Castro', linkedEntradaId: '', informacion: 'INVERSIONES EAMC SAS R-V-10255 | FVE 17674', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO', history: [] },
+            { id: '4-4', referencia: 47559, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Devolución venta', responsable: 'Stephany Castro', linkedEntradaId: '', informacion: 'INVERSIONES EAMC SAS R-V-10004 | FVE 17511', documento: 'RC-1-3302', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO', history: [] },
+            { id: '4-5', referencia: 95119, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Reembolso autorizado', responsable: 'Stephany Castro', linkedEntradaId: '', informacion: 'INVERSIONES EAMC SAS R-V-10011 | FVE 17515', documento: 'RC-1-3306', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO', history: [] }
           ]
         }
       ],
@@ -584,7 +629,7 @@
         'mod-identificar': ['Pendiente por Identificar', 'Partidas sin cliente o información asignada en la columna INFORMACION'],
         'mod-contabilizar': ['Pendiente por Contabilizar', 'Control de Recibos de Caja (RC) y Facturas (FVE)'],
         'mod-gastos': ['Gasto Bancario Global', 'Acumulado de Gravamen (4x1000), comisiones y cuotas de manejo'],
-        'mod-reversos': ['Reverso o Devolución', 'Matriz formal de auditoría de reclamaciones y contracargos']
+        'mod-reversos': ['Reverso o Devolución', 'Matriz de Auditoría, Cruce Automático de Reversión y Soportes']
       };
 
       document.getElementById('moduleTitle').innerText = titles[modId][0];
@@ -710,7 +755,7 @@
       document.getElementById('kpiSaldoFinal').innerText = formatCurrency(runningBalance);
     }
 
-    /* MÓDULO 3: AUDITORÍA CON FLUJO DE 5 ESTADOS Y 12 COLUMNAS */
+    /* MÓDULO 3: AUDITORÍA CON CONSOLIDACIÓN DE LAS 5 MEJORAS */
     function generateReportReversos() {
       const data = appData[currentAccount] || [];
       const body = document.getElementById('reportReversosBody');
@@ -721,6 +766,9 @@
       let totalPendiente = 0;
       let countPendiente = 0;
       const fechaHoy = new Date('2026-11-06');
+
+      // Lista de Entradas Bancarias disponibles para el Cruce Automático (Mejora 4)
+      const entradasDisponibles = data.filter(r => r.entrada > 0);
 
       data.forEach(row => {
         if (row.fecha.substring(0, 7) === currentMonth) {
@@ -735,7 +783,7 @@
             if (state === 'REINTEGRADO') totalRecuperado += monto;
             if (['NUEVO', 'PROCESO', 'VALIDACION'].includes(state)) { totalPendiente += monto; countPendiente++; }
 
-            body.innerHTML += buildReversoRow(row.fecha, row.referencia || 'SIN-REF', flujoBadge, row.tercero || 'Pendiente', row.descripcion, monto, row.entidad || currentAccount, row.motivo || 'Devolución', state, row.responsable || 'Stephany Castro', diasPend, row.id, null);
+            body.innerHTML += buildReversoRow(row.fecha, row.referencia || 'SIN-REF', flujoBadge, row.tercero || 'Pendiente', row.descripcion, monto, row.entidad || currentAccount, row.motivo || 'Devolución', state, row.responsable || 'Stephany Castro', diasPend, row.id, null, row.linkedEntradaId, entradasDisponibles);
           }
 
           row.subtotales.forEach(sub => {
@@ -748,14 +796,14 @@
               if (state === 'REINTEGRADO') totalRecuperado += monto;
               if (['NUEVO', 'PROCESO', 'VALIDACION'].includes(state)) { totalPendiente += monto; countPendiente++; }
 
-              body.innerHTML += buildReversoRow(row.fecha, sub.documento || 'SUB-REF', flujoBadge, sub.tercero || 'Cliente', sub.informacion, monto, sub.entidad || 'Pasarela', sub.motivo || 'Desglose Reclamado', state, sub.responsable || 'Stephany Castro', diasPend, row.id, sub.id);
+              body.innerHTML += buildReversoRow(row.fecha, sub.documento || 'SUB-REF', flujoBadge, sub.tercero || 'Cliente', sub.informacion, monto, sub.entidad || 'Pasarela', sub.motivo || 'Desglose Reclamado', state, sub.responsable || 'Stephany Castro', diasPend, row.id, sub.id, sub.linkedEntradaId, entradasDisponibles);
             }
           });
         }
       });
 
       if (totalReclamado === 0) {
-        body.innerHTML = `<tr><td colspan="12" style="text-align:center; color:#64748b; padding:20px;">No hay movimientos marcados como reverso en ${currentMonth}. Marca una fila con 🔄 en la Posición Bancaria.</td></tr>`;
+        body.innerHTML = `<tr><td colspan="13" style="text-align:center; color:#64748b; padding:20px;">No hay movimientos marcados como reverso en ${currentMonth}. Marca una fila con 🔄 en la Posición Bancaria.</td></tr>`;
       }
 
       document.getElementById('kpiTotalReclamado').innerText = formatCurrency(totalReclamado);
@@ -764,7 +812,7 @@
       document.getElementById('kpiCountPendiente').innerText = `${countPendiente} caso(s) en trámite activo`;
     }
 
-    function buildReversoRow(fecha, ref, flujo, tercero, desc, monto, entidad, motivo, state, resp, dias, parentId, subId) {
+    function buildReversoRow(fecha, ref, flujo, tercero, desc, monto, entidad, motivo, state, resp, dias, parentId, subId, linkedId, entradas) {
       const getStyleClass = (s) => {
         if (s === 'NUEVO') return 'st-nuevo';
         if (s === 'PROCESO') return 'st-proceso';
@@ -772,6 +820,15 @@
         if (s === 'REINTEGRADO') return 'st-reintegrado';
         return 'st-noprocedente';
       };
+
+      // Opciones para la Mejora 4: Cruce Automático con Abono en Banco
+      let cruceOptions = `<option value="">-- Sin Vincular --</option>`;
+      entradas.forEach(e => {
+        const sel = e.id === linkedId ? 'selected' : '';
+        cruceOptions += `<option value="${e.id}" ${sel}>${e.fecha} | ${formatCurrency(e.entrada)} (${e.descripcion.substring(0, 15)}...)</option>`;
+      });
+
+      const cruceSelectHTML = `<select class="cruce-select" onchange="linkCruceMovimiento('${parentId}', ${subId ? `'${subId}'` : 'null'}, this.value)">${cruceOptions}</select>`;
 
       return `
         <tr>
@@ -783,6 +840,7 @@
           <td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(monto)}</td>
           <td>${entidad}</td>
           <td>${motivo}</td>
+          <td>${cruceSelectHTML}</td>
           <td>
             <select class="status-select ${getStyleClass(state)}" onchange="updateReversoState('${parentId}', ${subId ? `'${subId}'` : 'null'}, this.value)">
               <option value="NUEVO" ${state === 'NUEVO' ? 'selected' : ''}>🟡 1. Nuevo / Identificado</option>
@@ -794,20 +852,96 @@
           </td>
           <td>${resp}</td>
           <td class="text-center" style="font-weight:bold; color:${dias > 30 ? '#dc2626' : '#0f172a'};">${dias} d</td>
-          <td class="text-center"><button onclick="alert('Detalle del caso: ${desc}')" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; font-size:10px; cursor:pointer; padding:2px 6px;">🔍 Ver</button></td>
+          <td class="text-center"><button onclick="openDetailModal('${parentId}', ${subId ? `'${subId}'` : 'null'})" class="btn-support">📎 Soportes</button></td>
         </tr>`;
     }
 
+    /* MEJORA 4: CRUCE AUTOMÁTICO */
+    function linkCruceMovimiento(parentId, subId, linkedEntradaId) {
+      const parent = appData[currentAccount].find(r => r.id === parentId);
+      if (parent) {
+        const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 16);
+        if (subId && subId !== 'null') {
+          const sub = parent.subtotales.find(s => s.id === subId);
+          if (sub) {
+            sub.linkedEntradaId = linkedEntradaId;
+            if (linkedEntradaId) {
+              sub.reversoState = 'REINTEGRADO';
+              sub.history.push(`[${timestamp}] Cruce Automático realizado con Abono #${linkedEntradaId} por Stephany Castro`);
+            }
+          }
+        } else {
+          parent.linkedEntradaId = linkedEntradaId;
+          if (linkedEntradaId) {
+            parent.reversoState = 'REINTEGRADO';
+            parent.history.push(`[${timestamp}] Cruce Automático realizado con Abono #${linkedEntradaId} por Stephany Castro`);
+          }
+        }
+        generateReportReversos();
+      }
+    }
+
+    /* MEJORA 2 Y 5: HISTORIAL Y CAMBIO DE ESTADO */
     function updateReversoState(parentId, subId, newState) {
       const parent = appData[currentAccount].find(r => r.id === parentId);
       if (parent) {
+        const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 16);
         if (subId && subId !== 'null') {
           const sub = parent.subtotales.find(s => s.id === subId);
-          if (sub) sub.reversoState = newState;
+          if (sub) {
+            sub.reversoState = newState;
+            sub.history = sub.history || [];
+            sub.history.push(`[${timestamp}] Estado cambiado a '${newState}' por Stephany Castro`);
+          }
         } else {
           parent.reversoState = newState;
+          parent.history = parent.history || [];
+          parent.history.push(`[${timestamp}] Estado cambiado a '${newState}' por Stephany Castro`);
         }
         generateReportReversos();
+      }
+    }
+
+    /* MEJORA 3 Y 5: MODAL DE SOPORTES E HISTORIAL */
+    function openDetailModal(parentId, subId) {
+      const parent = appData[currentAccount].find(r => r.id === parentId);
+      if (!parent) return;
+
+      let item = parent;
+      if (subId && subId !== 'null') {
+        item = parent.subtotales.find(s => s.id === subId);
+      }
+      activeDetailItem = item;
+
+      document.getElementById('detailTitle').innerText = `📎 Soportes y Auditoría: ${item.descripcion || item.informacion}`;
+      const historyBox = document.getElementById('historyLogContainer');
+      historyBox.innerHTML = '';
+
+      const logs = item.history || [];
+      if (logs.length === 0) {
+        historyBox.innerHTML = '<div class="log-item">No hay cambios de estado registrados en el historial.</div>';
+      } else {
+        logs.forEach(l => {
+          historyBox.innerHTML += `<div class="log-item">${l}</div>`;
+        });
+      }
+
+      document.getElementById('modalDetail').classList.remove('hidden');
+    }
+
+    function closeDetailModal() {
+      document.getElementById('modalDetail').classList.add('hidden');
+    }
+
+    function addSupportFile() {
+      const input = document.getElementById('fileInputSupport');
+      if (input.files.length > 0) {
+        const fileName = input.files[0].name;
+        const list = document.getElementById('supportFileList');
+        list.innerHTML += `<li>📄 ${fileName} (Cargado en sistema)</li>`;
+        alert(`Soporte "${fileName}" adjuntado con éxito.`);
+      } else {
+        alert("Selecciona un archivo para adjuntar.");
       }
     }
 
@@ -1036,6 +1170,7 @@
             observaciones: 'Cargado en Grid Excel',
             isReverso: false,
             reversoState: 'NUEVO',
+            history: [],
             subtotales: []
           });
           insertedCount++;
@@ -1076,7 +1211,8 @@
           documento: document.getElementById('inputSubDoc').value.trim(),
           observaciones: 'Subtotal desglosado',
           isReverso: false,
-          reversoState: 'NUEVO'
+          reversoState: 'NUEVO',
+          history: []
         });
         closeSubModal();
         renderApp();
