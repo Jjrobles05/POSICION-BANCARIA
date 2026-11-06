@@ -8,7 +8,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: #f8fafc; color: #0f172a; display: flex; min-height: 100vh; }
 
-    /* NAVEGACIÓN LATERAL POR MÓDULOS REESTRUCTURADOS */
+    /* NAVEGACIÓN LATERAL */
     aside { width: 270px; background-color: #0f172a; color: #ffffff; display: flex; flex-direction: column; flex-shrink: 0; border-right: 1px solid #1e293b; }
     .sidebar-header { padding: 20px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; gap: 12px; }
     .sidebar-logo { background: #10b981; color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
@@ -27,7 +27,9 @@
     .top-info h1 { font-size: 20px; font-weight: 800; color: #0f172a; }
     .top-info p { font-size: 12px; color: #64748b; }
 
-    .account-switcher { display: flex; align-items: center; gap: 10px; background: #f1f5f9; padding: 6px 12px; border-radius: 10px; border: 1px solid #cbd5e1; }
+    .header-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .account-switcher { display: flex; align-items: center; gap: 8px; background: #f1f5f9; padding: 6px 12px; border-radius: 10px; border: 1px solid #cbd5e1; }
+    .account-switcher label { font-size: 11px; font-weight: 800; color: #64748b; }
     .account-switcher select { background: transparent; border: none; font-size: 13px; font-weight: 700; color: #0f172a; outline: none; cursor: pointer; }
     .btn-add-acc { background: #0f172a; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
 
@@ -99,7 +101,7 @@
 </head>
 <body>
 
-  <!-- BARRA LATERAL CON MÓDULOS ESTRUCTURADOS -->
+  <!-- BARRA LATERAL CON MÓDULOS -->
   <aside>
     <div class="sidebar-header">
       <div class="sidebar-logo">🏦</div>
@@ -151,9 +153,37 @@
         <p id="moduleSubtitle">Control diario de tesorería y subtotales desglosados de adquirencia</p>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="header-controls">
+        <!-- FILTRO DE MES -->
         <div class="account-switcher">
-          <span style="font-size: 11px; font-weight: 800; color: #64748b;">CUENTA:</span>
+          <label>MES:</label>
+          <select id="monthSelect" onchange="changeMonth()">
+            <option value="2025-04">Abril 2025</option>
+            <option value="2025-05">Mayo 2025</option>
+            <option value="2025-06">Junio 2025</option>
+            <option value="2025-07">Julio 2025</option>
+            <option value="2025-08">Agosto 2025</option>
+            <option value="2025-09">Septiembre 2025</option>
+            <option value="2025-10">Octubre 2025</option>
+            <option value="2025-11">Noviembre 2025</option>
+            <option value="2025-12">Diciembre 2025</option>
+            <option value="2026-01">Enero 2026</option>
+            <option value="2026-02">Febrero 2026</option>
+            <option value="2026-03">Marzo 2026</option>
+            <option value="2026-04">Abril 2026</option>
+            <option value="2026-05">Mayo 2026</option>
+            <option value="2026-06">Junio 2026</option>
+            <option value="2026-07">Julio 2026</option>
+            <option value="2026-08">Agosto 2026</option>
+            <option value="2026-09">Septiembre 2026</option>
+            <option value="2026-10">Octubre 2026</option>
+            <option value="2026-11" selected>Noviembre 2026</option>
+          </select>
+        </div>
+
+        <!-- FILTRO DE CUENTA BANCARIA -->
+        <div class="account-switcher">
+          <label>CUENTA:</label>
           <select id="accountSelect" onchange="changeAccount()">
             <option value="DAVIVIENDA 5152">DAVIVIENDA 5152</option>
             <option value="BANCOLOMBIA 9015">BANCOLOMBIA 9015</option>
@@ -168,10 +198,10 @@
       <!-- MÓDULO 1.1: POSICIÓN BANCARIA -->
       <section id="mod-posicion" class="module-section">
         <div class="kpi-grid">
-          <div class="kpi-card"><div class="kpi-label">Saldo Inicial</div><div id="kpiSaldoInicial" class="kpi-val">$0</div></div>
-          <div class="kpi-card"><div class="kpi-label">Entradas Totales</div><div id="kpiEntradas" class="kpi-val green">$0</div></div>
-          <div class="kpi-card"><div class="kpi-label">Salidas Totales</div><div id="kpiSalidas" class="kpi-val red">$0</div></div>
-          <div class="kpi-card emerald-highlight"><div class="kpi-label">Saldo Real en Banco</div><div id="kpiSaldoFinal" class="kpi-val">$0</div></div>
+          <div class="kpi-card"><div class="kpi-label">Saldo Inicial del Mes</div><div id="kpiSaldoInicial" class="kpi-val">$0</div></div>
+          <div class="kpi-card"><div class="kpi-label">Entradas del Mes</div><div id="kpiEntradas" class="kpi-val green">$0</div></div>
+          <div class="kpi-card"><div class="kpi-label">Salidas del Mes</div><div id="kpiSalidas" class="kpi-val red">$0</div></div>
+          <div class="kpi-card emerald-highlight"><div class="kpi-label">Saldo Final en Banco</div><div id="kpiSaldoFinal" class="kpi-val">$0</div></div>
         </div>
 
         <div>
@@ -250,7 +280,7 @@
       <section id="mod-identificar" class="module-section hidden">
         <div class="table-card" style="padding: 24px;">
           <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">🔍 Informe de Movimientos Pendientes por Identificar</h3>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Evalúa registros con la columna <strong>INFORMACION</strong> vacía o no identificada.</p>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Evalúa registros del mes con la columna <strong>INFORMACION</strong> vacía o no identificada.</p>
           
           <table>
             <thead>
@@ -409,6 +439,7 @@
 
   <script>
     let currentAccount = 'DAVIVIENDA 5152';
+    let currentMonth = '2025-04'; // Formato AAAA-MM
 
     let appData = {
       'DAVIVIENDA 5152': [
@@ -513,76 +544,119 @@
       if (modId === 'mod-reversos') generateReportReversos();
     }
 
+    function changeMonth() {
+      currentMonth = document.getElementById('monthSelect').value;
+      renderApp();
+    }
+
+    function changeAccount() {
+      currentAccount = document.getElementById('accountSelect').value;
+      renderApp();
+    }
+
     function renderApp() {
       const tbody = document.getElementById('bankTableBody');
       if (!tbody) return;
       tbody.innerHTML = '';
 
       const data = appData[currentAccount] || [];
+      
+      // Ordenar por fecha cronológicamente
+      data.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
       let runningBalance = 0;
-      let totalEntradas = 0;
-      let totalSalidas = 0;
-      let initialBalance = 0;
+      let monthInitialBalance = 0;
+      let monthEntradas = 0;
+      let monthSalidas = 0;
+      let foundFirstMonthRow = false;
 
-      data.forEach((row, index) => {
-        if (index === 0) {
-          initialBalance = parseFloat(row.saldoInicial) || 0;
-          runningBalance = initialBalance;
-        }
-
+      // Calcular saldo inicial acumulado antes del mes seleccionado
+      data.forEach((row) => {
+        const rowMonth = row.fecha.substring(0, 7);
         const entrada = parseFloat(row.entrada) || 0;
         const salida = parseFloat(row.salida) || 0;
-        totalEntradas += entrada;
-        totalSalidas += salida;
-        runningBalance = runningBalance + entrada - salida;
 
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="text-center">
-            <button onclick="openSubModal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 5px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal">+</button>
-            <button onclick="toggleReversoParent('${row.id}')" class="btn-toggle-reverso" title="Marcar Reverso">🔄</button>
-          </td>
-          <td contenteditable="true" onblur="updateCell('${row.id}', 'fecha', this.innerText)">${row.fecha} ${row.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
-          <td contenteditable="true" onblur="updateCell('${row.id}', 'descripcion', this.innerText)" style="font-weight:700; color:#0f172a;">${row.descripcion}</td>
-          <td contenteditable="true" onblur="updateCell('${row.id}', 'referencia', this.innerText)" class="text-right" style="color:#94a3b8;">${row.referencia ? formatCurrency(row.referencia) : ''}</td>
-          <td contenteditable="true" onblur="updateCell('${row.id}', 'saldoInicial', this.innerText)" class="text-right" style="font-weight:600;">${index === 0 ? formatCurrency(row.saldoInicial) : ''}</td>
-          <td contenteditable="true" onblur="updateCell('${row.id}', 'entrada', this.innerText)" class="text-right" style="font-weight:800; color:#059669;">${entrada > 0 ? formatCurrency(entrada) : ''}</td>
-          <td contenteditable="true" onblur="updateCell('${row.id}', 'salida', this.innerText)" class="text-right" style="font-weight:800; color:#dc2626;">${salida > 0 ? formatCurrency(salida) : ''}</td>
-          <td class="text-right" style="font-weight:900; color:#0f172a;">${formatCurrency(runningBalance)}</td>
-          <td contenteditable="true" onblur="updateCell('${row.id}', 'informacion', this.innerText)" style="font-weight:500;">${row.informacion}</td>
-          <td contenteditable="true" onblur="updateCell('${row.id}', 'documento', this.innerText)" style="font-weight:700;">${row.documento}</td>
-          <td contenteditable="true" onblur="updateCell('${row.id}', 'observaciones', this.innerText)" style="font-style:italic; color:#64748b;">${row.observaciones}</td>
-        `;
-        tbody.appendChild(tr);
-
-        if (row.subtotales && row.subtotales.length > 0) {
-          row.subtotales.forEach((sub) => {
-            const trSub = document.createElement('tr');
-            trSub.className = "bg-subtotal";
-            trSub.innerHTML = `
-              <td class="text-center">
-                <button onclick="deleteSubtotal('${row.id}', '${sub.id}')" style="background:transparent; color:#dc2626; border:none; font-weight:bold; cursor:pointer;" title="Eliminar Subtotal">✕</button>
-                <button onclick="toggleReversoSub('${row.id}', '${sub.id}')" class="btn-toggle-reverso" title="Marcar Reverso Subtotal">🔄</button>
-              </td>
-              <td class="text-center" style="color:#a1a1aa;">—</td>
-              <td class="subtotal-indent">↳ Subtotal Desglosado ${sub.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
-              <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'referencia', this.innerText)" class="text-right" style="font-weight:800; color:#713f12;">${formatCurrency(sub.referencia)}</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'informacion', this.innerText)" style="font-weight:600; color:#451a03;">${sub.informacion}</td>
-              <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'documento', this.innerText)" style="font-weight:800; color:#451a03;">${sub.documento}</td>
-              <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'observaciones', this.innerText)" style="font-style:italic; color:#78350f;">${sub.observaciones}</td>
-            `;
-            tbody.appendChild(trSub);
-          });
+        if (rowMonth < currentMonth) {
+          if (runningBalance === 0 && row.saldoInicial > 0) {
+            runningBalance = parseFloat(row.saldoInicial);
+          }
+          runningBalance += (entrada - salida);
         }
       });
 
-      document.getElementById('kpiSaldoInicial').innerText = formatCurrency(initialBalance);
-      document.getElementById('kpiEntradas').innerText = formatCurrency(totalEntradas);
-      document.getElementById('kpiSalidas').innerText = formatCurrency(totalSalidas);
+      monthInitialBalance = runningBalance;
+
+      // Renderizar filas pertenecientes al mes seleccionado
+      data.forEach((row) => {
+        const rowMonth = row.fecha.substring(0, 7);
+        const entrada = parseFloat(row.entrada) || 0;
+        const salida = parseFloat(row.salida) || 0;
+
+        if (rowMonth === currentMonth) {
+          if (!foundFirstMonthRow) {
+            if (monthInitialBalance === 0 && row.saldoInicial > 0) {
+              monthInitialBalance = parseFloat(row.saldoInicial);
+              runningBalance = monthInitialBalance;
+            }
+            foundFirstMonthRow = true;
+          }
+
+          monthEntradas += entrada;
+          monthSalidas += salida;
+          runningBalance += (entrada - salida);
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="text-center">
+              <button onclick="openSubModal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 5px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal">+</button>
+              <button onclick="toggleReversoParent('${row.id}')" class="btn-toggle-reverso" title="Marcar Reverso">🔄</button>
+            </td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'fecha', this.innerText)">${row.fecha} ${row.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'descripcion', this.innerText)" style="font-weight:700; color:#0f172a;">${row.descripcion}</td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'referencia', this.innerText)" class="text-right" style="color:#94a3b8;">${row.referencia ? formatCurrency(row.referencia) : ''}</td>
+            <td class="text-right" style="font-weight:600;">${formatCurrency(monthInitialBalance)}</td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'entrada', this.innerText)" class="text-right" style="font-weight:800; color:#059669;">${entrada > 0 ? formatCurrency(entrada) : ''}</td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'salida', this.innerText)" class="text-right" style="font-weight:800; color:#dc2626;">${salida > 0 ? formatCurrency(salida) : ''}</td>
+            <td class="text-right" style="font-weight:900; color:#0f172a;">${formatCurrency(runningBalance)}</td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'informacion', this.innerText)" style="font-weight:500;">${row.informacion}</td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'documento', this.innerText)" style="font-weight:700;">${row.documento}</td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'observaciones', this.innerText)" style="font-style:italic; color:#64748b;">${row.observaciones}</td>
+          `;
+          tbody.appendChild(tr);
+
+          if (row.subtotales && row.subtotales.length > 0) {
+            row.subtotales.forEach((sub) => {
+              const trSub = document.createElement('tr');
+              trSub.className = "bg-subtotal";
+              trSub.innerHTML = `
+                <td class="text-center">
+                  <button onclick="deleteSubtotal('${row.id}', '${sub.id}')" style="background:transparent; color:#dc2626; border:none; font-weight:bold; cursor:pointer;" title="Eliminar Subtotal">✕</button>
+                  <button onclick="toggleReversoSub('${row.id}', '${sub.id}')" class="btn-toggle-reverso" title="Marcar Reverso Subtotal">🔄</button>
+                </td>
+                <td class="text-center" style="color:#a1a1aa;">—</td>
+                <td class="subtotal-indent">↳ Subtotal Desglosado ${sub.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
+                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'referencia', this.innerText)" class="text-right" style="font-weight:800; color:#713f12;">${formatCurrency(sub.referencia)}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'informacion', this.innerText)" style="font-weight:600; color:#451a03;">${sub.informacion}</td>
+                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'documento', this.innerText)" style="font-weight:800; color:#451a03;">${sub.documento}</td>
+                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'observaciones', this.innerText)" style="font-style:italic; color:#78350f;">${sub.observaciones}</td>
+              `;
+              tbody.appendChild(trSub);
+            });
+          }
+        }
+      });
+
+      if (!foundFirstMonthRow && tbody.children.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:#64748b; padding:24px;">No hay movimientos registrados para el mes seleccionado (${currentMonth}). Puedes agregarlos con el botón verde.</td></tr>`;
+      }
+
+      document.getElementById('kpiSaldoInicial').innerText = formatCurrency(monthInitialBalance);
+      document.getElementById('kpiEntradas').innerText = formatCurrency(monthEntradas);
+      document.getElementById('kpiSalidas').innerText = formatCurrency(monthSalidas);
       document.getElementById('kpiSaldoFinal').innerText = formatCurrency(runningBalance);
     }
 
@@ -633,30 +707,32 @@
       let totalGastos = 0;
 
       data.forEach(row => {
-        const isGasto = (row.informacion || '').toLowerCase().includes('gastos bancarios') || (row.descripcion || '').toLowerCase().includes('gravamen');
-        if (isGasto) {
-          totalGastos += row.salida;
-          body.innerHTML += `
-            <tr>
-              <td>${row.fecha}</td>
-              <td style="font-weight:bold;">${currentAccount}</td>
-              <td>${row.descripcion}</td>
-              <td class="text-right" style="font-weight:bold; color:#dc2626;">${formatCurrency(row.salida)}</td>
-              <td><span class="badge badge-gasto">Gasto Bancario / GMF</span></td>
-            </tr>`;
+        if (row.fecha.substring(0, 7) === currentMonth) {
+          const isGasto = (row.informacion || '').toLowerCase().includes('gastos bancarios') || (row.descripcion || '').toLowerCase().includes('gravamen');
+          if (isGasto) {
+            totalGastos += row.salida;
+            body.innerHTML += `
+              <tr>
+                <td>${row.fecha}</td>
+                <td style="font-weight:bold;">${currentAccount}</td>
+                <td>${row.descripcion}</td>
+                <td class="text-right" style="font-weight:bold; color:#dc2626;">${formatCurrency(row.salida)}</td>
+                <td><span class="badge badge-gasto">Gasto Bancario / GMF</span></td>
+              </tr>`;
+          }
         }
       });
 
       if (totalGastos === 0) {
-        body.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b; padding:20px;">No se registran gastos bancarios en la cuenta seleccionada.</td></tr>`;
+        body.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b; padding:20px;">No se registran gastos bancarios en la cuenta para el mes seleccionado (${currentMonth}).</td></tr>`;
       }
     }
 
-    /* VENTANA MODAL EXCEL */
+    /* VENTANA MODAL EXCEL GRIDS */
     function openExcelModal() {
       document.getElementById('modalExcel').classList.remove('hidden');
       clearExcelGrid();
-      for (let i = 0; i < 5; i++) addExcelGridRow();
+      for (let i = 0; i < 5; i++) addExcelGridRow(currentMonth + '-01');
     }
 
     function closeExcelModal() {
@@ -673,7 +749,7 @@
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td class="text-center" style="color:#94a3b8; font-weight:bold;">${rowCount}</td>
-        <td><input type="text" class="grid-cell-fecha" value="${fecha}" placeholder="AAAA-MM-DD"></td>
+        <td><input type="text" class="grid-cell-fecha" value="${fecha || currentMonth + '-01'}" placeholder="AAAA-MM-DD"></td>
         <td><input type="text" class="grid-cell-desc" value="${desc}" placeholder="Descripción del movimiento"></td>
         <td><input type="text" class="grid-cell-entrada text-right" value="${entrada}" placeholder="0"></td>
         <td><input type="text" class="grid-cell-salida text-right" value="${salida}" placeholder="0"></td>
@@ -696,7 +772,7 @@
           if (cols[0].toUpperCase().includes('FECHA') || cols[1].toUpperCase().includes('DESC')) return;
 
           addExcelGridRow(
-            cols[0] ? cols[0].trim() : '',
+            cols[0] ? cols[0].trim() : (currentMonth + '-01'),
             cols[1] ? cols[1].trim() : '',
             cols[2] ? cols[2].trim() : '0',
             cols[3] ? cols[3].trim() : '0'
@@ -721,7 +797,7 @@
 
           data.push({
             id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
-            fecha: fecha || new Date().toISOString().split('T')[0],
+            fecha: fecha || (currentMonth + '-01'),
             descripcion: desc || 'Movimiento de Banco',
             referencia: '',
             saldoInicial: 0,
@@ -826,18 +902,20 @@
       body.innerHTML = '';
 
       data.forEach(row => {
-        const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
-        const monto = row.entrada > 0 ? row.entrada : row.salida;
+        if (row.fecha.substring(0, 7) === currentMonth) {
+          const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
+          const monto = row.entrada > 0 ? row.entrada : row.salida;
 
-        if (row.subtotales.length > 0) {
-          row.subtotales.forEach(sub => {
-            if (!sub.informacion || sub.informacion.trim() === '') {
-              body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion} (Subtotal)</td><td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td><td style="color:#dc2626; font-weight:bold;">Sin información</td><td><span class="badge" style="background:#fef08a;">Subtotal</span></td></tr>`;
+          if (row.subtotales.length > 0) {
+            row.subtotales.forEach(sub => {
+              if (!sub.informacion || sub.informacion.trim() === '') {
+                body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion} (Subtotal)</td><td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td><td style="color:#dc2626; font-weight:bold;">Sin información</td><td><span class="badge" style="background:#fef08a;">Subtotal</span></td></tr>`;
+              }
+            });
+          } else {
+            if (!row.informacion || row.informacion.trim() === '' || row.informacion.toLowerCase().includes('pendiente')) {
+              body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(monto)}</td><td style="color:#dc2626; font-weight:bold;">${row.informacion || 'Sin información'}</td><td><span class="badge" style="background:#e2e8f0;">Movimiento Banco</span></td></tr>`;
             }
-          });
-        } else {
-          if (!row.informacion || row.informacion.trim() === '' || row.informacion.toLowerCase().includes('pendiente')) {
-            body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(monto)}</td><td style="color:#dc2626; font-weight:bold;">${row.informacion || 'Sin información'}</td><td><span class="badge" style="background:#e2e8f0;">Movimiento Banco</span></td></tr>`;
           }
         }
       });
@@ -849,24 +927,26 @@
       body.innerHTML = '';
 
       data.forEach(row => {
-        const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
-        const monto = row.entrada > 0 ? row.entrada : row.salida;
+        if (row.fecha.substring(0, 7) === currentMonth) {
+          const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
+          const monto = row.entrada > 0 ? row.entrada : row.salida;
 
-        if (row.subtotales.length > 0) {
-          row.subtotales.forEach(sub => {
-            const isGasto = (row.informacion + ' ' + sub.informacion).toLowerCase().includes('gastos bancarios');
+          if (row.subtotales.length > 0) {
+            row.subtotales.forEach(sub => {
+              const isGasto = (row.informacion + ' ' + sub.informacion).toLowerCase().includes('gastos bancarios');
+              if (isGasto) {
+                body.innerHTML += `<tr style="opacity:0.6;"><td>${row.fecha}</td><td>${flujoBadge}</td><td>${sub.informacion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td><td style="color:#64748b;">—</td><td><span class="badge badge-gasto">Gasto Bancario (Excluido)</span></td></tr>`;
+              } else if (!sub.documento || sub.documento.trim() === '') {
+                body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${sub.informacion}</td><td class="text-right" style="font-weight:bold; color:#2563eb;">${formatCurrency(sub.referencia)}</td><td style="color:#dc2626; font-weight:bold;">Sin Documento / RC</td><td><span class="badge" style="background:#dbeafe; color:#1e40af;">Pendiente Contabilizar</span></td></tr>`;
+              }
+            });
+          } else {
+            const isGasto = row.informacion.toLowerCase().includes('gastos bancarios');
             if (isGasto) {
-              body.innerHTML += `<tr style="opacity:0.6;"><td>${row.fecha}</td><td>${flujoBadge}</td><td>${sub.informacion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td><td style="color:#64748b;">—</td><td><span class="badge badge-gasto">Gasto Bancario (Excluido)</span></td></tr>`;
-            } else if (!sub.documento || sub.documento.trim() === '') {
-              body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${sub.informacion}</td><td class="text-right" style="font-weight:bold; color:#2563eb;">${formatCurrency(sub.referencia)}</td><td style="color:#dc2626; font-weight:bold;">Sin Documento / RC</td><td><span class="badge" style="background:#dbeafe; color:#1e40af;">Pendiente Contabilizar</span></td></tr>`;
+              body.innerHTML += `<tr style="opacity:0.6;"><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(monto)}</td><td style="color:#64748b;">—</td><td><span class="badge badge-gasto">Gasto Bancario (Excluido)</span></td></tr>`;
+            } else if (!row.documento || row.documento.trim() === '') {
+              body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold; color:#2563eb;">${formatCurrency(monto)}</td><td style="color:#dc2626; font-weight:bold;">Sin Documento / RC</td><td><span class="badge" style="background:#dbeafe; color:#1e40af;">Pendiente Contabilizar</span></td></tr>`;
             }
-          });
-        } else {
-          const isGasto = row.informacion.toLowerCase().includes('gastos bancarios');
-          if (isGasto) {
-            body.innerHTML += `<tr style="opacity:0.6;"><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(monto)}</td><td style="color:#64748b;">—</td><td><span class="badge badge-gasto">Gasto Bancario (Excluido)</span></td></tr>`;
-          } else if (!row.documento || row.documento.trim() === '') {
-            body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold; color:#2563eb;">${formatCurrency(monto)}</td><td style="color:#dc2626; font-weight:bold;">Sin Documento / RC</td><td><span class="badge" style="background:#dbeafe; color:#1e40af;">Pendiente Contabilizar</span></td></tr>`;
           }
         }
       });
@@ -879,23 +959,25 @@
       let count = 0;
 
       data.forEach(row => {
-        const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
-        
-        if (row.isReverso) {
-          count++;
-          body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(row.entrada > 0 ? row.entrada : row.salida)}</td><td>${row.observaciones}</td><td><span class="badge badge-reverso">En Reclamación</span></td></tr>`;
-        }
-
-        row.subtotales.forEach(sub => {
-          if (sub.isReverso) {
+        if (row.fecha.substring(0, 7) === currentMonth) {
+          const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
+          
+          if (row.isReverso) {
             count++;
-            body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${sub.informacion} (Subtotal)</td><td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(sub.referencia)}</td><td>${sub.observaciones}</td><td><span class="badge badge-reverso">En Reclamación</span></td></tr>`;
+            body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(row.entrada > 0 ? row.entrada : row.salida)}</td><td>${row.observaciones}</td><td><span class="badge badge-reverso">En Reclamación</span></td></tr>`;
           }
-        });
+
+          row.subtotales.forEach(sub => {
+            if (sub.isReverso) {
+              count++;
+              body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${sub.informacion} (Subtotal)</td><td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(sub.referencia)}</td><td>${sub.observaciones}</td><td><span class="badge badge-reverso">En Reclamación</span></td></tr>`;
+            }
+          });
+        }
       });
 
       if (count === 0) {
-        body.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b; padding:20px;">No hay registros marcados como reverso o reembolso. Puedes hacer clic en el botón 🔄 de cualquier fila para marcarlo.</td></tr>`;
+        body.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b; padding:20px;">No hay registros marcados como reverso o reembolso en el mes de ${currentMonth}.</td></tr>`;
       }
     }
 
@@ -940,11 +1022,6 @@
         parent.subtotales = parent.subtotales.filter(s => s.id !== subId);
         renderApp();
       }
-    }
-
-    function changeAccount() {
-      currentAccount = document.getElementById('accountSelect').value;
-      renderApp();
     }
 
     window.onload = function() {
