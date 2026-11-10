@@ -229,8 +229,12 @@
           <div class="kpi-8-card highlight-emerald"><div class="kpi-8-label">Saldo Final en Banco</div><div id="kpiSaldoFinal" class="kpi-8-val">$0</div></div>
         </div>
 
-        <div style="margin-bottom: 16px;">
+        <div style="margin-bottom: 16px; display: flex; gap: 10px; align-items: center;">
           <button onclick="openExcelModal()" class="btn-action">📊 + Agregar Movimientos (Ventana Excel)</button>
+          <!-- BOTÓN PARA OCULTAR O MOSTRAR SUBTOTALES -->
+          <button id="btnToggleSubtotales" onclick="toggleSubtotalesVisibility()" class="btn-secondary" style="background: #475569;">
+            👁️ Ocultar Subtotales
+          </button>
         </div>
 
         <div class="table-card">
@@ -605,6 +609,7 @@
     let currentAccount = 'DAVIVIENDA 5152';
     let currentMonth = '2025-04';
     let activeDetailItem = null;
+    let showSubtotales = true; // Control de visibilidad de subtotales
 
     let appData = {
       'DAVIVIENDA 5152': [
@@ -674,6 +679,20 @@
       if (!val) return 0;
       const cleanStr = val.toString().replace(/[^0-9.-]/g, '');
       return parseFloat(cleanStr) || 0;
+    }
+
+    /* FUNCIÓN PARA MOSTRAR / OCULTAR SUBTOTALES EN POSICIÓN BANCARIA */
+    function toggleSubtotalesVisibility() {
+      showSubtotales = !showSubtotales;
+      const btn = document.getElementById('btnToggleSubtotales');
+      if (showSubtotales) {
+        btn.innerText = '👁️ Ocultar Subtotales';
+        btn.style.background = '#475569';
+      } else {
+        btn.innerText = '👁️‍🗨️ Mostrar Subtotales';
+        btn.style.background = '#059669';
+      }
+      renderApp();
     }
 
     function switchModule(modId) {
@@ -782,7 +801,8 @@
           `;
           tbody.appendChild(tr);
 
-          if (row.subtotales && row.subtotales.length > 0) {
+          // RENDERIZADO CONDICIONAL DE SUBTOTALES
+          if (showSubtotales && row.subtotales && row.subtotales.length > 0) {
             row.subtotales.forEach((sub) => {
               const trSub = document.createElement('tr');
               trSub.className = "bg-subtotal";
@@ -811,7 +831,6 @@
       document.getElementById('kpiSaldoFinal').innerText = formatCurrency(runningBalance);
     }
 
-    /* CONTROL Y GUARDADO DE SUBTOTALES */
     function openSubModal(parentId) {
       document.getElementById('subParentId').value = parentId;
       document.getElementById('inputSubMonto').value = '';
@@ -958,7 +977,6 @@
       }
     }
 
-    /* MÓDULO 3: AUDITORÍA DE REVERSOS */
     function generateReportReversos() {
       const data = appData[currentAccount] || [];
       const body = document.getElementById('reportReversosBody');
