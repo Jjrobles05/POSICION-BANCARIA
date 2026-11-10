@@ -92,6 +92,8 @@
     .btn-action:hover { background: #047857; }
     .btn-secondary { background: #0f172a; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
     .btn-toggle-reverso { background: #7e22ce; color: white; border: none; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
+    .btn-toggle-subrow { background: #cbd5e1; color: #334155; border: none; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
+    .btn-toggle-subrow:hover { background: #94a3b8; color: white; }
     .btn-detail { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 999; }
@@ -229,19 +231,15 @@
           <div class="kpi-8-card highlight-emerald"><div class="kpi-8-label">Saldo Final en Banco</div><div id="kpiSaldoFinal" class="kpi-8-val">$0</div></div>
         </div>
 
-        <div style="margin-bottom: 16px; display: flex; gap: 10px; align-items: center;">
+        <div style="margin-bottom: 16px;">
           <button onclick="openExcelModal()" class="btn-action">📊 + Agregar Movimientos (Ventana Excel)</button>
-          <!-- BOTÓN PARA OCULTAR O MOSTRAR SUBTOTALES -->
-          <button id="btnToggleSubtotales" onclick="toggleSubtotalesVisibility()" class="btn-secondary" style="background: #475569;">
-            👁️ Ocultar Subtotales
-          </button>
         </div>
 
         <div class="table-card">
           <table>
             <thead>
               <tr>
-                <th class="text-center" style="width: 75px;">Acción</th>
+                <th class="text-center" style="width: 105px;">Acción</th>
                 <th>Fecha</th>
                 <th>Descripción</th>
                 <th class="text-right">Referencia</th>
@@ -504,7 +502,7 @@
     </div>
   </div>
 
-  <!-- MODAL SUBTOTAL MEJORADO Y AMIGABLE -->
+  <!-- MODAL SUBTOTAL MEJORADO -->
   <div id="modalSub" class="modal-overlay hidden">
     <div class="modal-excel-box" style="max-width: 500px;">
       <div class="modal-header">
@@ -609,7 +607,6 @@
     let currentAccount = 'DAVIVIENDA 5152';
     let currentMonth = '2025-04';
     let activeDetailItem = null;
-    let showSubtotales = true; // Control de visibilidad de subtotales
 
     let appData = {
       'DAVIVIENDA 5152': [
@@ -634,6 +631,7 @@
           fechaReclamacion: '2025-04-02',
           lastUpdate: '2026-11-06 09:00',
           reintegradoVal: 0,
+          showSubtotales: true, // Estado individual para ocultar/mostrar subtotales de este registro
           history: ['[2026-11-06 09:00] Registrado como IDENTIFICADO por Stephany Castro'],
           subtotales: []
         },
@@ -658,6 +656,7 @@
           fechaReclamacion: '2025-04-02',
           lastUpdate: '2026-11-06 09:15',
           reintegradoVal: 0,
+          showSubtotales: true, // Estado individual para ocultar/mostrar subtotales de este registro
           history: [],
           subtotales: [
             { id: 'REV-1002-1', referencia: 47559, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Doble cobro pasarela', responsable: 'Stephany Castro', linkedEntradaId: '', informacion: 'INVERSIONES EAMC SAS R-V-10016 | FVE 17524', documento: 'RC-1-3308', observaciones: 'subtotal movimiento banco', isReverso: false, reversoState: 'RADICADO', fechaReclamacion: '2025-04-03', lastUpdate: '2026-11-06 10:00', reintegradoVal: 47559, history: ['[2026-11-06 10:00] Reintegrado Total validado en extracto por Stephany Castro'] },
@@ -681,18 +680,13 @@
       return parseFloat(cleanStr) || 0;
     }
 
-    /* FUNCIÓN PARA MOSTRAR / OCULTAR SUBTOTALES EN POSICIÓN BANCARIA */
-    function toggleSubtotalesVisibility() {
-      showSubtotales = !showSubtotales;
-      const btn = document.getElementById('btnToggleSubtotales');
-      if (showSubtotales) {
-        btn.innerText = '👁️ Ocultar Subtotales';
-        btn.style.background = '#475569';
-      } else {
-        btn.innerText = '👁️‍🗨️ Mostrar Subtotales';
-        btn.style.background = '#059669';
+    /* FUNCIÓN PARA ALTERNAR INDIVIDUALMENTE LOS SUBTOTALES DE UNA FILA */
+    function toggleSubRow(parentId) {
+      const parent = appData[currentAccount].find(r => r.id === parentId);
+      if (parent) {
+        parent.showSubtotales = parent.showSubtotales === undefined ? false : !parent.showSubtotales;
+        renderApp();
       }
-      renderApp();
     }
 
     function switchModule(modId) {
@@ -782,10 +776,17 @@
           monthSalidas += salida;
           runningBalance += (entrada - salida);
 
+          const hasSub = row.subtotales && row.subtotales.length > 0;
+          const isVisible = row.showSubtotales === undefined ? true : row.showSubtotales;
+          
+          // BOTÓN OCULTAR/MOSTRAR UBICADO AL LADO DEL BOTÓN + EN LA COLUMNA DE ACCIÓN
+          const toggleEyeBtn = hasSub ? `<button onclick="toggleSubRow('${row.id}')" class="btn-toggle-subrow" title="${isVisible ? 'Ocultar Subtotales' : 'Mostrar Subtotales'}">${isVisible ? '👁️' : '👁️‍🗨️'}</button>` : '';
+
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td class="text-center">
-              <button onclick="openSubModal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 5px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal Desglosado">+</button>
+            <td class="text-center" style="white-space:nowrap;">
+              <button onclick="openSubModal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 6px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal Desglosado">+</button>
+              ${toggleEyeBtn}
               <button onclick="toggleReversoParent('${row.id}')" class="btn-toggle-reverso" title="Marcar Reverso">🔄</button>
             </td>
             <td contenteditable="true" onblur="updateCell('${row.id}', 'fecha', this.innerText)">${row.fecha} ${row.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
@@ -801,8 +802,8 @@
           `;
           tbody.appendChild(tr);
 
-          // RENDERIZADO CONDICIONAL DE SUBTOTALES
-          if (showSubtotales && row.subtotales && row.subtotales.length > 0) {
+          // RENDERIZADO DE SUBTOTALES SI EL BOTÓN DE LA FILA ESTÁ ACTIVO
+          if (hasSub && isVisible) {
             row.subtotales.forEach((sub) => {
               const trSub = document.createElement('tr');
               trSub.className = "bg-subtotal";
@@ -859,6 +860,7 @@
           reversoState: 'IDENTIFICADO',
           history: []
         });
+        parent.showSubtotales = true; // Forzar visibilidad al agregar uno nuevo
         closeSubModal();
         renderApp();
       } else {
