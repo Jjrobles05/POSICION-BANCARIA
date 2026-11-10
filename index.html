@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Tesorería y Conciliación Bancaria</title>
+  <title>Sistema de Tesorería y Auditoría de Reversos</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: #f8fafc; color: #0f172a; display: flex; min-height: 100vh; }
 
-    /* NAVEGACIÓN LATERAL */
     aside { width: 270px; background-color: #0f172a; color: #ffffff; display: flex; flex-direction: column; flex-shrink: 0; border-right: 1px solid #1e293b; }
     .sidebar-header { padding: 20px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; gap: 12px; }
     .sidebar-logo { background: #10b981; color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
@@ -33,39 +32,33 @@
     .account-switcher select { background: transparent; border: none; font-size: 13px; font-weight: 700; color: #0f172a; outline: none; cursor: pointer; }
     .btn-add-acc { background: #0f172a; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
 
-    main { padding: 32px; max-width: 1400px; margin: 0 auto; width: 100%; }
+    main { padding: 32px; max-width: 1600px; margin: 0 auto; width: 100%; }
 
-    /* TARJETAS KPI GERENCIALES */
-    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .kpi-card { background: #ffffff; padding: 20px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
-    .kpi-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; }
-    .kpi-val { font-size: 22px; font-weight: 800; margin-top: 6px; color: #0f172a; }
-    .kpi-val.green { color: #059669; }
-    .kpi-val.red { color: #dc2626; }
-    .kpi-val.purple { color: #7e22ce; }
-    .kpi-card.emerald-highlight { background: #ecfdf5; border-color: #a7f3d0; }
-    .kpi-card.emerald-highlight .kpi-label { color: #065f46; }
-    .kpi-card.emerald-highlight .kpi-val { color: #064e3b; font-size: 24px; }
-    .kpi-card.purple-highlight { background: #faf5ff; border-color: #e9d5ff; }
+    .kpi-8-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 24px; }
+    .kpi-8-card { background: #ffffff; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+    .kpi-8-label { font-size: 10px; font-weight: 800; text-transform: uppercase; color: #64748b; letter-spacing: 0.3px; }
+    .kpi-8-val { font-size: 18px; font-weight: 800; margin-top: 6px; color: #0f172a; }
+    .kpi-8-sub { font-size: 10px; font-weight: 700; margin-top: 4px; color: #94a3b8; }
+    
+    .kpi-8-card.highlight-purple { background: #faf5ff; border-color: #e9d5ff; }
+    .kpi-8-card.highlight-purple .kpi-8-val { color: #7e22ce; }
+    .kpi-8-card.highlight-emerald { background: #ecfdf5; border-color: #a7f3d0; }
+    .kpi-8-card.highlight-emerald .kpi-8-val { color: #047857; }
+    .kpi-8-card.highlight-amber { background: #fffbeb; border-color: #fde68a; }
+    .kpi-8-card.highlight-amber .kpi-8-val { color: #b45309; }
+    .kpi-8-card.highlight-rose { background: #fff1f2; border-color: #fecdd3; }
+    .kpi-8-card.highlight-rose .kpi-8-val { color: #be123c; }
 
-    /* ALERTA CUENTAS DESACTUALIZADAS */
-    .alert-card { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
-    .alert-title { font-size: 13px; font-weight: 800; color: #991b1b; display: flex; align-items: center; gap: 8px; }
-    .alert-desc { font-size: 12px; color: #7f1d1d; margin-top: 2px; }
+    .filter-bar { background: #ffffff; padding: 16px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; align-items: center; }
+    .filter-group { display: flex; flex-direction: column; gap: 4px; }
+    .filter-group label { font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; }
+    .filter-group input, .filter-group select { padding: 8px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; outline: none; background: #ffffff; }
 
-    /* TABLA ESTILO EXCEL */
     .table-card { background: #ffffff; border-radius: 14px; border: 1px solid #cbd5e1; overflow-x: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
     table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
     th { background-color: #107c41 !important; color: #ffffff !important; font-weight: 700; padding: 12px 10px; text-transform: uppercase; border-bottom: 2px solid #084c27; white-space: nowrap; }
     td { padding: 10px; border-bottom: 1px solid #f1f5f9; color: #334155; white-space: nowrap; }
     tr:hover { background-color: #f8fafc; }
-
-    td[contenteditable="true"] { outline: none; }
-    td[contenteditable="true"]:focus { background-color: #fffbe6; border: 1px solid #eab308; border-radius: 4px; }
-
-    tr.bg-subtotal { background-color: #fef08a !important; }
-    tr.bg-subtotal:hover { background-color: #fde047 !important; }
-    td.subtotal-indent { padding-left: 20px !important; font-style: italic; color: #713f12; font-weight: 700; }
 
     .badge { padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; display: inline-block; }
     .badge-in { background: #d1fae5; color: #065f46; }
@@ -74,25 +67,31 @@
     .badge-reverso { background: #f3e8ff; color: #6b21a8; }
     .badge-alert { background: #ffe4e6; color: #9f1239; }
 
-    /* ESTADOS CONTROLADOS */
     .status-select { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; border: 1px solid #cbd5e1; outline: none; cursor: pointer; }
-    .status-select.st-nuevo { background: #fef9c3; color: #854d0e; border-color: #fef08a; }
-    .status-select.st-proceso { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
-    .status-select.st-validacion { background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff; }
-    .status-select.st-reintegrado { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
-    .status-select.st-noprocedente { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+    .st-identificado { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+    .st-pendiente-rad { background: #ffedd5; color: #c2410c; border-color: #fdba74; }
+    .st-radicado { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+    .st-seguimiento { background: #e0e7ff; color: #3730a3; border-color: #a5b4fc; }
+    .st-validacion { background: #f3e8ff; color: #6b21a8; border-color: #d8b4fe; }
+    .st-reintegrado-parc { background: #ecfdf5; color: #047857; border-color: #6ee7b7; }
+    .st-reintegrado-tot { background: #10b981; color: #ffffff; border-color: #059669; }
+    .st-rechazado { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+    .st-cerrado { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
 
-    .cruce-select { padding: 3px 6px; font-size: 10px; border-radius: 4px; border: 1px solid #94a3b8; outline: none; background: #ffffff; max-width: 140px; }
+    .sla-badge { padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; display: inline-block; }
+    .sla-green { background: #d1fae5; color: #065f46; }
+    .sla-yellow { background: #fef08a; color: #713f12; }
+    .sla-orange { background: #ffedd5; color: #9a3412; }
+    .sla-red { background: #fee2e2; color: #991b1b; }
 
-    .btn-action { background: #059669; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-bottom: 16px; margin-right: 8px; transition: 0.2s; }
+    .btn-action { background: #059669; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
     .btn-action:hover { background: #047857; }
-    .btn-secondary { background: #0f172a; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-bottom: 16px; }
+    .btn-secondary { background: #0f172a; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
     .btn-toggle-reverso { background: #7e22ce; color: white; border: none; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
-    .btn-support { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: bold; cursor: pointer; }
+    .btn-detail { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
-    /* MODAL */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 999; }
-    .modal-excel-box { background: white; border-radius: 16px; width: 90%; max-width: 900px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid #cbd5e1; display: flex; flex-direction: column; max-height: 85vh; }
+    .modal-excel-box { background: white; border-radius: 16px; width: 92%; max-width: 950px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid #cbd5e1; display: flex; flex-direction: column; max-height: 90vh; }
     
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; }
     .modal-title { font-size: 16px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px; }
@@ -105,10 +104,22 @@
     .excel-grid-table input { width: 100%; border: none; outline: none; background: transparent; font-size: 12px; font-family: inherit; }
     .excel-grid-table input:focus { background: #ecfdf5; font-weight: 600; }
 
-    .modal-footer { display: flex; justify-content: space-between; align-items: center; }
+    .tab-header { display: flex; gap: 4px; border-bottom: 2px solid #e2e8f0; margin-bottom: 16px; }
+    .tab-btn { padding: 8px 14px; font-size: 12px; font-weight: 700; color: #64748b; background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer; }
+    .tab-btn.active { color: #059669; border-bottom-color: #059669; background: #ecfdf5; border-radius: 6px 6px 0 0; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
 
-    .history-log { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; max-height: 180px; overflow-y: auto; font-size: 11px; font-family: monospace; }
-    .log-item { border-bottom: 1px solid #cbd5e1; padding: 4px 0; color: #334155; }
+    .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 12px; }
+    .detail-item { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .detail-item label { font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 2px; }
+    .detail-item span { font-weight: 700; color: #0f172a; }
+
+    .history-log { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; max-height: 220px; overflow-y: auto; font-size: 11px; font-family: monospace; }
+    .log-item { border-bottom: 1px solid #e2e8f0; padding: 6px 0; color: #334155; }
+
+    .pagination-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #ffffff; border-top: 1px solid #e2e8f0; }
+    .page-btn { padding: 4px 10px; border: 1px solid #cbd5e1; background: #ffffff; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; }
 
     .text-right { text-align: right; }
     .text-center { text-align: center; }
@@ -117,7 +128,7 @@
 </head>
 <body>
 
-  <!-- BARRA LATERAL CON MÓDULOS -->
+  <!-- BARRA LATERAL NAVEGACIÓN -->
   <aside>
     <div class="sidebar-header">
       <div class="sidebar-logo">🏦</div>
@@ -128,7 +139,6 @@
     </div>
 
     <nav class="module-nav">
-      <!-- MÓDULO 1 -->
       <div class="nav-section-label">Módulo 1: Posición y Saldos</div>
       <div id="link-mod-posicion" onclick="switchModule('mod-posicion')" class="mod-link active">
         <span>📊</span> <span>Posición Bancaria</span>
@@ -140,7 +150,6 @@
         <span>⚠️</span> <span>Alerta: Cuentas por Actualizar</span>
       </div>
 
-      <!-- MÓDULO 2 -->
       <div class="nav-section-label" style="margin-top: 14px;">Módulo 2: Seguimiento</div>
       <div id="link-mod-identificar" onclick="switchModule('mod-identificar')" class="mod-link">
         <span>🔍</span> <span>Pendiente por Identificar</span>
@@ -152,15 +161,13 @@
         <span>💸</span> <span>Gasto Bancario Global</span>
       </div>
 
-      <!-- MÓDULO 3 -->
       <div class="nav-section-label" style="margin-top: 14px;">Módulo 3: Auditoría & Control</div>
       <div id="link-mod-reversos" onclick="switchModule('mod-reversos')" class="mod-link">
-        <span>🔄</span> <span>Reverso o Devolución</span>
+        <span>🔄</span> <span>Auditoría de Reversos</span>
       </div>
     </nav>
   </aside>
 
-  <!-- CONTENEDOR PRINCIPAL -->
   <div class="app-viewport">
     
     <header>
@@ -170,7 +177,6 @@
       </div>
 
       <div class="header-controls">
-        <!-- FILTRO DE MES -->
         <div class="account-switcher">
           <label>MES:</label>
           <select id="monthSelect" onchange="changeMonth()">
@@ -197,7 +203,6 @@
           </select>
         </div>
 
-        <!-- FILTRO DE CUENTA BANCARIA -->
         <div class="account-switcher">
           <label>CUENTA:</label>
           <select id="accountSelect" onchange="changeAccount()">
@@ -213,14 +218,14 @@
 
       <!-- MÓDULO 1.1: POSICIÓN BANCARIA -->
       <section id="mod-posicion" class="module-section">
-        <div class="kpi-grid">
-          <div class="kpi-card"><div class="kpi-label">Saldo Inicial del Mes</div><div id="kpiSaldoInicial" class="kpi-val">$0</div></div>
-          <div class="kpi-card"><div class="kpi-label">Entradas del Mes</div><div id="kpiEntradas" class="kpi-val green">$0</div></div>
-          <div class="kpi-card"><div class="kpi-label">Salidas del Mes</div><div id="kpiSalidas" class="kpi-val red">$0</div></div>
-          <div class="kpi-card emerald-highlight"><div class="kpi-label">Saldo Final en Banco</div><div id="kpiSaldoFinal" class="kpi-val">$0</div></div>
+        <div class="kpi-8-grid">
+          <div class="kpi-8-card"><div class="kpi-8-label">Saldo Inicial del Mes</div><div id="kpiSaldoInicial" class="kpi-8-val">$0</div></div>
+          <div class="kpi-8-card highlight-emerald"><div class="kpi-8-label">Entradas del Mes</div><div id="kpiEntradas" class="kpi-8-val">$0</div></div>
+          <div class="kpi-8-card highlight-rose"><div class="kpi-8-label">Salidas del Mes</div><div id="kpiSalidas" class="kpi-8-val">$0</div></div>
+          <div class="kpi-8-card highlight-emerald"><div class="kpi-8-label">Saldo Final en Banco</div><div id="kpiSaldoFinal" class="kpi-8-val">$0</div></div>
         </div>
 
-        <div>
+        <div style="margin-bottom: 16px;">
           <button onclick="openExcelModal()" class="btn-action">📊 + Agregar Movimientos (Ventana Excel)</button>
         </div>
 
@@ -269,14 +274,6 @@
 
       <!-- MÓDULO 1.3: ALERTA CUENTAS DESACTUALIZADAS -->
       <section id="mod-alertas" class="module-section hidden">
-        <div class="alert-card">
-          <div>
-            <div class="alert-title">⚠️ Panel de Control de Actualización de Extractos</div>
-            <div class="alert-desc">Evalúa la última fecha de movimiento registrada frente a la fecha de corte actual.</div>
-          </div>
-          <span class="badge badge-alert">Fecha Corte: 06 Nov 2026</span>
-        </div>
-
         <div class="table-card" style="padding: 24px;">
           <table>
             <thead>
@@ -295,18 +292,10 @@
       <!-- MÓDULO 2.1: PENDIENTE POR IDENTIFICAR -->
       <section id="mod-identificar" class="module-section hidden">
         <div class="table-card" style="padding: 24px;">
-          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">🔍 Informe de Movimientos Pendientes por Identificar</h3>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Evalúa registros del mes con la columna <strong>INFORMACION</strong> vacía o no identificada.</p>
-          
           <table>
             <thead>
               <tr style="background: #475569 !important;">
-                <th>Fecha</th>
-                <th>Flujo</th>
-                <th>Descripción</th>
-                <th class="text-right">Monto</th>
-                <th>Información Actual</th>
-                <th>Tipo</th>
+                <th>Fecha</th><th>Flujo</th><th>Descripción</th><th class="text-right">Monto</th><th>Información Actual</th><th>Tipo</th>
               </tr>
             </thead>
             <tbody id="reportIdentificarBody"></tbody>
@@ -317,18 +306,10 @@
       <!-- MÓDULO 2.2: PENDIENTE POR CONTABILIZAR -->
       <section id="mod-contabilizar" class="module-section hidden">
         <div class="table-card" style="padding: 24px;">
-          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">📝 Informe de Partidas Pendientes por Contabilizar</h3>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Examina la presencia de Recibos de Caja (RC) o Facturas (FVE) en los subtotales desglosados (Excluye Gastos Bancarios).</p>
-          
           <table>
             <thead>
               <tr style="background: #334155 !important;">
-                <th>Fecha</th>
-                <th>Flujo</th>
-                <th>Descripción / Información</th>
-                <th class="text-right">Monto</th>
-                <th>Estado Documento</th>
-                <th>Clasificación</th>
+                <th>Fecha</th><th>Flujo</th><th>Descripción / Información</th><th class="text-right">Monto</th><th>Estado Documento</th><th>Clasificación</th>
               </tr>
             </thead>
             <tbody id="reportContabilizarBody"></tbody>
@@ -339,17 +320,10 @@
       <!-- MÓDULO 2.3: GASTO BANCARIO GLOBAL -->
       <section id="mod-gastos" class="module-section hidden">
         <div class="table-card" style="padding: 24px;">
-          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">💸 Consolidado de Gastos Bancarios</h3>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Consolidado de gravámenes (4x1000), comisiones bancarias y notas débito clasificadas como gasto.</p>
-
           <table>
             <thead>
               <tr style="background: #1e293b !important;">
-                <th>Fecha</th>
-                <th>Cuenta</th>
-                <th>Concepto / Descripción</th>
-                <th class="text-right">Valor Gasto</th>
-                <th>Clasificación</th>
+                <th>Fecha</th><th>Cuenta</th><th>Concepto / Descripción</th><th class="text-right">Valor Gasto</th><th>Clasificación</th>
               </tr>
             </thead>
             <tbody id="reportGastosBody"></tbody>
@@ -357,67 +331,141 @@
         </div>
       </section>
 
-      <!-- MÓDULO 3: AUDITORÍA DE REVERSO O DEVOLUCIÓN -->
+      <!-- MÓDULO 3: AUDITORÍA DE REVERSOS Y DEVOLUCIONES -->
       <section id="mod-reversos" class="module-section hidden">
-        <!-- 1. INDICADORES GERENCIALES -->
-        <div class="kpi-grid">
-          <div class="kpi-card purple-highlight">
-            <div class="kpi-label">1. Dinero Reclamado Total</div>
-            <div id="kpiTotalReclamado" class="kpi-val purple">$0</div>
+        <div class="kpi-8-grid">
+          <div class="kpi-8-card highlight-purple">
+            <div class="kpi-8-label">1. Operaciones Reclamadas</div>
+            <div id="kpiOpsReclamadas" class="kpi-8-val">0</div>
+            <div class="kpi-8-sub">Casos en sistema</div>
           </div>
-          <div class="kpi-card emerald-highlight">
-            <div class="kpi-label">2. Dinero Reintegrado y Cruce Ok</div>
-            <div id="kpiTotalRecuperado" class="kpi-val green">$0</div>
-            <p style="font-size:10px; font-weight:bold; color:#047857; margin-top:4px;">* Cruce validado con abono real</p>
+          <div class="kpi-8-card highlight-purple">
+            <div class="kpi-8-label">2. Valor Total Reclamado</div>
+            <div id="kpiValReclamado" class="kpi-8-val">$0</div>
+            <div class="kpi-8-sub">Monto bruto</div>
           </div>
-          <div class="kpi-card" style="background:#fff7ed; border-color:#ffedd5;">
-            <div class="kpi-label">3. Casos Activos Pendientes</div>
-            <div id="kpiTotalPendiente" class="kpi-val" style="color:#c2410c;">$0</div>
-            <p id="kpiCountPendiente" style="font-size:11px; font-weight:bold; color:#ea580c; margin-top:4px;">0 casos en trámite</p>
+          <div class="kpi-8-card highlight-amber">
+            <div class="kpi-8-label">3. Reclamaciones Pendientes</div>
+            <div id="kpiOpsPendientes" class="kpi-8-val">0</div>
+            <div class="kpi-8-sub">En trámite activo</div>
+          </div>
+          <div class="kpi-8-card highlight-amber">
+            <div class="kpi-8-label">4. Saldo Pendiente Recuperar</div>
+            <div id="kpiValPendiente" class="kpi-8-val">$0</div>
+            <div class="kpi-8-sub">Por abono en banco</div>
+          </div>
+          <div class="kpi-8-card highlight-emerald">
+            <div class="kpi-8-label">5. Devoluciones Recibidas</div>
+            <div id="kpiOpsRecibidas" class="kpi-8-val">0</div>
+            <div class="kpi-8-sub">Abonos validados</div>
+          </div>
+          <div class="kpi-8-card highlight-emerald">
+            <div class="kpi-8-label">6. Valor Recuperado Real</div>
+            <div id="kpiValRecuperado" class="kpi-8-val">$0</div>
+            <div class="kpi-8-sub">En extracto bancario</div>
+          </div>
+          <div class="kpi-8-card highlight-rose">
+            <div class="kpi-8-label">7. Casos Rechazados</div>
+            <div id="kpiOpsRechazadas" class="kpi-8-val">0</div>
+            <div class="kpi-8-sub">No procedentes</div>
+          </div>
+          <div class="kpi-8-card highlight-emerald">
+            <div class="kpi-8-label">8. % Efectividad Recuperación</div>
+            <div id="kpiPorcRecuperacion" class="kpi-8-val">0.0%</div>
+            <div class="kpi-8-sub">Ratio de éxito</div>
           </div>
         </div>
 
-        <div class="table-card" style="padding: 20px;">
-          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 8px;">🔄 Matriz Completa de Auditoría, Cruce y Soportes</h3>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 16px;">Permite relacionar el abono devuelto con el movimiento original y auditar soportes y responsables.</p>
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label>Buscar / Referencia:</label>
+            <input type="text" id="filterSearch" placeholder="Ref, cliente, causa..." oninput="generateReportReversos()">
+          </div>
+          <div class="filter-group">
+            <label>Entidad / Banco:</label>
+            <select id="filterEntidad" onchange="generateReportReversos()">
+              <option value="">Todas las entidades</option>
+              <option value="Credibanco">Credibanco</option>
+              <option value="Davivienda">Davivienda</option>
+              <option value="Bancolombia">Bancolombia</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Estado Reclamación:</label>
+            <select id="filterEstado" onchange="generateReportReversos()">
+              <option value="">Todos los estados</option>
+              <option value="IDENTIFICADO">1. Identificado</option>
+              <option value="PENDIENTE_RADICACION">2. Pendiente radicación</option>
+              <option value="RADICADO">3. Reclamación radicada</option>
+              <option value="EN_SEGUIMIENTO">4. En seguimiento</option>
+              <option value="EN_VALIDACION">5. En validación</option>
+              <option value="REINTEGRADO_PARCIAL">6. Reintegrado parcial</option>
+              <option value="REINTEGRADO_TOTAL">7. Reintegrado totalmente</option>
+              <option value="RECHAZADO">8. Rechazado</option>
+              <option value="CERRADO">9. Cerrado</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Responsable:</label>
+            <select id="filterResponsable" onchange="generateReportReversos()">
+              <option value="">Todos</option>
+              <option value="Stephany Castro">Stephany Castro</option>
+            </select>
+          </div>
+          <div class="filter-group" style="grid-column: span 2; display:flex; flex-direction:row; gap:8px; align-items:flex-end;">
+            <button onclick="exportToExcel()" class="btn-action" style="background:#107c41; width:100%;">📊 Exportar Excel</button>
+            <button onclick="exportToPDF()" class="btn-action" style="background:#b91c1c; width:100%;">📄 Exportar PDF</button>
+          </div>
+        </div>
 
+        <div class="table-card">
           <table>
             <thead>
               <tr style="background: #6b21a8 !important;">
-                <th>Fecha</th>
-                <th>Referencia</th>
+                <th>F. Transacción</th>
+                <th>ID Único</th>
+                <th>Ref. Bancaria</th>
                 <th>Flujo</th>
                 <th>Tercero</th>
-                <th>Descripción / Registro</th>
-                <th class="text-right">Valor ($)</th>
-                <th>Entidad</th>
-                <th>Motivo</th>
-                <th>4. Cruce Automático (Abono Relacionado)</th>
-                <th>2. Estado Flujo</th>
-                <th>5. Responsable</th>
-                <th class="text-center">Días Pend.</th>
-                <th class="text-center">3. Soportes</th>
+                <th>Descripción</th>
+                <th>Banco / Pasarela</th>
+                <th class="text-right">Valor Op.</th>
+                <th>Motivo Reclamación</th>
+                <th>F. Reclamación</th>
+                <th>Responsable</th>
+                <th>Estado Reclamación</th>
+                <th class="text-center">Semáforo Días</th>
+                <th>Última Actualización</th>
+                <th class="text-center">Acciones</th>
               </tr>
             </thead>
             <tbody id="reportReversosBody"></tbody>
           </table>
+          <div class="pagination-bar">
+            <span style="font-size:11px; color:#64748b;">Mostrando operaciones de auditoría activas</span>
+            <div>
+              <button class="page-btn">« Ant</button>
+              <button class="page-btn" style="background:#059669; color:white;">1</button>
+              <button class="page-btn">Sig »</button>
+            </div>
+          </div>
         </div>
       </section>
 
     </main>
   </div>
 
-  <!-- VENTANA MODAL EXCEL -->
+  <!-- VENTANA MODAL EXCEL CORREGIDA Y MEJORADA -->
   <div id="modalExcel" class="modal-overlay hidden">
     <div class="modal-excel-box">
       <div class="modal-header">
-        <h3 class="modal-title">📊 Ventana de Pegado / Carga Tipo Excel</h3>
+        <h3 class="modal-title">📊 Ventana de Pegado Directo tipo Excel</h3>
         <button onclick="closeExcelModal()" class="modal-close">✕</button>
       </div>
       
       <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">
-        Haz clic en cualquier celda para escribir o <strong>pega directamente un bloque copiado de Excel (Ctrl + V)</strong> en las columnas:
-        <br><code>FECHA | DESCRIPCIÓN | ENTRADA | SALIDA</code>
+        Haz clic dentro de la tabla y <strong>pega (Ctrl + V)</strong> cualquier bloque copiado de Excel. 
+        <br><small>Formatos aceptados: <code>[FECHA | DESCRIPCIÓN | ENTRADA | SALIDA]</code> o <code>[FECHA | DESCRIPCIÓN | MONTO]</code></small>
       </p>
 
       <div class="excel-grid-container" onpaste="handleGridPaste(event)">
@@ -425,7 +473,7 @@
           <thead>
             <tr>
               <th style="width: 40px; text-align: center;">#</th>
-              <th style="width: 140px;">Fecha</th>
+              <th style="width: 130px;">Fecha</th>
               <th>Descripción</th>
               <th style="width: 140px;" class="text-right">Entrada ($)</th>
               <th style="width: 140px;" class="text-right">Salida ($)</th>
@@ -434,15 +482,15 @@
           <tbody id="excelGridBody"></tbody>
         </table>
       </div>
-
-      <div class="modal-footer">
+      
+      <div style="display:flex; justify-content:space-between; align-items:center;">
         <div>
-          <button onclick="addExcelGridRow()" class="btn-secondary" style="margin-bottom:0;">+ Fila</button>
-          <button onclick="clearExcelGrid()" style="background:#ef4444; color:white; border:none; padding:10px 14px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;">Limpiar</button>
+          <button onclick="addExcelGridRow()" class="btn-secondary" style="margin:0;">+ Fila</button>
+          <button onclick="clearExcelGrid()" style="background:#ef4444; color:white; border:none; padding:8px 12px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer;">Limpiar</button>
         </div>
         <div>
-          <button onclick="closeExcelModal()" class="btn-secondary" style="margin-bottom:0;">Cancelar</button>
-          <button onclick="saveExcelGridData()" class="btn-action" style="margin-bottom:0; margin-right:0;">✅ Insertar a la Tabla Principal</button>
+          <button onclick="closeExcelModal()" class="btn-secondary" style="margin-right:8px;">Cancelar</button>
+          <button onclick="saveExcelGridData()" class="btn-action">✅ Insertar a la Posición Bancaria</button>
         </div>
       </div>
     </div>
@@ -457,65 +505,104 @@
       </div>
       <input type="hidden" id="subParentId">
       <div style="margin-bottom: 12px;">
-        <label style="font-size:11px; font-weight:bold; color:#475569; display:block; margin-bottom:4px;">Monto Subtotal ($)</label>
-        <input type="number" id="inputSubMonto" placeholder="Ej: 47559" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
+        <label style="font-size:11px; font-weight:bold; color:#475569;">Monto Subtotal ($)</label>
+        <input type="number" id="inputSubMonto" placeholder="Ej: 47559" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
       </div>
       <div style="margin-bottom: 12px;">
-        <label style="font-size:11px; font-weight:bold; color:#475569; display:block; margin-bottom:4px;">Información (Cliente / Factura FVE)</label>
-        <input type="text" id="inputSubInfo" placeholder="Ej: INVERSIONES EAMC SAS | FVE 17524" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
+        <label style="font-size:11px; font-weight:bold; color:#475569;">Información (Cliente / Factura FVE)</label>
+        <input type="text" id="inputSubInfo" placeholder="Ej: INVERSIONES EAMC SAS | FVE 17524" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
       </div>
       <div style="margin-bottom: 16px;">
-        <label style="font-size:11px; font-weight:bold; color:#475569; display:block; margin-bottom:4px;">Documento (Recibo de Caja RC)</label>
-        <input type="text" id="inputSubDoc" placeholder="Ej: RC-1-3308" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
+        <label style="font-size:11px; font-weight:bold; color:#475569;">Documento (Recibo de Caja RC)</label>
+        <input type="text" id="inputSubDoc" placeholder="Ej: RC-1-3308" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
       </div>
-      <div style="display:flex; justify-content:flex-end; gap:8px;">
-        <button onclick="closeSubModal()" class="btn-secondary" style="margin-bottom:0;">Cancelar</button>
-        <button onclick="saveSubtotal()" class="btn-action" style="margin-bottom:0; margin-right:0;">Guardar Subtotal</button>
-      </div>
+      <button onclick="saveSubtotal()" class="btn-action">Guardar Subtotal</button>
     </div>
   </div>
 
-  <!-- MODAL DE DETALLE, SOPORTES E HISTORIAL (MEJORAS 3 Y 5) -->
+  <!-- PANEL DE DETALLE POR PESTAÑAS (A, B, C, D, E) -->
   <div id="modalDetail" class="modal-overlay hidden">
-    <div class="modal-excel-box" style="max-width: 650px;">
+    <div class="modal-excel-box">
       <div class="modal-header">
-        <h3 class="modal-title" id="detailTitle">📎 Detalle de Transacción y Soportes</h3>
+        <h3 class="modal-title" id="detailTitle">🔍 Exp. Auditoría Transacción</h3>
         <button onclick="closeDetailModal()" class="modal-close">✕</button>
       </div>
 
-      <div style="margin-bottom: 16px;">
-        <h4 style="font-size:12px; font-weight:bold; color:#0f172a; margin-bottom:6px;">Archivos y Soportes Adjuntos:</h4>
-        <div style="display:flex; gap:8px; align-items:center;">
-          <input type="file" id="fileInputSupport" style="font-size:11px;">
-          <button onclick="addSupportFile()" class="btn-action" style="padding:4px 10px; font-size:11px; margin:0;">+ Adjuntar Soporte</button>
+      <div class="tab-header">
+        <button class="tab-btn active" onclick="switchTab('tabA')">A. Inf. General</button>
+        <button class="tab-btn" onclick="switchTab('tabB')">B. Reclamación</button>
+        <button class="tab-btn" onclick="switchTab('tabC')">C. Soportes</button>
+        <button class="tab-btn" onclick="switchTab('tabD')">D. Seguimiento</button>
+        <button class="tab-btn" onclick="switchTab('tabE')">E. Recuperación</button>
+      </div>
+
+      <div id="tabA" class="tab-content active">
+        <div class="detail-grid">
+          <div class="detail-item"><label>ID Único Operación</label><span id="detId">--</span></div>
+          <div class="detail-item"><label>Fecha Transacción</label><span id="detFecha">--</span></div>
+          <div class="detail-item"><label>Banco / Pasarela</label><span id="detBanco">--</span></div>
+          <div class="detail-item"><label>Referencia Bancaria</label><span id="detRef">--</span></div>
+          <div class="detail-item"><label>Tercero Relacionado</label><span id="detTercero">--</span></div>
+          <div class="detail-item"><label>Valor Operación Original</label><span id="detValor">--</span></div>
         </div>
-        <ul id="supportFileList" style="margin-top:8px; font-size:11px; color:#2563eb; padding-left:16px;">
-          <li>📄 Radicado_Reclamacion_Credibanco_88192.pdf</li>
+      </div>
+
+      <div id="tabB" class="tab-content">
+        <div class="detail-grid">
+          <div class="detail-item"><label>Motivo de Reclamación</label><span id="detMotivo">--</span></div>
+          <div class="detail-item"><label>Número de Radicado Entidad</label><span id="detRadicado">RAD-2026-8819</span></div>
+          <div class="detail-item"><label>Fecha Presentación Reclamo</label><span id="detFechaRad">2026-10-15</span></div>
+          <div class="detail-item"><label>Entidad Responsable</label><span id="detEntidadResp">Credibanco Pasarela</span></div>
+          <div class="detail-item" style="grid-column: span 2;"><label>Descripción Detallada Causa</label><span id="detDesc">Reclamación formal por doble cobro en lote de adquirencia.</span></div>
+        </div>
+      </div>
+
+      <div id="tabC" class="tab-content">
+        <p style="font-size:12px; color:#64748b; margin-bottom:10px;">Adjunta comprobantes, extractos o respuestas bancarias:</p>
+        <div style="display:flex; gap:8px; margin-bottom:12px;">
+          <input type="file" id="fileInputSupport" style="font-size:11px;">
+          <button onclick="addSupportFile()" class="btn-action" style="padding:4px 10px; font-size:11px;">+ Adjuntar PDF/Excel</button>
+        </div>
+        <ul id="supportFileList" style="font-size:12px; color:#1d4ed8; padding-left:16px;">
+          <li>📄 Radicado_Credibanco_Oficial_8819.pdf</li>
         </ul>
       </div>
 
-      <div>
-        <h4 style="font-size:12px; font-weight:bold; color:#0f172a; margin-bottom:6px;">📜 5. Historial de Auditoría y Responsables:</h4>
-        <div id="historyLogContainer" class="history-log">
-          <!-- Historial de cambios dinámico -->
+      <div id="tabD" class="tab-content">
+        <h4 style="font-size:12px; font-weight:bold; margin-bottom:6px;">📜 Historial Cronológico e Inmutable de Auditoría:</h4>
+        <div id="historyLogContainer" class="history-log"></div>
+      </div>
+
+      <div id="tabE" class="tab-content">
+        <div class="detail-grid" style="margin-bottom:16px;">
+          <div class="detail-item"><label>Valor Total Reclamado</label><span id="recValReclamado">$0</span></div>
+          <div class="detail-item"><label>Valor Efectivamente Reintegrado</label><span id="recValReintegrado" style="color:#047857;">$0</span></div>
+          <div class="detail-item"><label>Saldo Pendiente de Recuperar</label><span id="recSaldoPendiente" style="color:#b45309;">$0</span></div>
+          <div class="detail-item"><label>% Recuperación Obtenido</label><span id="recPorcentaje" style="color:#047857;">0%</span></div>
+        </div>
+
+        <h4 style="font-size:12px; font-weight:bold; margin-bottom:6px;">Registrar Reintegro Parcial / Total (Cruce Automático con Extracto):</h4>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <select id="selectCruceAbono" style="padding:6px; font-size:11px; border-radius:6px; border:1px solid #cbd5e1; flex:1;"></select>
+          <button onclick="executePartialReintegro()" class="btn-action" style="padding:6px 12px; font-size:11px;">🔗 Aplicar Reintegro</button>
         </div>
       </div>
 
       <div style="display:flex; justify-content:flex-end; margin-top:16px;">
-        <button onclick="closeDetailModal()" class="btn-secondary" style="margin:0;">Cerrar</button>
+        <button onclick="closeDetailModal()" class="btn-secondary">Cerrar Expediente</button>
       </div>
     </div>
   </div>
 
   <script>
     let currentAccount = 'DAVIVIENDA 5152';
-    let currentMonth = '2025-04'; // Formato AAAA-MM
+    let currentMonth = '2025-04';
     let activeDetailItem = null;
 
     let appData = {
       'DAVIVIENDA 5152': [
         {
-          id: '1',
+          id: 'REV-1001',
           fecha: '2025-04-01',
           descripcion: 'Ajuste X Gravamen Movimiento Financier',
           referencia: 'REF-001',
@@ -529,61 +616,22 @@
           salida: 800464,
           informacion: 'Gastos Bancarios',
           documento: '',
-          observaciones: 'este seria el movimiento de banco visual',
+          observaciones: 'movimiento de banco visual',
           isReverso: false,
-          reversoState: 'NUEVO',
-          history: ['[2026-11-06 09:00] Caso registrado por Stephany Castro'],
+          reversoState: 'IDENTIFICADO',
+          fechaReclamacion: '2025-04-02',
+          lastUpdate: '2026-11-06 09:00',
+          reintegradoVal: 0,
+          history: ['[2026-11-06 09:00] Registrado como IDENTIFICADO por Stephany Castro'],
           subtotales: []
         },
         {
-          id: '2',
-          fecha: '2025-04-01',
-          descripcion: 'Pagos por Internet CAMARA DE COMERCIO DE B',
-          referencia: 'REF-002',
-          tercero: 'Cámara de Comercio',
-          entidad: 'Davivienda',
-          motivo: 'Certificado duplicado',
-          responsable: 'Stephany Castro',
-          linkedEntradaId: '',
-          saldoInicial: 0,
-          entrada: 0,
-          salida: 11600,
-          informacion: 'Certificado de Existencia Camara de Comercio',
-          documento: 'RP-999-4',
-          observaciones: 'este seria el movimiento de banco visual',
-          isReverso: false,
-          reversoState: 'NUEVO',
-          history: ['[2026-11-06 09:10] Caso registrado por Stephany Castro'],
-          subtotales: []
-        },
-        {
-          id: '3',
-          fecha: '2025-04-01',
-          descripcion: 'Descuento Transferencia otra entidad BANCOLOMBIA 901514952',
-          referencia: 'TD-126',
-          tercero: 'WeTravel Colombia SAS',
-          entidad: 'Bancolombia',
-          motivo: 'Traslado entre cuentas',
-          responsable: 'Stephany Castro',
-          linkedEntradaId: '',
-          saldoInicial: 0,
-          entrada: 0,
-          salida: 20000000,
-          informacion: 'Traslados entre cuentas',
-          documento: 'TD-126',
-          observaciones: 'este seria el movimiento de banco visual',
-          isReverso: false,
-          reversoState: 'NUEVO',
-          history: [],
-          subtotales: []
-        },
-        {
-          id: '4',
+          id: 'REV-1002',
           fecha: '2025-04-01',
           descripcion: 'Nc Visa T Credito Credibanco',
           referencia: 'CRED-902',
           tercero: 'Credibanco',
-          entidad: 'Credibanco / Davivienda',
+          entidad: 'Credibanco',
           motivo: 'Abono de adquirencia desglosado',
           responsable: 'Stephany Castro',
           linkedEntradaId: '',
@@ -592,16 +640,17 @@
           salida: 0,
           informacion: 'SE ABREN MOVIMIENTOS',
           documento: '',
-          observaciones: 'este seria el movimiento de banco visual',
+          observaciones: 'movimiento de banco visual',
           isReverso: false,
-          reversoState: 'NUEVO',
+          reversoState: 'IDENTIFICADO',
+          fechaReclamacion: '2025-04-02',
+          lastUpdate: '2026-11-06 09:15',
+          reintegradoVal: 0,
           history: [],
           subtotales: [
-            { id: '4-1', referencia: 47559, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Doble cobro pasarela', responsable: 'Stephany Castro', linkedEntradaId: '', informacion: 'INVERSIONES EAMC SAS R-V-10016 | FVE 17524', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO', history: ['[2026-11-06 10:00] Creado por Stephany Castro'] },
-            { id: '4-2', referencia: 285358, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Contracargo tarjeta', responsable: 'Stephany Castro', linkedEntradaId: '', informacion: 'INVERSIONES EAMC SAS R-V-10019 | FVE 17516', documento: 'RC-1-3307', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO', history: ['[2026-11-06 10:15] Creado por Stephany Castro'] },
-            { id: '4-3', referencia: 142678, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Error en comisión', responsable: 'Stephany Castro', linkedEntradaId: '', informacion: 'INVERSIONES EAMC SAS R-V-10255 | FVE 17674', documento: 'RC-1-3308', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO', history: [] },
-            { id: '4-4', referencia: 47559, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Devolución venta', responsable: 'Stephany Castro', linkedEntradaId: '', informacion: 'INVERSIONES EAMC SAS R-V-10004 | FVE 17511', documento: 'RC-1-3302', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO', history: [] },
-            { id: '4-5', referencia: 95119, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Reembolso autorizado', responsable: 'Stephany Castro', linkedEntradaId: '', informacion: 'INVERSIONES EAMC SAS R-V-10011 | FVE 17515', documento: 'RC-1-3306', observaciones: 'este seria un subtotal movimiento banco', isReverso: false, reversoState: 'NUEVO', history: [] }
+            { id: 'REV-1002-1', referencia: 47559, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Doble cobro pasarela', responsable: 'Stephany Castro', linkedEntradaId: '', informacion: 'INVERSIONES EAMC SAS R-V-10016 | FVE 17524', documento: 'RC-1-3308', observaciones: 'subtotal movimiento banco', isReverso: false, reversoState: 'RADICADO', fechaReclamacion: '2025-04-03', lastUpdate: '2026-11-06 10:00', reintegradoVal: 47559, history: ['[2026-11-06 10:00] Reintegrado Total validado en extracto por Stephany Castro'] },
+            { id: 'REV-1002-2', referencia: 285358, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Contracargo tarjeta', responsable: 'Stephany Castro', linkedEntradaId: '', informacion: 'INVERSIONES EAMC SAS R-V-10019 | FVE 17516', documento: 'RC-1-3307', observaciones: 'subtotal movimiento banco', isReverso: false, reversoState: 'EN_SEGUIMIENTO', fechaReclamacion: '2025-04-03', lastUpdate: '2026-11-06 10:15', reintegradoVal: 0, history: ['[2026-11-06 10:15] Pasado a EN_SEGUIMIENTO por Stephany Castro'] },
+            { id: 'REV-1002-3', referencia: 142678, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Error en comisión', responsable: 'Stephany Castro', linkedEntradaId: '', informacion: 'INVERSIONES EAMC SAS R-V-10255 | FVE 17674', documento: 'RC-1-3308', observaciones: 'subtotal movimiento banco', isReverso: false, reversoState: 'EN_VALIDACION', fechaReclamacion: '2025-04-04', lastUpdate: '2026-11-06 10:30', reintegradoVal: 0, history: [] }
           ]
         }
       ],
@@ -611,6 +660,14 @@
     function formatCurrency(val) {
       const num = parseFloat(val) || 0;
       return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(num);
+    }
+
+    function parseFormattedNumber(val) {
+      if (typeof val === 'number') return val;
+      if (!val) return 0;
+      // Limpia comas, puntos y símbolos de moneda para extraer el valor exacto
+      const cleanStr = val.toString().replace(/[^0-9.-]/g, '');
+      return parseFloat(cleanStr) || 0;
     }
 
     function switchModule(modId) {
@@ -629,7 +686,7 @@
         'mod-identificar': ['Pendiente por Identificar', 'Partidas sin cliente o información asignada en la columna INFORMACION'],
         'mod-contabilizar': ['Pendiente por Contabilizar', 'Control de Recibos de Caja (RC) y Facturas (FVE)'],
         'mod-gastos': ['Gasto Bancario Global', 'Acumulado de Gravamen (4x1000), comisiones y cuotas de manejo'],
-        'mod-reversos': ['Reverso o Devolución', 'Matriz de Auditoría, Cruce Automático de Reversión y Soportes']
+        'mod-reversos': ['Auditoría de Reversos', 'Sistema Gerencial e Integral de Reclamaciones, Cruces y Recuperación']
       };
 
       document.getElementById('moduleTitle').innerText = titles[modId][0];
@@ -703,8 +760,8 @@
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td class="text-center">
-              <button onclick="openSubModal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 5px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal">+</button>
-              <button onclick="toggleReversoParent('${row.id}')" class="btn-toggle-reverso" title="Marcar Reverso">🔄</button>
+              <button onclick="openSubModal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 5px; border-radius:4px; font-weight:bold; cursor:pointer;">+</button>
+              <button onclick="toggleReversoParent('${row.id}')" class="btn-toggle-reverso">🔄</button>
             </td>
             <td contenteditable="true" onblur="updateCell('${row.id}', 'fecha', this.innerText)">${row.fecha} ${row.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
             <td contenteditable="true" onblur="updateCell('${row.id}', 'descripcion', this.innerText)" style="font-weight:700; color:#0f172a;">${row.descripcion}</td>
@@ -713,8 +770,8 @@
             <td contenteditable="true" onblur="updateCell('${row.id}', 'entrada', this.innerText)" class="text-right" style="font-weight:800; color:#059669;">${entrada > 0 ? formatCurrency(entrada) : ''}</td>
             <td contenteditable="true" onblur="updateCell('${row.id}', 'salida', this.innerText)" class="text-right" style="font-weight:800; color:#dc2626;">${salida > 0 ? formatCurrency(salida) : ''}</td>
             <td class="text-right" style="font-weight:900; color:#0f172a;">${formatCurrency(runningBalance)}</td>
-            <td contenteditable="true" onblur="updateCell('${row.id}', 'informacion', this.innerText)" style="font-weight:500;">${row.informacion}</td>
-            <td contenteditable="true" onblur="updateCell('${row.id}', 'documento', this.innerText)" style="font-weight:700;">${row.documento}</td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'informacion', this.innerText)">${row.informacion}</td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'documento', this.innerText)">${row.documento}</td>
             <td contenteditable="true" onblur="updateCell('${row.id}', 'observaciones', this.innerText)" style="font-style:italic; color:#64748b;">${row.observaciones}</td>
           `;
           tbody.appendChild(tr);
@@ -725,19 +782,16 @@
               trSub.className = "bg-subtotal";
               trSub.innerHTML = `
                 <td class="text-center">
-                  <button onclick="deleteSubtotal('${row.id}', '${sub.id}')" style="background:transparent; color:#dc2626; border:none; font-weight:bold; cursor:pointer;" title="Eliminar Subtotal">✕</button>
-                  <button onclick="toggleReversoSub('${row.id}', '${sub.id}')" class="btn-toggle-reverso" title="Marcar Reverso Subtotal">🔄</button>
+                  <button onclick="deleteSubtotal('${row.id}', '${sub.id}')" style="background:transparent; color:#dc2626; border:none; font-weight:bold; cursor:pointer;">✕</button>
+                  <button onclick="toggleReversoSub('${row.id}', '${sub.id}')" class="btn-toggle-reverso">🔄</button>
                 </td>
                 <td class="text-center" style="color:#a1a1aa;">—</td>
                 <td class="subtotal-indent">↳ Subtotal Desglosado ${sub.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
                 <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'referencia', this.innerText)" class="text-right" style="font-weight:800; color:#713f12;">${formatCurrency(sub.referencia)}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'informacion', this.innerText)" style="font-weight:600; color:#451a03;">${sub.informacion}</td>
-                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'documento', this.innerText)" style="font-weight:800; color:#451a03;">${sub.documento}</td>
-                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'observaciones', this.innerText)" style="font-style:italic; color:#78350f;">${sub.observaciones}</td>
+                <td></td><td></td><td></td><td></td>
+                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'informacion', this.innerText)">${sub.informacion}</td>
+                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'documento', this.innerText)">${sub.documento}</td>
+                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'observaciones', this.innerText)">${sub.observaciones}</td>
               `;
               tbody.appendChild(trSub);
             });
@@ -745,352 +799,13 @@
         }
       });
 
-      if (!foundFirstMonthRow && tbody.children.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:#64748b; padding:24px;">No hay movimientos registrados para el mes seleccionado (${currentMonth}). Puedes agregarlos con el botón verde.</td></tr>`;
-      }
-
       document.getElementById('kpiSaldoInicial').innerText = formatCurrency(monthInitialBalance);
       document.getElementById('kpiEntradas').innerText = formatCurrency(monthEntradas);
       document.getElementById('kpiSalidas').innerText = formatCurrency(monthSalidas);
       document.getElementById('kpiSaldoFinal').innerText = formatCurrency(runningBalance);
     }
 
-    /* MÓDULO 3: AUDITORÍA CON CONSOLIDACIÓN DE LAS 5 MEJORAS */
-    function generateReportReversos() {
-      const data = appData[currentAccount] || [];
-      const body = document.getElementById('reportReversosBody');
-      body.innerHTML = '';
-      
-      let totalReclamado = 0;
-      let totalRecuperado = 0;
-      let totalPendiente = 0;
-      let countPendiente = 0;
-      const fechaHoy = new Date('2026-11-06');
-
-      // Lista de Entradas Bancarias disponibles para el Cruce Automático (Mejora 4)
-      const entradasDisponibles = data.filter(r => r.entrada > 0);
-
-      data.forEach(row => {
-        if (row.fecha.substring(0, 7) === currentMonth) {
-          const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">INGRESO</span>' : '<span class="badge badge-out">EGRESO</span>';
-          
-          if (row.isReverso) {
-            const monto = row.entrada > 0 ? row.entrada : row.salida;
-            const state = row.reversoState || 'NUEVO';
-            const diasPend = Math.max(0, Math.floor((fechaHoy - new Date(row.fecha)) / (1000 * 60 * 60 * 24)));
-
-            totalReclamado += monto;
-            if (state === 'REINTEGRADO') totalRecuperado += monto;
-            if (['NUEVO', 'PROCESO', 'VALIDACION'].includes(state)) { totalPendiente += monto; countPendiente++; }
-
-            body.innerHTML += buildReversoRow(row.fecha, row.referencia || 'SIN-REF', flujoBadge, row.tercero || 'Pendiente', row.descripcion, monto, row.entidad || currentAccount, row.motivo || 'Devolución', state, row.responsable || 'Stephany Castro', diasPend, row.id, null, row.linkedEntradaId, entradasDisponibles);
-          }
-
-          row.subtotales.forEach(sub => {
-            if (sub.isReverso) {
-              const monto = sub.referencia;
-              const state = sub.reversoState || 'NUEVO';
-              const diasPend = Math.max(0, Math.floor((fechaHoy - new Date(row.fecha)) / (1000 * 60 * 60 * 24)));
-
-              totalReclamado += monto;
-              if (state === 'REINTEGRADO') totalRecuperado += monto;
-              if (['NUEVO', 'PROCESO', 'VALIDACION'].includes(state)) { totalPendiente += monto; countPendiente++; }
-
-              body.innerHTML += buildReversoRow(row.fecha, sub.documento || 'SUB-REF', flujoBadge, sub.tercero || 'Cliente', sub.informacion, monto, sub.entidad || 'Pasarela', sub.motivo || 'Desglose Reclamado', state, sub.responsable || 'Stephany Castro', diasPend, row.id, sub.id, sub.linkedEntradaId, entradasDisponibles);
-            }
-          });
-        }
-      });
-
-      if (totalReclamado === 0) {
-        body.innerHTML = `<tr><td colspan="13" style="text-align:center; color:#64748b; padding:20px;">No hay movimientos marcados como reverso en ${currentMonth}. Marca una fila con 🔄 en la Posición Bancaria.</td></tr>`;
-      }
-
-      document.getElementById('kpiTotalReclamado').innerText = formatCurrency(totalReclamado);
-      document.getElementById('kpiTotalRecuperado').innerText = formatCurrency(totalRecuperado);
-      document.getElementById('kpiTotalPendiente').innerText = formatCurrency(totalPendiente);
-      document.getElementById('kpiCountPendiente').innerText = `${countPendiente} caso(s) en trámite activo`;
-    }
-
-    function buildReversoRow(fecha, ref, flujo, tercero, desc, monto, entidad, motivo, state, resp, dias, parentId, subId, linkedId, entradas) {
-      const getStyleClass = (s) => {
-        if (s === 'NUEVO') return 'st-nuevo';
-        if (s === 'PROCESO') return 'st-proceso';
-        if (s === 'VALIDACION') return 'st-validacion';
-        if (s === 'REINTEGRADO') return 'st-reintegrado';
-        return 'st-noprocedente';
-      };
-
-      // Opciones para la Mejora 4: Cruce Automático con Abono en Banco
-      let cruceOptions = `<option value="">-- Sin Vincular --</option>`;
-      entradas.forEach(e => {
-        const sel = e.id === linkedId ? 'selected' : '';
-        cruceOptions += `<option value="${e.id}" ${sel}>${e.fecha} | ${formatCurrency(e.entrada)} (${e.descripcion.substring(0, 15)}...)</option>`;
-      });
-
-      const cruceSelectHTML = `<select class="cruce-select" onchange="linkCruceMovimiento('${parentId}', ${subId ? `'${subId}'` : 'null'}, this.value)">${cruceOptions}</select>`;
-
-      return `
-        <tr>
-          <td>${fecha}</td>
-          <td style="font-weight:bold;">${ref}</td>
-          <td>${flujo}</td>
-          <td>${tercero}</td>
-          <td>${desc}</td>
-          <td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(monto)}</td>
-          <td>${entidad}</td>
-          <td>${motivo}</td>
-          <td>${cruceSelectHTML}</td>
-          <td>
-            <select class="status-select ${getStyleClass(state)}" onchange="updateReversoState('${parentId}', ${subId ? `'${subId}'` : 'null'}, this.value)">
-              <option value="NUEVO" ${state === 'NUEVO' ? 'selected' : ''}>🟡 1. Nuevo / Identificado</option>
-              <option value="PROCESO" ${state === 'PROCESO' ? 'selected' : ''}>🔵 2. En reclamación</option>
-              <option value="VALIDACION" ${state === 'VALIDACION' ? 'selected' : ''}>🟣 3. En validación</option>
-              <option value="REINTEGRADO" ${state === 'REINTEGRADO' ? 'selected' : ''}>🟢 4. Reintegrado en extracto</option>
-              <option value="NOPROCEDENTE" ${state === 'NOPROCEDENTE' ? 'selected' : ''}>🔴 5. No procedente / Cerrado</option>
-            </select>
-          </td>
-          <td>${resp}</td>
-          <td class="text-center" style="font-weight:bold; color:${dias > 30 ? '#dc2626' : '#0f172a'};">${dias} d</td>
-          <td class="text-center"><button onclick="openDetailModal('${parentId}', ${subId ? `'${subId}'` : 'null'})" class="btn-support">📎 Soportes</button></td>
-        </tr>`;
-    }
-
-    /* MEJORA 4: CRUCE AUTOMÁTICO */
-    function linkCruceMovimiento(parentId, subId, linkedEntradaId) {
-      const parent = appData[currentAccount].find(r => r.id === parentId);
-      if (parent) {
-        const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 16);
-        if (subId && subId !== 'null') {
-          const sub = parent.subtotales.find(s => s.id === subId);
-          if (sub) {
-            sub.linkedEntradaId = linkedEntradaId;
-            if (linkedEntradaId) {
-              sub.reversoState = 'REINTEGRADO';
-              sub.history.push(`[${timestamp}] Cruce Automático realizado con Abono #${linkedEntradaId} por Stephany Castro`);
-            }
-          }
-        } else {
-          parent.linkedEntradaId = linkedEntradaId;
-          if (linkedEntradaId) {
-            parent.reversoState = 'REINTEGRADO';
-            parent.history.push(`[${timestamp}] Cruce Automático realizado con Abono #${linkedEntradaId} por Stephany Castro`);
-          }
-        }
-        generateReportReversos();
-      }
-    }
-
-    /* MEJORA 2 Y 5: HISTORIAL Y CAMBIO DE ESTADO */
-    function updateReversoState(parentId, subId, newState) {
-      const parent = appData[currentAccount].find(r => r.id === parentId);
-      if (parent) {
-        const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 16);
-        if (subId && subId !== 'null') {
-          const sub = parent.subtotales.find(s => s.id === subId);
-          if (sub) {
-            sub.reversoState = newState;
-            sub.history = sub.history || [];
-            sub.history.push(`[${timestamp}] Estado cambiado a '${newState}' por Stephany Castro`);
-          }
-        } else {
-          parent.reversoState = newState;
-          parent.history = parent.history || [];
-          parent.history.push(`[${timestamp}] Estado cambiado a '${newState}' por Stephany Castro`);
-        }
-        generateReportReversos();
-      }
-    }
-
-    /* MEJORA 3 Y 5: MODAL DE SOPORTES E HISTORIAL */
-    function openDetailModal(parentId, subId) {
-      const parent = appData[currentAccount].find(r => r.id === parentId);
-      if (!parent) return;
-
-      let item = parent;
-      if (subId && subId !== 'null') {
-        item = parent.subtotales.find(s => s.id === subId);
-      }
-      activeDetailItem = item;
-
-      document.getElementById('detailTitle').innerText = `📎 Soportes y Auditoría: ${item.descripcion || item.informacion}`;
-      const historyBox = document.getElementById('historyLogContainer');
-      historyBox.innerHTML = '';
-
-      const logs = item.history || [];
-      if (logs.length === 0) {
-        historyBox.innerHTML = '<div class="log-item">No hay cambios de estado registrados en el historial.</div>';
-      } else {
-        logs.forEach(l => {
-          historyBox.innerHTML += `<div class="log-item">${l}</div>`;
-        });
-      }
-
-      document.getElementById('modalDetail').classList.remove('hidden');
-    }
-
-    function closeDetailModal() {
-      document.getElementById('modalDetail').classList.add('hidden');
-    }
-
-    function addSupportFile() {
-      const input = document.getElementById('fileInputSupport');
-      if (input.files.length > 0) {
-        const fileName = input.files[0].name;
-        const list = document.getElementById('supportFileList');
-        list.innerHTML += `<li>📄 ${fileName} (Cargado en sistema)</li>`;
-        alert(`Soporte "${fileName}" adjuntado con éxito.`);
-      } else {
-        alert("Selecciona un archivo para adjuntar.");
-      }
-    }
-
-    /* OTROS INFORMES */
-    function generateAlertas() {
-      const body = document.getElementById('alertasBody');
-      body.innerHTML = '';
-      const hoy = new Date('2026-11-06');
-
-      Object.keys(appData).forEach(acc => {
-        const rows = appData[acc];
-        if (rows.length === 0) {
-          body.innerHTML += `
-            <tr>
-              <td style="font-weight:bold;">${acc}</td>
-              <td style="color:#dc2626;">Sin datos cargados</td>
-              <td>—</td>
-              <td><span class="badge badge-alert">⚠️ Nivel Crítico: Sin Movimientos</span></td>
-            </tr>`;
-        } else {
-          const ultFecha = rows[rows.length - 1].fecha;
-          const fechaMov = new Date(ultFecha);
-          const diffDays = Math.floor((hoy - fechaMov) / (1000 * 60 * 60 * 24));
-
-          let badge = '';
-          if (diffDays > 30) {
-            badge = '<span class="badge badge-alert">⚠️ Desactualizada (Más de 30 días)</span>';
-          } else {
-            badge = '<span class="badge badge-in">✅ Al día</span>';
-          }
-
-          body.innerHTML += `
-            <tr>
-              <td style="font-weight:bold;">${acc}</td>
-              <td>${ultFecha}</td>
-              <td>${diffDays} días</td>
-              <td>${badge}</td>
-            </tr>`;
-        }
-      });
-    }
-
-    function generateReportGastos() {
-      const data = appData[currentAccount] || [];
-      const body = document.getElementById('reportGastosBody');
-      body.innerHTML = '';
-      let totalGastos = 0;
-
-      data.forEach(row => {
-        if (row.fecha.substring(0, 7) === currentMonth) {
-          const isGasto = (row.informacion || '').toLowerCase().includes('gastos bancarios') || (row.descripcion || '').toLowerCase().includes('gravamen');
-          if (isGasto) {
-            totalGastos += row.salida;
-            body.innerHTML += `
-              <tr>
-                <td>${row.fecha}</td>
-                <td style="font-weight:bold;">${currentAccount}</td>
-                <td>${row.descripcion}</td>
-                <td class="text-right" style="font-weight:bold; color:#dc2626;">${formatCurrency(row.salida)}</td>
-                <td><span class="badge badge-gasto">Gasto Bancario / GMF</span></td>
-              </tr>`;
-          }
-        }
-      });
-
-      if (totalGastos === 0) {
-        body.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b; padding:20px;">No se registran gastos bancarios en la cuenta para el mes seleccionado (${currentMonth}).</td></tr>`;
-      }
-    }
-
-    function generateReportIdentificar() {
-      const data = appData[currentAccount] || [];
-      const body = document.getElementById('reportIdentificarBody');
-      body.innerHTML = '';
-
-      data.forEach(row => {
-        if (row.fecha.substring(0, 7) === currentMonth) {
-          const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
-          const monto = row.entrada > 0 ? row.entrada : row.salida;
-
-          if (row.subtotales.length > 0) {
-            row.subtotales.forEach(sub => {
-              if (!sub.informacion || sub.informacion.trim() === '') {
-                body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion} (Subtotal)</td><td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td><td style="color:#dc2626; font-weight:bold;">Sin información</td><td><span class="badge" style="background:#fef08a;">Subtotal</span></td></tr>`;
-              }
-            });
-          } else {
-            if (!row.informacion || row.informacion.trim() === '' || row.informacion.toLowerCase().includes('pendiente')) {
-              body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(monto)}</td><td style="color:#dc2626; font-weight:bold;">${row.informacion || 'Sin información'}</td><td><span class="badge" style="background:#e2e8f0;">Movimiento Banco</span></td></tr>`;
-            }
-          }
-        }
-      });
-    }
-
-    function generateReportContabilizar() {
-      const data = appData[currentAccount] || [];
-      const body = document.getElementById('reportContabilizarBody');
-      body.innerHTML = '';
-
-      data.forEach(row => {
-        if (row.fecha.substring(0, 7) === currentMonth) {
-          const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">ENTRADA</span>' : '<span class="badge badge-out">SALIDA</span>';
-          const monto = row.entrada > 0 ? row.entrada : row.salida;
-
-          if (row.subtotales.length > 0) {
-            row.subtotales.forEach(sub => {
-              const isGasto = (row.informacion + ' ' + sub.informacion).toLowerCase().includes('gastos bancarios');
-              if (isGasto) {
-                body.innerHTML += `<tr style="opacity:0.6;"><td>${row.fecha}</td><td>${flujoBadge}</td><td>${sub.informacion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(sub.referencia)}</td><td style="color:#64748b;">—</td><td><span class="badge badge-gasto">Gasto Bancario (Excluido)</span></td></tr>`;
-              } else if (!sub.documento || sub.documento.trim() === '') {
-                body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${sub.informacion}</td><td class="text-right" style="font-weight:bold; color:#2563eb;">${formatCurrency(sub.referencia)}</td><td style="color:#dc2626; font-weight:bold;">Sin Documento / RC</td><td><span class="badge" style="background:#dbeafe; color:#1e40af;">Pendiente Contabilizar</span></td></tr>`;
-              }
-            });
-          } else {
-            const isGasto = row.informacion.toLowerCase().includes('gastos bancarios');
-            if (isGasto) {
-              body.innerHTML += `<tr style="opacity:0.6;"><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold;">${formatCurrency(monto)}</td><td style="color:#64748b;">—</td><td><span class="badge badge-gasto">Gasto Bancario (Excluido)</span></td></tr>`;
-            } else if (!row.documento || row.documento.trim() === '') {
-              body.innerHTML += `<tr><td>${row.fecha}</td><td>${flujoBadge}</td><td>${row.descripcion}</td><td class="text-right" style="font-weight:bold; color:#2563eb;">${formatCurrency(monto)}</td><td style="color:#dc2626; font-weight:bold;">Sin Documento / RC</td><td><span class="badge" style="background:#dbeafe; color:#1e40af;">Pendiente Contabilizar</span></td></tr>`;
-            }
-          }
-        }
-      });
-    }
-
-    function generateConsolidado() {
-      const body = document.getElementById('consolidadoBody');
-      body.innerHTML = '';
-      
-      Object.keys(appData).forEach(acc => {
-        const rows = appData[acc];
-        let init = rows.length > 0 ? rows[0].saldoInicial : 0;
-        let inTotal = rows.reduce((s, r) => s + (parseFloat(r.entrada)||0), 0);
-        let outTotal = rows.reduce((s, r) => s + (parseFloat(r.salida)||0), 0);
-        let finalBal = init + inTotal - outTotal;
-
-        body.innerHTML += `
-          <tr>
-            <td style="font-weight:800;">${acc}</td>
-            <td class="text-right">${formatCurrency(init)}</td>
-            <td class="text-right" style="color:#059669; font-weight:bold;">${formatCurrency(inTotal)}</td>
-            <td class="text-right" style="color:#dc2626; font-weight:bold;">${formatCurrency(outTotal)}</td>
-            <td class="text-right" style="font-weight:900;">${formatCurrency(finalBal)}</td>
-          </tr>`;
-      });
-    }
-
-    /* VENTANA MODAL EXCEL GRIDS */
+    /* FUNCIONALIDAD MEJORADA Y AMIGABLE DEL PEGADO DIRECTO DESDE EXCEL */
     function openExcelModal() {
       document.getElementById('modalExcel').classList.remove('hidden');
       clearExcelGrid();
@@ -1112,7 +827,7 @@
       tr.innerHTML = `
         <td class="text-center" style="color:#94a3b8; font-weight:bold;">${rowCount}</td>
         <td><input type="text" class="grid-cell-fecha" value="${fecha || currentMonth + '-01'}" placeholder="AAAA-MM-DD"></td>
-        <td><input type="text" class="grid-cell-desc" value="${desc}" placeholder="Descripción del movimiento"></td>
+        <td><input type="text" class="grid-cell-desc" value="${desc}" placeholder="Descripción de la transacción"></td>
         <td><input type="text" class="grid-cell-entrada text-right" value="${entrada}" placeholder="0"></td>
         <td><input type="text" class="grid-cell-salida text-right" value="${salida}" placeholder="0"></td>
       `;
@@ -1125,21 +840,41 @@
       const pastedData = clipboardData.getData('Text');
       if (!pastedData) return;
 
-      const lines = pastedData.trim().split('\n');
+      const lines = pastedData.trim().split(/\r\n|\n|\r/);
       clearExcelGrid();
 
       lines.forEach((line) => {
+        if (!line.trim()) return;
         const cols = line.split('\t');
-        if (cols.length >= 2) {
-          if (cols[0].toUpperCase().includes('FECHA') || cols[1].toUpperCase().includes('DESC')) return;
 
-          addExcelGridRow(
-            cols[0] ? cols[0].trim() : (currentMonth + '-01'),
-            cols[1] ? cols[1].trim() : '',
-            cols[2] ? cols[2].trim() : '0',
-            cols[3] ? cols[3].trim() : '0'
-          );
+        // Ignorar encabezados si el usuario los copió de Excel
+        const firstColUpper = (cols[0] || '').toUpperCase();
+        if (firstColUpper.includes('FECHA') || firstColUpper.includes('DESC') || firstColUpper.includes('MONTO')) return;
+
+        let rawFecha = currentMonth + '-01';
+        let rawDesc = '';
+        let rawEntrada = '0';
+        let rawSalida = '0';
+
+        if (cols.length === 1) {
+          rawDesc = cols[0].trim();
+        } else if (cols.length === 2) {
+          rawFecha = cols[0].trim() || rawFecha;
+          rawDesc = cols[1].trim();
+        } else if (cols.length === 3) {
+          rawFecha = cols[0].trim() || rawFecha;
+          rawDesc = cols[1].trim();
+          const val = parseFormattedNumber(cols[2]);
+          if (val >= 0) rawEntrada = val.toString();
+          else rawSalida = Math.abs(val).toString();
+        } else if (cols.length >= 4) {
+          rawFecha = cols[0].trim() || rawFecha;
+          rawDesc = cols[1].trim();
+          rawEntrada = parseFormattedNumber(cols[2]).toString();
+          rawSalida = parseFormattedNumber(cols[3]).toString();
         }
+
+        addExcelGridRow(rawFecha, rawDesc, rawEntrada !== '0' ? rawEntrada : '', rawSalida !== '0' ? rawSalida : '');
       });
     }
 
@@ -1151,25 +886,23 @@
       rows.forEach(tr => {
         const fecha = tr.querySelector('.grid-cell-fecha').value.trim();
         const desc = tr.querySelector('.grid-cell-desc').value.trim();
-        const entradaStr = tr.querySelector('.grid-cell-entrada').value;
-        const salidaStr = tr.querySelector('.grid-cell-salida').value;
+        const entradaVal = parseFormattedNumber(tr.querySelector('.grid-cell-entrada').value);
+        const salidaVal = parseFormattedNumber(tr.querySelector('.grid-cell-salida').value);
 
-        if (desc !== '' || fecha !== '') {
-          const cleanNum = (str) => parseFloat((str || '').replace(/[^0-9.-]/g, '')) || 0;
-
+        if (desc !== '' || entradaVal > 0 || salidaVal > 0) {
           data.push({
-            id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
+            id: 'MOV-' + Date.now().toString() + Math.random().toString(36).substr(2, 3),
             fecha: fecha || (currentMonth + '-01'),
             descripcion: desc || 'Movimiento de Banco',
             referencia: '',
             saldoInicial: 0,
-            entrada: cleanNum(entradaStr),
-            salida: cleanNum(salidaStr),
+            entrada: entradaVal,
+            salida: salidaVal,
             informacion: '',
             documento: '',
-            observaciones: 'Cargado en Grid Excel',
+            observaciones: 'Cargado vía pegado Excel',
             isReverso: false,
-            reversoState: 'NUEVO',
+            reversoState: 'IDENTIFICADO',
             history: [],
             subtotales: []
           });
@@ -1180,86 +913,308 @@
       if (insertedCount > 0) {
         closeExcelModal();
         renderApp();
+        alert(`✅ Se insertaron ${insertedCount} movimiento(s) exitosamente en la Posición Bancaria de ${currentAccount}.`);
       } else {
-        alert("Ingresa al menos una fila válida con información.");
+        alert("Por favor pega o ingresa al menos una fila válida con información.");
       }
     }
 
-    /* CONTROL DE SUBTOTALES Y CUENTAS */
-    function openSubModal(parentId) {
-      document.getElementById('subParentId').value = parentId;
-      document.getElementById('inputSubMonto').value = '';
-      document.getElementById('inputSubInfo').value = '';
-      document.getElementById('inputSubDoc').value = '';
-      document.getElementById('modalSub').classList.remove('hidden');
-    }
+    /* MÓDULO 3: AUDITORÍA DE REVERSOS */
+    function generateReportReversos() {
+      const data = appData[currentAccount] || [];
+      const body = document.getElementById('reportReversosBody');
+      body.innerHTML = '';
+      
+      let opsReclamadas = 0, valReclamado = 0;
+      let opsPendientes = 0, valPendiente = 0;
+      let opsRecibidas = 0, valRecuperado = 0;
+      let opsRechazadas = 0;
 
-    function closeSubModal() {
-      document.getElementById('modalSub').classList.add('hidden');
-    }
+      const fSearch = (document.getElementById('filterSearch').value || '').toLowerCase();
+      const fEntidad = document.getElementById('filterEntidad').value;
+      const fEstado = document.getElementById('filterEstado').value;
+      const fResp = document.getElementById('filterResponsable').value;
+      const fechaHoy = new Date('2026-11-06');
 
-    function saveSubtotal() {
-      const parentId = document.getElementById('subParentId').value;
-      const parent = appData[currentAccount].find(r => r.id === parentId);
-      const monto = parseFloat(document.getElementById('inputSubMonto').value) || 0;
+      data.forEach(row => {
+        if (row.fecha.substring(0, 7) === currentMonth) {
+          const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">INGRESO</span>' : '<span class="badge badge-out">EGRESO</span>';
+          
+          if (row.isReverso) {
+            const monto = row.entrada > 0 ? row.entrada : row.salida;
+            const state = row.reversoState || 'IDENTIFICADO';
+            const reintegrado = row.reintegradoVal || 0;
+            const saldoPend = monto - reintegrado;
+            const dias = Math.max(0, Math.floor((fechaHoy - new Date(row.fecha)) / (1000 * 60 * 60 * 24)));
 
-      if (parent && monto > 0) {
-        parent.subtotales.push({
-          id: parentId + '-' + (parent.subtotales.length + 1),
-          referencia: monto,
-          informacion: document.getElementById('inputSubInfo').value.trim() || 'Subtotal Desglosado',
-          documento: document.getElementById('inputSubDoc').value.trim(),
-          observaciones: 'Subtotal desglosado',
-          isReverso: false,
-          reversoState: 'NUEVO',
-          history: []
-        });
-        closeSubModal();
-        renderApp();
-      } else {
-        alert("Ingresa un monto válido para el subtotal.");
-      }
-    }
+            opsReclamadas++; valReclamado += monto;
+            valRecuperado += reintegrado;
+            if (reintegrado > 0) opsRecibidas++;
+            if (state === 'RECHAZADO') opsRechazadas++;
+            if (!['REINTEGRADO_TOTAL', 'CERRADO', 'RECHAZADO'].includes(state)) { opsPendientes++; valPendiente += saldoPend; }
 
-    function openAccountModal() {
-      const name = prompt("Nombre de la nueva cuenta bancaria:");
-      if (name) {
-        appData[name] = [];
-        const select = document.getElementById('accountSelect');
-        const opt = document.createElement('option');
-        opt.value = name; opt.innerText = name;
-        select.appendChild(opt);
-        select.value = name;
-        currentAccount = name;
-        renderApp();
-      }
-    }
-
-    function updateCell(id, field, val) {
-      const row = appData[currentAccount].find(r => r.id === id);
-      if (row) {
-        if (['entrada', 'salida', 'saldoInicial'].includes(field)) {
-          row[field] = parseFloat(val.replace(/[^0-9.-]/g, '')) || 0;
-        } else {
-          row[field] = val.trim();
-        }
-        renderApp();
-      }
-    }
-
-    function updateSubCell(parentId, subId, field, val) {
-      const parent = appData[currentAccount].find(r => r.id === parentId);
-      if (parent) {
-        const sub = parent.subtotales.find(s => s.id === subId);
-        if (sub) {
-          if (field === 'referencia') {
-            sub[field] = parseFloat(val.replace(/[^0-9.-]/g, '')) || 0;
-          } else {
-            sub[field] = val.trim();
+            if (applyFilters(row, fSearch, fEntidad, fEstado, fResp)) {
+              body.innerHTML += buildAuditRow(row.fecha, row.id, row.referencia || 'SIN-REF', flujoBadge, row.tercero || 'DIAN', row.descripcion, row.entidad || currentAccount, monto, row.motivo || 'Devolución', row.fechaReclamacion || row.fecha, row.responsable || 'Stephany Castro', state, dias, row.lastUpdate || '2026-11-06', row.id, null);
+            }
           }
-          renderApp();
+
+          row.subtotales.forEach(sub => {
+            if (sub.isReverso) {
+              const monto = sub.referencia;
+              const state = sub.reversoState || 'IDENTIFICADO';
+              const reintegrado = sub.reintegradoVal || 0;
+              const saldoPend = monto - reintegrado;
+              const dias = Math.max(0, Math.floor((fechaHoy - new Date(row.fecha)) / (1000 * 60 * 60 * 24)));
+
+              opsReclamadas++; valReclamado += monto;
+              valRecuperado += reintegrado;
+              if (reintegrado > 0) opsRecibidas++;
+              if (state === 'RECHAZADO') opsRechazadas++;
+              if (!['REINTEGRADO_TOTAL', 'CERRADO', 'RECHAZADO'].includes(state)) { opsPendientes++; valPendiente += saldoPend; }
+
+              if (applyFilters(sub, fSearch, fEntidad, fEstado, fResp)) {
+                body.innerHTML += buildAuditRow(row.fecha, sub.id, sub.documento || 'SUB-REF', flujoBadge, sub.tercero || 'Cliente EAMC', sub.informacion, sub.entidad || 'Credibanco', monto, sub.motivo || 'Reversión Adquirencia', sub.fechaReclamacion || row.fecha, sub.responsable || 'Stephany Castro', state, dias, sub.lastUpdate || '2026-11-06', row.id, sub.id);
+              }
+            }
+          });
         }
+      });
+
+      if (opsReclamadas === 0) {
+        body.innerHTML = `<tr><td colspan="15" style="text-align:center; color:#64748b; padding:20px;">No hay registros marcados como reverso en ${currentMonth}. Haz clic en 🔄 en la Posición Bancaria.</td></tr>`;
       }
+
+      document.getElementById('kpiOpsReclamadas').innerText = opsReclamadas;
+      document.getElementById('kpiValReclamado').innerText = formatCurrency(valReclamado);
+      document.getElementById('kpiOpsPendientes').innerText = opsPendientes;
+      document.getElementById('kpiValPendiente').innerText = formatCurrency(valPendiente);
+      document.getElementById('kpiOpsRecibidas').innerText = opsRecibidas;
+      document.getElementById('kpiValRecuperado').innerText = formatCurrency(valRecuperado);
+      document.getElementById('kpiOpsRechazadas').innerText = opsRechazadas;
+
+      const porc = valReclamado > 0 ? ((valRecuperado / valReclamado) * 100).toFixed(1) : '0.0';
+      document.getElementById('kpiPorcRecuperacion').innerText = `${porc}%`;
+    }
+
+    function applyFilters(item, search, entidad, estado, resp) {
+      const matchSearch = !search || (item.descripcion || item.informacion || '').toLowerCase().includes(search) || (item.referencia || item.documento || '').toLowerCase().includes(search);
+      const matchEntidad = !entidad || (item.entidad || '').includes(entidad);
+      const matchEstado = !estado || (item.reversoState === estado);
+      const matchResp = !resp || (item.responsable === resp);
+      return matchSearch && matchEntidad && matchEstado && matchResp;
+    }
+
+    function buildAuditRow(fecha, idUnico, ref, flujo, tercero, desc, entidad, monto, motivo, fReclam, resp, state, dias, lastUp, parentId, subId) {
+      const getSlaBadge = (d) => {
+        if (d <= 5) return `<span class="sla-badge sla-green">${d} días (Al día)</span>`;
+        if (d <= 10) return `<span class="sla-badge sla-yellow">${d} días (Alerta 5d)</span>`;
+        if (d <= 15) return `<span class="sla-badge sla-orange">${d} días (Alerta 10d)</span>`;
+        return `<span class="sla-badge sla-red">${d} días (>30d Crítico)</span>`;
+      };
+
+      const getStatusSelect = (s) => {
+        const cls = 'st-' + s.toLowerCase().replace('_', '-');
+        return `
+          <select class="status-select ${cls}" onchange="changeStateGuard('${parentId}', ${subId ? `'${subId}'` : 'null'}, this.value)">
+            <option value="IDENTIFICADO" ${s === 'IDENTIFICADO' ? 'selected' : ''}>1. Identificado</option>
+            <option value="PENDIENTE_RADICACION" ${s === 'PENDIENTE_RADICACION' ? 'selected' : ''}>2. Pendiente radicación</option>
+            <option value="RADICADO" ${s === 'RADICADO' ? 'selected' : ''}>3. Reclamación radicada</option>
+            <option value="EN_SEGUIMIENTO" ${s === 'EN_SEGUIMIENTO' ? 'selected' : ''}>4. En seguimiento</option>
+            <option value="EN_VALIDACION" ${s === 'EN_VALIDACION' ? 'selected' : ''}>5. En validación</option>
+            <option value="REINTEGRADO_PARCIAL" ${s === 'REINTEGRADO_PARCIAL' ? 'selected' : ''}>6. Reintegrado parcial</option>
+            <option value="REINTEGRADO_TOTAL" ${s === 'REINTEGRADO_TOTAL' ? 'selected' : ''}>7. Reintegrado total</option>
+            <option value="RECHAZADO" ${s === 'RECHAZADO' ? 'selected' : ''}>8. Rechazado</option>
+            <option value="CERRADO" ${s === 'CERRADO' ? 'selected' : ''}>9. Cerrado</option>
+          </select>`;
+      };
+
+      return `
+        <tr>
+          <td>${fecha}</td>
+          <td style="font-weight:bold; font-family:monospace; color:#2563eb;">${idUnico}</td>
+          <td style="font-weight:bold;">${ref}</td>
+          <td>${flujo}</td>
+          <td>${tercero}</td>
+          <td>${desc}</td>
+          <td>${entidad}</td>
+          <td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(monto)}</td>
+          <td>${motivo}</td>
+          <td>${fReclam}</td>
+          <td>${resp}</td>
+          <td>${getStatusSelect(state)}</td>
+          <td class="text-center">${getSlaBadge(dias)}</td>
+          <td style="font-size:10px; color:#64748b;">${lastUp}</td>
+          <td class="text-center"><button onclick="openDetailModal('${parentId}', ${subId ? `'${subId}'` : 'null'})" class="btn-detail">🔍 Expediente</button></td>
+        </tr>`;
+    }
+
+    function changeStateGuard(parentId, subId, newState) {
+      const parent = appData[currentAccount].find(r => r.id === parentId);
+      if (!parent) return;
+
+      let item = parent;
+      if (subId && subId !== 'null') {
+        item = parent.subtotales.find(s => s.id === subId);
+      }
+
+      if (newState === 'CERRADO' && (item.reintegradoVal || 0) <= 0) {
+        alert("⚠️ REGLA DE AUDITORÍA: No se puede cerrar una reclamación sin verificar el reintegro en el extracto bancario.");
+        generateReportReversos();
+        return;
+      }
+
+      const prev = item.reversoState;
+      item.reversoState = newState;
+      item.lastUpdate = new Date().toISOString().replace('T', ' ').substring(0, 16);
+      
+      item.history = item.history || [];
+      item.history.push(`[${item.lastUpdate}] Estado cambiado de '${prev}' a '${newState}' por Stephany Castro.`);
+
+      generateReportReversos();
+    }
+
+    function openDetailModal(parentId, subId) {
+      const parent = appData[currentAccount].find(r => r.id === parentId);
+      if (!parent) return;
+
+      let item = parent;
+      if (subId && subId !== 'null') {
+        item = parent.subtotales.find(s => s.id === subId);
+      }
+      activeDetailItem = item;
+
+      document.getElementById('detId').innerText = item.id;
+      document.getElementById('detFecha').innerText = parent.fecha;
+      document.getElementById('detBanco').innerText = item.entidad || currentAccount;
+      document.getElementById('detRef').innerText = item.referencia || item.documento || 'REF-NUL';
+      document.getElementById('detTercero').innerText = item.tercero || 'Cámara de Comercio / Pasarela';
+      document.getElementById('detValor').innerText = formatCurrency(item.entrada || item.salida || item.referencia);
+
+      document.getElementById('detMotivo').innerText = item.motivo || 'Devolución adquirencia';
+      document.getElementById('detDesc').innerText = item.descripcion || item.informacion;
+
+      const hBox = document.getElementById('historyLogContainer');
+      hBox.innerHTML = '';
+      (item.history || []).forEach(h => { hBox.innerHTML += `<div class="log-item">${h}</div>`; });
+
+      const montoVal = parseFloat(item.entrada || item.salida || item.referencia) || 0;
+      const reintegrado = item.reintegradoVal || 0;
+      const saldo = montoVal - reintegrado;
+      const porc = montoVal > 0 ? ((reintegrado / montoVal) * 100).toFixed(1) : 0;
+
+      document.getElementById('recValReclamado').innerText = formatCurrency(montoVal);
+      document.getElementById('recValReintegrado').innerText = formatCurrency(reintegrado);
+      document.getElementById('recSaldoPendiente').innerText = formatCurrency(saldo);
+      document.getElementById('recPorcentaje').innerText = `${porc}%`;
+
+      const selectCruce = document.getElementById('selectCruceAbono');
+      selectCruce.innerHTML = '<option value="">-- Seleccionar abono en extracto --</option>';
+      (appData[currentAccount] || []).filter(r => r.entrada > 0).forEach(e => {
+        selectCruce.innerHTML += `<option value="${e.entrada}">${e.fecha} | Abono en banco ${formatCurrency(e.entrada)} (${e.descripcion})</option>`;
+      });
+
+      switchTab('tabA');
+      document.getElementById('modalDetail').classList.remove('hidden');
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function closeDetailModal() {
+      document.getElementById('modalDetail').classList.add('hidden');
+    }
+
+    function executePartialReintegro() {
+      if (!activeDetailItem) return;
+      const val = parseFloat(document.getElementById('selectCruceAbono').value) || 0;
+      if (val > 0) {
+        activeDetailItem.reintegradoVal = (activeDetailItem.reintegradoVal || 0) + val;
+        const totalVal = parseFloat(activeDetailItem.entrada || activeDetailItem.salida || activeDetailItem.referencia) || 0;
+
+        if (activeDetailItem.reintegradoVal >= totalVal) {
+          activeDetailItem.reversoState = 'REINTEGRADO_TOTAL';
+        } else {
+          activeDetailItem.reversoState = 'REINTEGRADO_PARCIAL';
+        }
+
+        const time = new Date().toISOString().replace('T', ' ').substring(0, 16);
+        activeDetailItem.history.push(`[${time}] Reintegro parcial de ${formatCurrency(val)} abonado y validado en extracto.`);
+        alert(`Reintegro por ${formatCurrency(val)} cruzado exitosamente.`);
+        closeDetailModal();
+        generateReportReversos();
+      } else {
+        alert("Selecciona un movimiento de abono válido para cruzar.");
+      }
+    }
+
+    function addSupportFile() {
+      const input = document.getElementById('fileInputSupport');
+      if (input.files.length > 0) {
+        const f = input.files[0].name;
+        document.getElementById('supportFileList').innerHTML += `<li>📄 ${f} (Subido por Stephany Castro)</li>`;
+        alert(`Soporte '${f}' adjuntado al expediente.`);
+      }
+    }
+
+    function exportToExcel() { alert("📥 Exportando reporte gerencial a Excel (.xlsx)..."); }
+    function exportToPDF() { alert("📄 Generando informe gerencial en PDF..."); }
+
+    function generateAlertas() {
+      const body = document.getElementById('alertasBody'); body.innerHTML = '';
+      const hoy = new Date('2026-11-06');
+      Object.keys(appData).forEach(acc => {
+        const rows = appData[acc];
+        if (rows.length === 0) {
+          body.innerHTML += `<tr><td>${acc}</td><td>Sin datos</td><td>—</td><td><span class="badge badge-alert">⚠️ Sin Movimientos</span></td></tr>`;
+        } else {
+          const ult = rows[rows.length - 1].fecha;
+          const diff = Math.floor((hoy - new Date(ult)) / (1000 * 60 * 60 * 24));
+          body.innerHTML += `<tr><td>${acc}</td><td>${ult}</td><td>${diff} días</td><td><span class="badge ${diff>30?'badge-alert':'badge-in'}">${diff>30?'Desactualizada':'Al día'}</span></td></tr>`;
+        }
+      });
+    }
+
+    function generateReportGastos() {
+      const body = document.getElementById('reportGastosBody'); body.innerHTML = '';
+      (appData[currentAccount] || []).forEach(row => {
+        if (row.fecha.substring(0, 7) === currentMonth && ((row.informacion||'').toLowerCase().includes('gastos') || (row.descripcion||'').toLowerCase().includes('gravamen'))) {
+          body.innerHTML += `<tr><td>${row.fecha}</td><td>${currentAccount}</td><td>${row.descripcion}</td><td class="text-right">${formatCurrency(row.salida)}</td><td><span class="badge badge-gasto">Gasto Bancario</span></td></tr>`;
+        }
+      });
+    }
+
+    function generateReportIdentificar() {
+      const body = document.getElementById('reportIdentificarBody'); body.innerHTML = '';
+      (appData[currentAccount] || []).forEach(row => {
+        if (row.fecha.substring(0, 7) === currentMonth && (!row.informacion || row.informacion.trim() === '')) {
+          body.innerHTML += `<tr><td>${row.fecha}</td><td><span class="badge badge-out">SALIDA</span></td><td>${row.descripcion}</td><td class="text-right">${formatCurrency(row.salida||row.entrada)}</td><td>Sin Información</td><td>Banco</td></tr>`;
+        }
+      });
+    }
+
+    function generateReportContabilizar() {
+      const body = document.getElementById('reportContabilizarBody'); body.innerHTML = '';
+      (appData[currentAccount] || []).forEach(row => {
+        if (row.fecha.substring(0, 7) === currentMonth && !row.documento) {
+          body.innerHTML += `<tr><td>${row.fecha}</td><td><span class="badge badge-in">ENTRADA</span></td><td>${row.descripcion}</td><td class="text-right">${formatCurrency(row.entrada||row.salida)}</td><td>Sin RC/FVE</td><td>Pendiente</td></tr>`;
+        }
+      });
+    }
+
+    function generateConsolidado() {
+      const body = document.getElementById('consolidadoBody'); body.innerHTML = '';
+      Object.keys(appData).forEach(acc => {
+        const rows = appData[acc];
+        let init = rows.length > 0 ? rows[0].saldoInicial : 0;
+        let inT = rows.reduce((s, r) => s + (parseFloat(r.entrada)||0), 0);
+        let outT = rows.reduce((s, r) => s + (parseFloat(r.salida)||0), 0);
+        body.innerHTML += `<tr><td>${acc}</td><td class="text-right">${formatCurrency(init)}</td><td class="text-right">${formatCurrency(inT)}</td><td class="text-right">${formatCurrency(outT)}</td><td class="text-right">${formatCurrency(init+inT-outT)}</td></tr>`;
+      });
     }
 
     function toggleReversoParent(id) {
@@ -1283,9 +1238,52 @@
       }
     }
 
-    window.onload = function() {
-      renderApp();
-    };
+    function updateCell(id, field, val) {
+      const row = appData[currentAccount].find(r => r.id === id);
+      if (row) { row[field] = field.includes('entrada') || field.includes('salida') ? parseFormattedNumber(val) : val.trim(); renderApp(); }
+    }
+
+    function updateSubCell(parentId, subId, field, val) {
+      const parent = appData[currentAccount].find(r => r.id === parentId);
+      if (parent) {
+        const sub = parent.subtotales.find(s => s.id === subId);
+        if (sub) { sub[field] = field === 'referencia' ? parseFormattedNumber(val) : val.trim(); renderApp(); }
+      }
+    }
+
+    function openAccountModal() {
+      const name = prompt("Nombre de la nueva cuenta bancaria:");
+      if (name) {
+        appData[name] = [];
+        const select = document.getElementById('accountSelect');
+        const opt = document.createElement('option');
+        opt.value = name; opt.innerText = name;
+        select.appendChild(opt);
+        select.value = name;
+        currentAccount = name;
+        renderApp();
+      }
+    }
+
+    function openSubModal(p) { document.getElementById('subParentId').value = p; document.getElementById('modalSub').classList.remove('hidden'); }
+    function closeSubModal() { document.getElementById('modalSub').classList.add('hidden'); }
+    function saveSubtotal() {
+      const pId = document.getElementById('subParentId').value;
+      const parent = appData[currentAccount].find(r => r.id === pId);
+      const monto = parseFloat(document.getElementById('inputSubMonto').value) || 0;
+      if (parent && monto > 0) {
+        parent.subtotales.push({
+          id: pId + '-' + (parent.subtotales.length + 1),
+          referencia: monto,
+          informacion: document.getElementById('inputSubInfo').value || 'Subtotal Desglosado',
+          documento: document.getElementById('inputSubDoc').value,
+          isReverso: false, reversoState: 'IDENTIFICADO', history: []
+        });
+        closeSubModal(); renderApp();
+      }
+    }
+
+    window.onload = function() { renderApp(); };
   </script>
 </body>
 </html>
