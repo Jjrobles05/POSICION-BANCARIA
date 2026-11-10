@@ -60,6 +60,10 @@
     td { padding: 10px; border-bottom: 1px solid #f1f5f9; color: #334155; white-space: nowrap; }
     tr:hover { background-color: #f8fafc; }
 
+    tr.bg-subtotal { background-color: #fef08a !important; }
+    tr.bg-subtotal:hover { background-color: #fde047 !important; }
+    td.subtotal-indent { padding-left: 20px !important; font-style: italic; color: #713f12; font-weight: 700; }
+
     .badge { padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; display: inline-block; }
     .badge-in { background: #d1fae5; color: #065f46; }
     .badge-out { background: #ffe4e6; color: #9f1239; }
@@ -455,7 +459,7 @@
     </main>
   </div>
 
-  <!-- VENTANA MODAL EXCEL CORREGIDA Y MEJORADA -->
+  <!-- VENTANA MODAL EXCEL PEGADO DIRECTO -->
   <div id="modalExcel" class="modal-overlay hidden">
     <div class="modal-excel-box">
       <div class="modal-header">
@@ -496,7 +500,7 @@
     </div>
   </div>
 
-  <!-- MODAL SUBTOTAL -->
+  <!-- MODAL SUBTOTAL MEJORADO Y AMIGABLE -->
   <div id="modalSub" class="modal-overlay hidden">
     <div class="modal-excel-box" style="max-width: 500px;">
       <div class="modal-header">
@@ -505,18 +509,21 @@
       </div>
       <input type="hidden" id="subParentId">
       <div style="margin-bottom: 12px;">
-        <label style="font-size:11px; font-weight:bold; color:#475569;">Monto Subtotal ($)</label>
-        <input type="number" id="inputSubMonto" placeholder="Ej: 47559" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+        <label style="font-size:11px; font-weight:bold; color:#475569; display:block; margin-bottom:4px;">Monto Subtotal ($)</label>
+        <input type="number" id="inputSubMonto" placeholder="Ej: 47559" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
       </div>
       <div style="margin-bottom: 12px;">
-        <label style="font-size:11px; font-weight:bold; color:#475569;">Información (Cliente / Factura FVE)</label>
-        <input type="text" id="inputSubInfo" placeholder="Ej: INVERSIONES EAMC SAS | FVE 17524" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+        <label style="font-size:11px; font-weight:bold; color:#475569; display:block; margin-bottom:4px;">Información (Cliente / Factura FVE)</label>
+        <input type="text" id="inputSubInfo" placeholder="Ej: INVERSIONES EAMC SAS | FVE 17524" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
       </div>
       <div style="margin-bottom: 16px;">
-        <label style="font-size:11px; font-weight:bold; color:#475569;">Documento (Recibo de Caja RC)</label>
-        <input type="text" id="inputSubDoc" placeholder="Ej: RC-1-3308" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+        <label style="font-size:11px; font-weight:bold; color:#475569; display:block; margin-bottom:4px;">Documento (Recibo de Caja RC)</label>
+        <input type="text" id="inputSubDoc" placeholder="Ej: RC-1-3308" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
       </div>
-      <button onclick="saveSubtotal()" class="btn-action">Guardar Subtotal</button>
+      <div style="display:flex; justify-content:flex-end; gap:8px;">
+        <button onclick="closeSubModal()" class="btn-secondary" style="margin-bottom:0;">Cancelar</button>
+        <button onclick="saveSubtotal()" class="btn-action" style="margin-bottom:0;">Guardar Subtotal</button>
+      </div>
     </div>
   </div>
 
@@ -665,7 +672,6 @@
     function parseFormattedNumber(val) {
       if (typeof val === 'number') return val;
       if (!val) return 0;
-      // Limpia comas, puntos y símbolos de moneda para extraer el valor exacto
       const cleanStr = val.toString().replace(/[^0-9.-]/g, '');
       return parseFloat(cleanStr) || 0;
     }
@@ -760,8 +766,8 @@
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td class="text-center">
-              <button onclick="openSubModal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 5px; border-radius:4px; font-weight:bold; cursor:pointer;">+</button>
-              <button onclick="toggleReversoParent('${row.id}')" class="btn-toggle-reverso">🔄</button>
+              <button onclick="openSubModal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 5px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal Desglosado">+</button>
+              <button onclick="toggleReversoParent('${row.id}')" class="btn-toggle-reverso" title="Marcar Reverso">🔄</button>
             </td>
             <td contenteditable="true" onblur="updateCell('${row.id}', 'fecha', this.innerText)">${row.fecha} ${row.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
             <td contenteditable="true" onblur="updateCell('${row.id}', 'descripcion', this.innerText)" style="font-weight:700; color:#0f172a;">${row.descripcion}</td>
@@ -782,8 +788,8 @@
               trSub.className = "bg-subtotal";
               trSub.innerHTML = `
                 <td class="text-center">
-                  <button onclick="deleteSubtotal('${row.id}', '${sub.id}')" style="background:transparent; color:#dc2626; border:none; font-weight:bold; cursor:pointer;">✕</button>
-                  <button onclick="toggleReversoSub('${row.id}', '${sub.id}')" class="btn-toggle-reverso">🔄</button>
+                  <button onclick="deleteSubtotal('${row.id}', '${sub.id}')" style="background:transparent; color:#dc2626; border:none; font-weight:bold; cursor:pointer;" title="Eliminar Subtotal">✕</button>
+                  <button onclick="toggleReversoSub('${row.id}', '${sub.id}')" class="btn-toggle-reverso" title="Marcar Reverso Subtotal">🔄</button>
                 </td>
                 <td class="text-center" style="color:#a1a1aa;">—</td>
                 <td class="subtotal-indent">↳ Subtotal Desglosado ${sub.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
@@ -805,7 +811,42 @@
       document.getElementById('kpiSaldoFinal').innerText = formatCurrency(runningBalance);
     }
 
-    /* FUNCIONALIDAD MEJORADA Y AMIGABLE DEL PEGADO DIRECTO DESDE EXCEL */
+    /* CONTROL Y GUARDADO DE SUBTOTALES */
+    function openSubModal(parentId) {
+      document.getElementById('subParentId').value = parentId;
+      document.getElementById('inputSubMonto').value = '';
+      document.getElementById('inputSubInfo').value = '';
+      document.getElementById('inputSubDoc').value = '';
+      document.getElementById('modalSub').classList.remove('hidden');
+    }
+
+    function closeSubModal() {
+      document.getElementById('modalSub').classList.add('hidden');
+    }
+
+    function saveSubtotal() {
+      const parentId = document.getElementById('subParentId').value;
+      const parent = appData[currentAccount].find(r => r.id === parentId);
+      const monto = parseFloat(document.getElementById('inputSubMonto').value) || 0;
+
+      if (parent && monto > 0) {
+        parent.subtotales.push({
+          id: parentId + '-' + (parent.subtotales.length + 1),
+          referencia: monto,
+          informacion: document.getElementById('inputSubInfo').value.trim() || 'Subtotal Desglosado',
+          documento: document.getElementById('inputSubDoc').value.trim(),
+          observaciones: 'Subtotal desglosado',
+          isReverso: false,
+          reversoState: 'IDENTIFICADO',
+          history: []
+        });
+        closeSubModal();
+        renderApp();
+      } else {
+        alert("Ingresa un monto válido para el subtotal.");
+      }
+    }
+
     function openExcelModal() {
       document.getElementById('modalExcel').classList.remove('hidden');
       clearExcelGrid();
@@ -847,7 +888,6 @@
         if (!line.trim()) return;
         const cols = line.split('\t');
 
-        // Ignorar encabezados si el usuario los copió de Excel
         const firstColUpper = (cols[0] || '').toUpperCase();
         if (firstColUpper.includes('FECHA') || firstColUpper.includes('DESC') || firstColUpper.includes('MONTO')) return;
 
@@ -913,9 +953,8 @@
       if (insertedCount > 0) {
         closeExcelModal();
         renderApp();
-        alert(`✅ Se insertaron ${insertedCount} movimiento(s) exitosamente en la Posición Bancaria de ${currentAccount}.`);
       } else {
-        alert("Por favor pega o ingresa al menos una fila válida con información.");
+        alert("Ingresa al menos una fila válida con información.");
       }
     }
 
@@ -1262,24 +1301,6 @@
         select.value = name;
         currentAccount = name;
         renderApp();
-      }
-    }
-
-    function openSubModal(p) { document.getElementById('subParentId').value = p; document.getElementById('modalSub').classList.remove('hidden'); }
-    function closeSubModal() { document.getElementById('modalSub').classList.add('hidden'); }
-    function saveSubtotal() {
-      const pId = document.getElementById('subParentId').value;
-      const parent = appData[currentAccount].find(r => r.id === pId);
-      const monto = parseFloat(document.getElementById('inputSubMonto').value) || 0;
-      if (parent && monto > 0) {
-        parent.subtotales.push({
-          id: pId + '-' + (parent.subtotales.length + 1),
-          referencia: monto,
-          informacion: document.getElementById('inputSubInfo').value || 'Subtotal Desglosado',
-          documento: document.getElementById('inputSubDoc').value,
-          isReverso: false, reversoState: 'IDENTIFICADO', history: []
-        });
-        closeSubModal(); renderApp();
       }
     }
 
