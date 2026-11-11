@@ -97,7 +97,6 @@
     .btn-action:hover { background: #047857; }
     .btn-secondary { background: #0f172a; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
     .btn-toggle-reverso { background: #7e22ce; color: white; border: none; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
-    .btn-toggle-eye { background: #ffffff; color: #084c27; border: 1px solid #ffffff; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; cursor: pointer; margin-left: 4px; }
     .btn-detail { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 999; }
@@ -236,6 +235,12 @@
             <option value="BANCOLOMBIA 9015">BANCOLOMBIA 9015</option>
           </select>
         </div>
+        
+        <!-- BOTÓN EN EL HEADER PARA OCULTAR/MOSTRAR SUBTOTALES -->
+        <button id="btnHeaderEyeControls" onclick="toggleSubtotalesVisibility()" class="btn-secondary" style="background:#475569;">
+          👁️ Ocultar Subtotales
+        </button>
+
         <button onclick="openAccountModal()" class="btn-add-acc">+ Cuenta</button>
       </div>
     </header>
@@ -260,10 +265,7 @@
           <table>
             <thead>
               <tr>
-                <th class="text-center" style="white-space:nowrap;">
-                  Acción 
-                  <button id="btnHeaderEye" onclick="toggleSubtotalesVisibility()" class="btn-toggle-eye" title="Ocultar/Mostrar Subtotales">👁️</button>
-                </th>
+                <th class="text-center" style="white-space:nowrap; width:80px;">Acción</th>
                 <th>Fecha</th>
                 <th>Descripción</th>
                 <th class="text-right">Referencia</th>
@@ -769,9 +771,17 @@
       renderApp();
     }
 
+    /* ALTERNANCIA DE SUBTOTALES EN EL HEADER */
     function toggleSubtotalesVisibility() {
       showSubtotales = !showSubtotales;
-      document.getElementById('btnHeaderEye').innerText = showSubtotales ? '👁️' : '👁️‍🗨️';
+      const btn = document.getElementById('btnHeaderEyeControls');
+      if (showSubtotales) {
+        btn.innerText = '👁️ Ocultar Subtotales';
+        btn.style.background = '#475569';
+      } else {
+        btn.innerText = '👁️‍🗨️ Mostrar Subtotales';
+        btn.style.background = '#059669';
+      }
       renderApp();
     }
 
@@ -910,22 +920,15 @@
         let rawEntrada = 0;
         let rawSalida = 0;
 
-        if (cols.length === 1) {
-          rawDesc = cols[0].trim();
-        } else if (cols.length === 2) {
-          rawFecha = cols[0].trim() || rawFecha;
-          rawDesc = cols[1].trim();
-        } else if (cols.length === 3) {
-          rawFecha = cols[0].trim() || rawFecha;
-          rawDesc = cols[1].trim();
+        if (cols.length === 1) { rawDesc = cols[0].trim(); }
+        else if (cols.length === 2) { rawFecha = cols[0].trim() || rawFecha; rawDesc = cols[1].trim(); }
+        else if (cols.length === 3) {
+          rawFecha = cols[0].trim() || rawFecha; rawDesc = cols[1].trim();
           const val = parseFormattedNumber(cols[2]);
-          if (val >= 0) rawEntrada = val;
-          else rawSalida = Math.abs(val);
+          if (val >= 0) rawEntrada = val; else rawSalida = Math.abs(val);
         } else if (cols.length >= 4) {
-          rawFecha = cols[0].trim() || rawFecha;
-          rawDesc = cols[1].trim();
-          rawEntrada = parseFormattedNumber(cols[2]);
-          rawSalida = parseFormattedNumber(cols[3]);
+          rawFecha = cols[0].trim() || rawFecha; rawDesc = cols[1].trim();
+          rawEntrada = parseFormattedNumber(cols[2]); rawSalida = parseFormattedNumber(cols[3]);
         }
 
         if (rawDesc !== '' || rawEntrada > 0 || rawSalida > 0) {
