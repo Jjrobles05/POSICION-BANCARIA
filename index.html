@@ -10,7 +10,7 @@
 
     aside { width: 270px; background-color: #0f172a; color: #ffffff; display: flex; flex-direction: column; flex-shrink: 0; border-right: 1px solid #1e293b; }
     .sidebar-header { padding: 20px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; gap: 12px; }
-    .sidebar-logo { background: #10b981; color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
+    .sidebar-logo { background: #10b981; color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: justify; font-size: 20px; font-weight: bold; }
     .sidebar-title h2 { font-size: 15px; font-weight: 800; color: #ffffff; }
     .sidebar-title p { font-size: 11px; color: #64748b; }
 
@@ -68,6 +68,7 @@
     tr.row-empty td { border-bottom: 2px dashed #86efac; color: #166534; }
     td.editable-cell { outline: none; transition: background 0.2s; }
     td.editable-cell:focus { background-color: #dcfce7 !important; box-shadow: inset 0 0 0 2px #15803d; }
+    td.readonly-cell { background-color: transparent !important; cursor: not-allowed; opacity: 0.85; }
 
     .badge { padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; display: inline-block; }
     .badge-in { background: #d1fae5; color: #065f46; }
@@ -102,6 +103,8 @@
     .btn-row-eye { background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
     .btn-row-eye:hover { background: #f1f5f9; }
 
+    .btn-disabled { opacity: 0.4 !important; cursor: not-allowed !important; pointer-events: none !important; }
+
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 999; }
     .modal-excel-box { background: white; border-radius: 16px; width: 92%; max-width: 950px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid #cbd5e1; display: flex; flex-direction: column; max-height: 90vh; }
     
@@ -133,6 +136,10 @@
     .checkbox-list { max-height: 140px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; background: #f8fafc; }
     .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 6px; font-weight: 600; color: #334155; }
 
+    .permissions-matrix { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; margin-top: 6px; }
+    .perm-box { background: white; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; }
+    .perm-box h5 { font-size: 11px; font-weight: 800; color: #0f172a; text-transform: uppercase; margin-bottom: 6px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; }
+
     .pagination-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #ffffff; border-top: 1px solid #e2e8f0; }
     .page-btn { padding: 4px 10px; border: 1px solid #cbd5e1; background: #ffffff; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; }
 
@@ -143,7 +150,7 @@
 </head>
 <body>
 
-  <!-- BARRA LATERAL NAVEGACIÓN CON MÓDULOS SEPARADOS -->
+  <!-- BARRA LATERAL NAVEGACIÓN -->
   <aside>
     <div class="sidebar-header">
       <div class="sidebar-logo">🏦</div>
@@ -241,7 +248,7 @@
           </select>
         </div>
 
-        <button onclick="openAccountModal()" class="btn-add-acc">+ Cuenta</button>
+        <button id="btnAddAccountHeader" onclick="openAccountModal()" class="btn-add-acc">+ Cuenta</button>
       </div>
     </header>
 
@@ -257,7 +264,7 @@
         </div>
 
         <div style="margin-bottom: 12px; display:flex; justify-content:space-between; align-items:center;">
-          <button onclick="openExcelModal()" class="btn-action">📊 + Agregar Movimientos (Ventana Modal Excel)</button>
+          <button id="btnOpenExcelModal" onclick="openExcelModal()" class="btn-action">📊 + Agregar Movimientos (Ventana Modal Excel)</button>
           <span style="font-size:12px; color:#64748b;">💡 Escribe en la fila verde al final o pega con <strong>Ctrl + V</strong> en la propia tabla.</span>
         </div>
 
@@ -362,14 +369,14 @@
       <!-- MÓDULO 3: CONFIGURACIÓN (USUARIOS Y PERMISOS) -->
       <section id="mod-usuarios" class="module-section hidden">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-          <h3 style="font-size:16px; font-weight:800;">👥 Administración de Usuarios y Empresas Asignadas</h3>
-          <button onclick="openUserModal()" class="btn-action">+ Crear Nuevo Usuario</button>
+          <h3 style="font-size:16px; font-weight:800;">👥 Administración de Usuarios, Permisos y Empresas</h3>
+          <button id="btnCreateUser" onclick="openUserModal()" class="btn-action">+ Crear Nuevo Usuario</button>
         </div>
         <div class="table-card">
           <table>
             <thead>
               <tr style="background:#0f172a !important;">
-                <th>Usuario (Nombre)</th><th>Correo / Usuario</th><th>Rol</th><th>Empresas Asignadas (Permisos)</th><th class="text-center">Acciones</th>
+                <th>Usuario (Nombre)</th><th>Correo / Usuario</th><th>Rol Principal</th><th>Empresas Asignadas</th><th>Resumen de Permisos</th><th class="text-center">Acciones</th>
               </tr>
             </thead>
             <tbody id="usersTableBody"></tbody>
@@ -504,7 +511,7 @@
     </div>
   </div>
 
-  <!-- MODAL SUBTOTAL DESGLOSADO MEJORADO -->
+  <!-- MODAL SUBTOTAL DESGLOSADO -->
   <div id="modalSub" class="modal-overlay hidden">
     <div class="modal-excel-box" style="max-width: 500px;">
       <div class="modal-header">
@@ -604,37 +611,82 @@
     </div>
   </div>
 
-  <!-- MODAL USUARIOS Y PERMISOS -->
+  <!-- MODAL REGISTRO / EDICIÓN DE USUARIOS Y MATRIZ DE PERMISOS -->
   <div id="modalUser" class="modal-overlay hidden">
-    <div class="modal-excel-box" style="max-width: 520px;">
+    <div class="modal-excel-box" style="max-width: 720px;">
       <div class="modal-header">
-        <h3 class="modal-title">👥 Registrar Usuario y Permisos</h3>
+        <h3 class="modal-title">👥 Configuración Individual de Usuario y Permisos</h3>
         <button onclick="closeUserModal()" class="modal-close">✕</button>
       </div>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom: 12px;">
+        <div>
+          <label style="font-size:11px; font-weight:bold;">Nombre Completo</label>
+          <input type="text" id="inputUserName" placeholder="Ej: Carlos Ramírez" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+        </div>
+        <div>
+          <label style="font-size:11px; font-weight:bold;">Usuario / Correo</label>
+          <input type="text" id="inputUserKey" placeholder="Ej: carlos.ramirez" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+        </div>
+        <div>
+          <label style="font-size:11px; font-weight:bold;">Rol Base (Plantilla Inicial)</label>
+          <select id="inputUserRole" onchange="applyRoleTemplate(this.value)" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+            <option value="Líder Contable">Líder Contable (Admin Total)</option>
+            <option value="Tesorería">Tesorería (Administración Bancaria)</option>
+            <option value="Contabilidad">Contabilidad (Edición Limitada)</option>
+            <option value="Auditor Externo">Auditor Externo (Solo Consulta)</option>
+          </select>
+        </div>
+      </div>
+
       <div style="margin-bottom: 12px;">
-        <label style="font-size:11px; font-weight:bold;">Nombre Completo</label>
-        <input type="text" id="inputUserName" placeholder="Ej: Carlos Ramírez" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
-      </div>
-      <div style="margin-bottom: 12px;">
-        <label style="font-size:11px; font-weight:bold;">Usuario / Correo</label>
-        <input type="text" id="inputUserKey" placeholder="Ej: carlos.ramirez" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
-      </div>
-      <div style="margin-bottom: 14px;">
-        <label style="font-size:11px; font-weight:bold;">Rol del Usuario</label>
-        <select id="inputUserRole" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
-          <option value="Auditor Externo">Auditor Externo</option>
-          <option value="Revisor Fiscal">Revisor Fiscal</option>
-          <option value="Asistente Contable">Asistente Contable</option>
-          <option value="Líder Contable">Líder Contable</option>
-        </select>
-      </div>
-      <div style="margin-bottom: 16px;">
-        <label style="font-size:11px; font-weight:bold;">🏢 Seleccionar Empresas que debe visualizar:</label>
+        <label style="font-size:11px; font-weight:bold;">🏢 Empresas Asignadas (Permisos de Visualización):</label>
         <div id="empresasCheckboxes" class="checkbox-list"></div>
       </div>
+
+      <div style="margin-bottom: 14px;">
+        <label style="font-size:11px; font-weight:bold; color:#0f172a;">🔐 Matriz de Permisos por Área y Acción (Personalizada por Usuario):</label>
+        <div class="permissions-matrix">
+          
+          <div class="perm-box">
+            <h5>Posición Bancaria</h5>
+            <label class="checkbox-item"><input type="checkbox" id="perm_posicion_ver"> <span>Ver Módulo</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="perm_posicion_crear"> <span>Agregar Movimientos</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="perm_posicion_editar_todo"> <span>Editar Todo (Tesorería)</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="perm_posicion_editar_limitado"> <span>Editar Info/Doc/Obs</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="perm_posicion_eliminar"> <span>Eliminar Registros</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="perm_posicion_subtotales_admin"> <span>Crear/Eliminar Subtotales</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="perm_posicion_modal_excel"> <span>Usar Modal/Pegado Excel</span></label>
+          </div>
+
+          <div class="perm-box">
+            <h5>Módulos de Seguimiento</h5>
+            <label class="checkbox-item"><input type="checkbox" id="perm_seguimiento_ver"> <span>Ver Reportes Seguimiento</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="perm_seguimiento_editar"> <span>Editar Clasificaciones</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="perm_consolidado_ver"> <span>Ver Consolidado Cuentas</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="perm_alertas_ver"> <span>Ver Alertas Cuentas</span></label>
+          </div>
+
+          <div class="perm-box">
+            <h5>Auditoría de Reversos</h5>
+            <label class="checkbox-item"><input type="checkbox" id="perm_auditoria_ver"> <span>Ver Módulo Auditoría</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="perm_auditoria_marcar"> <span>Marcar/Desmarcar Reverso</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="perm_auditoria_cambiar_estado"> <span>Cambiar Estado Reclamación</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="perm_auditoria_aplicar_cruce"> <span>Aplicar Reintegros/Cruces</span></label>
+          </div>
+
+          <div class="perm-box">
+            <h5>Administración</h5>
+            <label class="checkbox-item"><input type="checkbox" id="perm_usuarios_ver"> <span>Ver Módulo Usuarios</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="perm_usuarios_gestionar"> <span>Crear/Editar Usuarios</span></label>
+          </div>
+
+        </div>
+      </div>
+
       <div style="display:flex; justify-content:flex-end; gap:8px;">
         <button onclick="closeUserModal()" class="btn-secondary">Cancelar</button>
-        <button onclick="saveUser()" class="btn-action">Guardar Usuario</button>
+        <button onclick="saveUser()" class="btn-action">Guardar Configuración de Permisos</button>
       </div>
     </div>
   </div>
@@ -652,9 +704,64 @@
       { nit: '900555111-9', razonSocial: 'Comercializadora EAMC SAS' }
     ];
 
+    /* BASE DE DATOS DE USUARIOS CON CONFIGURACIÓN INDEPENDIENTE DE PERMISOS POR ÁREA Y ACCIÓN */
     let usersList = [
-      { userKey: 'stephany.castro', nombre: 'Stephany Castro', rol: 'Líder Contable', empresasAsignadas: ['901234567-1', '800987654-3', '900555111-9'] },
-      { userKey: 'revisor.externo', nombre: 'Carlos Revisor', rol: 'Revisor Fiscal', empresasAsignadas: ['901234567-1'] }
+      { 
+        userKey: 'stephany.castro', 
+        nombre: 'Stephany Castro', 
+        rol: 'Líder Contable', 
+        empresasAsignadas: ['901234567-1', '800987654-3', '900555111-9'],
+        permissions: {
+          posicion: { ver: true, crear: true, editarTodo: true, editarLimitado: true, eliminar: true, subtotalesAdmin: true, modalExcel: true },
+          seguimiento: { ver: true, editar: true },
+          consolidado: { ver: true },
+          alertas: { ver: true },
+          auditoria: { ver: true, marcar: true, cambiarEstado: true, aplicarCruce: true },
+          usuarios: { ver: true, gestionar: true }
+        }
+      },
+      { 
+        userKey: 'tesoreria.user', 
+        nombre: 'Juan Tesorería', 
+        rol: 'Tesorería', 
+        empresasAsignadas: ['901234567-1', '800987654-3'],
+        permissions: {
+          posicion: { ver: true, crear: true, editarTodo: true, editarLimitado: true, eliminar: true, subtotalesAdmin: true, modalExcel: true },
+          seguimiento: { ver: true, editar: true },
+          consolidado: { ver: true },
+          alertas: { ver: true },
+          auditoria: { ver: true, marcar: true, cambiarEstado: true, aplicarCruce: true },
+          usuarios: { ver: false, gestionar: false }
+        }
+      },
+      { 
+        userKey: 'contabilidad.user', 
+        nombre: 'Maria Contable', 
+        rol: 'Contabilidad', 
+        empresasAsignadas: ['901234567-1'],
+        permissions: {
+          posicion: { ver: true, crear: false, editarTodo: false, editarLimitado: true, eliminar: false, subtotalesAdmin: false, modalExcel: false },
+          seguimiento: { ver: true, editar: true },
+          consolidado: { ver: true },
+          alertas: { ver: false },
+          auditoria: { ver: true, marcar: false, cambiarEstado: false, aplicarCruce: false },
+          usuarios: { ver: false, gestionar: false }
+        }
+      },
+      { 
+        userKey: 'auditor.user', 
+        nombre: 'Carlos Revisor', 
+        rol: 'Auditor Externo', 
+        empresasAsignadas: ['901234567-1'],
+        permissions: {
+          posicion: { ver: true, crear: false, editarTodo: false, editarLimitado: false, eliminar: false, subtotalesAdmin: false, modalExcel: false },
+          seguimiento: { ver: true, editar: false },
+          consolidado: { ver: true },
+          alertas: { ver: true },
+          auditoria: { ver: true, marcar: false, cambiarEstado: false, aplicarCruce: false },
+          usuarios: { ver: false, gestionar: false }
+        }
+      }
     ];
 
     let appData = {
@@ -726,6 +833,17 @@
       return parseFloat(val.toString().replace(/[^0-9.-]/g, '')) || 0;
     }
 
+    /* FUNCIÓN GUARDIANA DE PERMISOS */
+    function getCurrentUserObj() {
+      return usersList.find(u => u.userKey === currentActiveUser) || usersList[0];
+    }
+
+    function hasPermission(area, accion) {
+      const user = getCurrentUserObj();
+      if (!user || !user.permissions || !user.permissions[area]) return false;
+      return !!user.permissions[area][accion];
+    }
+
     function renderUserSessionSwitcher() {
       const select = document.getElementById('userSessionSelect');
       select.innerHTML = '';
@@ -742,14 +860,51 @@
     function changeUserSession() {
       currentActiveUser = document.getElementById('userSessionSelect').value;
       renderEmpresasSelect();
+      updateNavigationPermissions();
       renderApp();
+    }
+
+    function updateNavigationPermissions() {
+      const user = getCurrentUserObj();
+      
+      // Ocultar / Mostrar Módulos en el menú lateral según permisos
+      toggleNavLink('link-mod-posicion', hasPermission('posicion', 'ver'));
+      toggleNavLink('link-mod-consolidado', hasPermission('consolidado', 'ver'));
+      toggleNavLink('link-mod-alertas', hasPermission('alertas', 'ver'));
+      toggleNavLink('link-mod-identificar', hasPermission('seguimiento', 'ver'));
+      toggleNavLink('link-mod-contabilizar', hasPermission('seguimiento', 'ver'));
+      toggleNavLink('link-mod-gastos', hasPermission('seguimiento', 'ver'));
+      toggleNavLink('link-mod-usuarios', hasPermission('usuarios', 'ver'));
+      toggleNavLink('link-mod-reversos', hasPermission('auditoria', 'ver'));
+
+      // Botón superior Excel modal
+      const btnExcel = document.getElementById('btnOpenExcelModal');
+      if (btnExcel) {
+        if (hasPermission('posicion', 'modalExcel')) btnExcel.classList.remove('hidden');
+        else btnExcel.classList.add('hidden');
+      }
+
+      // Botón + Cuenta
+      const btnAcc = document.getElementById('btnAddAccountHeader');
+      if (btnAcc) {
+        if (hasPermission('posicion', 'crear')) btnAcc.classList.remove('hidden');
+        else btnAcc.classList.add('hidden');
+      }
+    }
+
+    function toggleNavLink(id, isVisible) {
+      const el = document.getElementById(id);
+      if (el) {
+        if (isVisible) el.classList.remove('hidden');
+        else el.classList.add('hidden');
+      }
     }
 
     function renderEmpresasSelect() {
       const select = document.getElementById('empresaSelect');
       select.innerHTML = '';
 
-      const currentUserObj = usersList.find(u => u.userKey === currentActiveUser);
+      const currentUserObj = getCurrentUserObj();
       const assignedNits = currentUserObj ? currentUserObj.empresasAsignadas : [];
       const allowedEmpresas = empresasList.filter(e => assignedNits.includes(e.nit));
 
@@ -781,9 +936,17 @@
     }
 
     function renderApp() {
+      updateNavigationPermissions();
+
       const tbody = document.getElementById('bankTableBody');
       if (!tbody) return;
       tbody.innerHTML = '';
+
+      const canEditAll = hasPermission('posicion', 'editarTodo');
+      const canEditLimited = hasPermission('posicion', 'editarLimitado');
+      const canCreate = hasPermission('posicion', 'crear');
+      const canSubAdmin = hasPermission('posicion', 'subtotalesAdmin');
+      const canReversoMarcar = hasPermission('auditoria', 'marcar');
 
       const data = appData[currentAccount] || [];
       data.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
@@ -828,27 +991,35 @@
           const hasSub = row.subtotales && row.subtotales.length > 0;
           const isVisible = row.subtotalesVisible !== false;
           
+          /* BOTÓN VER DE SUB-TOTALES (SIEMPRE VISIBLE Y UTILIZABLE POR TODOS) */
           const eyeBtnHtml = hasSub 
-            ? `<button onclick="toggleRowSubtotales('${row.id}')" class="btn-row-eye" title="${isVisible ? 'Ocultar subtotales de este grupo' : 'Mostrar subtotales de este grupo'}">${isVisible ? '👁️' : '👁️‍🗨️'}</button>`
+            ? `<button onclick="toggleRowSubtotales('${row.id}')" class="btn-row-eye" title="${isVisible ? 'Ocultar subtotales' : 'Mostrar subtotales'}">${isVisible ? '👁️' : '👁️‍🗨️'}</button>`
             : '';
+
+          /* BOTONES ADMINISTRATIVOS DE ACCIÓN (BLOQUEADOS PARA OTROS USUARIOS) */
+          const addSubBtnHtml = `<button onclick="openSubModal('${row.id}')" class="${canSubAdmin ? '' : 'btn-disabled'}" style="background:#d1fae5; color:#065f46; border:none; padding:4px 6px; border-radius:4px; font-weight:bold; cursor:pointer;" title="${canSubAdmin ? 'Agregar Subtotal' : 'No Autorizado'}">+</button>`;
+          const reversoBtnHtml = `<button onclick="toggleReversoParent('${row.id}')" class="btn-toggle-reverso ${canReversoMarcar ? '' : 'btn-disabled'}" title="${canReversoMarcar ? 'Marcar Reverso' : 'No Autorizado'}">🔄</button>`;
+
+          const attrFullEdit = canEditAll ? 'contenteditable="true" class="editable-cell"' : 'contenteditable="false" class="readonly-cell"';
+          const attrLimEdit = (canEditAll || canEditLimited) ? 'contenteditable="true" class="editable-cell"' : 'contenteditable="false" class="readonly-cell"';
 
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td class="text-center" style="display:flex; gap:3px; justify-content:center; align-items:center;">
-              <button onclick="openSubModal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 6px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal Desglosado">+</button>
-              <button onclick="toggleReversoParent('${row.id}')" class="btn-toggle-reverso" title="Marcar Reverso">🔄</button>
+              ${addSubBtnHtml}
+              ${reversoBtnHtml}
               ${eyeBtnHtml}
             </td>
-            <td contenteditable="true" onblur="updateCell('${row.id}', 'fecha', this.innerText)">${row.fecha} ${row.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
-            <td contenteditable="true" onblur="updateCell('${row.id}', 'descripcion', this.innerText)" style="font-weight:700; color:#0f172a;">${row.descripcion}</td>
-            <td contenteditable="true" onblur="updateCell('${row.id}', 'referencia', this.innerText)" class="text-right" style="color:#94a3b8;">${row.referencia ? formatCurrency(row.referencia) : ''}</td>
+            <td ${attrFullEdit} onblur="updateCell('${row.id}', 'fecha', this.innerText)">${row.fecha} ${row.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
+            <td ${attrFullEdit} onblur="updateCell('${row.id}', 'descripcion', this.innerText)" style="font-weight:700; color:#0f172a;">${row.descripcion}</td>
+            <td ${attrFullEdit} onblur="updateCell('${row.id}', 'referencia', this.innerText)" class="text-right" style="color:#94a3b8;">${row.referencia ? formatCurrency(row.referencia) : ''}</td>
             <td class="text-right" style="font-weight:600;">${formatCurrency(monthInitialBalance)}</td>
-            <td contenteditable="true" onblur="updateCell('${row.id}', 'entrada', this.innerText)" class="text-right" style="font-weight:800; color:#059669;">${entrada > 0 ? formatCurrency(entrada) : ''}</td>
-            <td contenteditable="true" onblur="updateCell('${row.id}', 'salida', this.innerText)" class="text-right" style="font-weight:800; color:#dc2626;">${salida > 0 ? formatCurrency(salida) : ''}</td>
+            <td ${attrFullEdit} onblur="updateCell('${row.id}', 'entrada', this.innerText)" class="text-right" style="font-weight:800; color:#059669;">${entrada > 0 ? formatCurrency(entrada) : ''}</td>
+            <td ${attrFullEdit} onblur="updateCell('${row.id}', 'salida', this.innerText)" class="text-right" style="font-weight:800; color:#dc2626;">${salida > 0 ? formatCurrency(salida) : ''}</td>
             <td class="text-right" style="font-weight:900; color:#0f172a;">${formatCurrency(runningBalance)}</td>
-            <td contenteditable="true" onblur="updateCell('${row.id}', 'informacion', this.innerText)">${row.informacion}</td>
-            <td contenteditable="true" onblur="updateCell('${row.id}', 'documento', this.innerText)">${row.documento}</td>
-            <td contenteditable="true" onblur="updateCell('${row.id}', 'observaciones', this.innerText)" style="font-style:italic; color:#64748b;">${row.observaciones}</td>
+            <td ${attrLimEdit} onblur="updateCell('${row.id}', 'informacion', this.innerText)">${row.informacion}</td>
+            <td ${attrLimEdit} onblur="updateCell('${row.id}', 'documento', this.innerText)">${row.documento}</td>
+            <td ${attrLimEdit} onblur="updateCell('${row.id}', 'observaciones', this.innerText)" style="font-style:italic; color:#64748b;">${row.observaciones}</td>
           `;
           tbody.appendChild(tr);
 
@@ -856,18 +1027,22 @@
             row.subtotales.forEach((sub) => {
               const trSub = document.createElement('tr');
               trSub.className = "bg-subtotal";
+              
+              const delSubHtml = `<button onclick="deleteSubtotal('${row.id}', '${sub.id}')" class="${canSubAdmin ? '' : 'btn-disabled'}" style="background:transparent; color:#dc2626; border:none; font-weight:bold; cursor:pointer;" title="${canSubAdmin ? 'Eliminar Subtotal' : 'No Autorizado'}">✕</button>`;
+              const subRevHtml = `<button onclick="toggleReversoSub('${row.id}', '${sub.id}')" class="btn-toggle-reverso ${canReversoMarcar ? '' : 'btn-disabled'}" title="${canReversoMarcar ? 'Marcar Reverso Subtotal' : 'No Autorizado'}">🔄</button>`;
+
               trSub.innerHTML = `
                 <td class="text-center">
-                  <button onclick="deleteSubtotal('${row.id}', '${sub.id}')" style="background:transparent; color:#dc2626; border:none; font-weight:bold; cursor:pointer;" title="Eliminar Subtotal">✕</button>
-                  <button onclick="toggleReversoSub('${row.id}', '${sub.id}')" class="btn-toggle-reverso" title="Marcar Reverso Subtotal">🔄</button>
+                  ${delSubHtml}
+                  ${subRevHtml}
                 </td>
                 <td class="text-center" style="color:#a1a1aa;">—</td>
                 <td class="subtotal-indent">↳ Subtotal Desglosado ${sub.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
-                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'referencia', this.innerText)" class="text-right" style="font-weight:800; color:#713f12;">${formatCurrency(sub.referencia)}</td>
+                <td ${attrFullEdit} onblur="updateSubCell('${row.id}', '${sub.id}', 'referencia', this.innerText)" class="text-right" style="font-weight:800; color:#713f12;">${formatCurrency(sub.referencia)}</td>
                 <td></td><td></td><td></td><td></td>
-                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'informacion', this.innerText)">${sub.informacion}</td>
-                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'documento', this.innerText)">${sub.documento}</td>
-                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'observaciones', this.innerText)">${sub.observaciones}</td>
+                <td ${attrLimEdit} onblur="updateSubCell('${row.id}', '${sub.id}', 'informacion', this.innerText)">${sub.informacion}</td>
+                <td ${attrLimEdit} onblur="updateSubCell('${row.id}', '${sub.id}', 'documento', this.innerText)">${sub.documento}</td>
+                <td ${attrLimEdit} onblur="updateSubCell('${row.id}', '${sub.id}', 'observaciones', this.innerText)">${sub.observaciones}</td>
               `;
               tbody.appendChild(trSub);
             });
@@ -875,22 +1050,25 @@
         }
       });
 
-      const trEmpty = document.createElement('tr');
-      trEmpty.className = 'row-empty';
-      trEmpty.innerHTML = `
-        <td class="text-center" style="font-weight:bold; color:#166534;">+</td>
-        <td contenteditable="true" class="editable-cell" id="new_fecha" placeholder="AAAA-MM-DD">${currentMonth}-01</td>
-        <td contenteditable="true" class="editable-cell" id="new_desc" style="font-weight:700;" onblur="checkSaveNewRow()">+ Escribe o pega aquí (Ctrl+V)...</td>
-        <td contenteditable="true" class="editable-cell text-right" id="new_ref" onblur="checkSaveNewRow()"></td>
-        <td class="text-right" style="color:#94a3b8;">—</td>
-        <td contenteditable="true" class="editable-cell text-right" id="new_entrada" style="color:#059669; font-weight:bold;" onblur="checkSaveNewRow()"></td>
-        <td contenteditable="true" class="editable-cell text-right" id="new_salida" style="color:#dc2626; font-weight:bold;" onblur="checkSaveNewRow()"></td>
-        <td class="text-right" style="color:#94a3b8;">—</td>
-        <td contenteditable="true" class="editable-cell" id="new_info" onblur="checkSaveNewRow()"></td>
-        <td contenteditable="true" class="editable-cell" id="new_doc" onblur="checkSaveNewRow()"></td>
-        <td contenteditable="true" class="editable-cell" id="new_obs" onblur="checkSaveNewRow()"></td>
-      `;
-      tbody.appendChild(trEmpty);
+      /* FILA VACÍA FINAL SOLO VISIBLE PARA TESORERÍA / USUARIOS CON PERMISO DE CREAR */
+      if (canCreate) {
+        const trEmpty = document.createElement('tr');
+        trEmpty.className = 'row-empty';
+        trEmpty.innerHTML = `
+          <td class="text-center" style="font-weight:bold; color:#166534;">+</td>
+          <td contenteditable="true" class="editable-cell" id="new_fecha" placeholder="AAAA-MM-DD">${currentMonth}-01</td>
+          <td contenteditable="true" class="editable-cell" id="new_desc" style="font-weight:700;" onblur="checkSaveNewRow()">+ Escribe o pega aquí (Ctrl+V)...</td>
+          <td contenteditable="true" class="editable-cell text-right" id="new_ref" onblur="checkSaveNewRow()"></td>
+          <td class="text-right" style="color:#94a3b8;">—</td>
+          <td contenteditable="true" class="editable-cell text-right" id="new_entrada" style="color:#059669; font-weight:bold;" onblur="checkSaveNewRow()"></td>
+          <td contenteditable="true" class="editable-cell text-right" id="new_salida" style="color:#dc2626; font-weight:bold;" onblur="checkSaveNewRow()"></td>
+          <td class="text-right" style="color:#94a3b8;">—</td>
+          <td contenteditable="true" class="editable-cell" id="new_info" onblur="checkSaveNewRow()"></td>
+          <td contenteditable="true" class="editable-cell" id="new_doc" onblur="checkSaveNewRow()"></td>
+          <td contenteditable="true" class="editable-cell" id="new_obs" onblur="checkSaveNewRow()"></td>
+        `;
+        tbody.appendChild(trEmpty);
+      }
 
       document.getElementById('kpiSaldoInicial').innerText = formatCurrency(monthInitialBalance);
       document.getElementById('kpiEntradas').innerText = formatCurrency(monthEntradas);
@@ -899,6 +1077,12 @@
     }
 
     function handleDirectTablePaste(e) {
+      if (!hasPermission('posicion', 'modalExcel') && !hasPermission('posicion', 'crear')) {
+        alert("⚠️ Tu usuario no tiene permisos para agregar movimientos por pegado directo.");
+        e.preventDefault();
+        return;
+      }
+
       const clipboardData = e.clipboardData || window.clipboardData;
       const pastedData = clipboardData.getData('Text');
       if (!pastedData) return;
@@ -959,6 +1143,8 @@
     }
 
     function checkSaveNewRow() {
+      if (!hasPermission('posicion', 'crear')) return;
+
       const fecha = document.getElementById('new_fecha').innerText.trim();
       const desc = document.getElementById('new_desc').innerText.replace('+ Escribe o pega aquí (Ctrl+V)...', '').trim();
       const ref = document.getElementById('new_ref').innerText.trim();
@@ -991,6 +1177,10 @@
     }
 
     function openSubModal(parentId) {
+      if (!hasPermission('posicion', 'subtotalesAdmin')) {
+        alert("⚠️ No tienes permisos para administrar subtotales.");
+        return;
+      }
       document.getElementById('subParentId').value = parentId;
       document.getElementById('inputSubMonto').value = '';
       document.getElementById('inputSubInfo').value = '';
@@ -1000,6 +1190,8 @@
     function closeSubModal() { document.getElementById('modalSub').classList.add('hidden'); }
 
     function saveSubtotal() {
+      if (!hasPermission('posicion', 'subtotalesAdmin')) return;
+
       const parentId = document.getElementById('subParentId').value;
       const parent = appData[currentAccount].find(r => r.id === parentId);
       const monto = parseFloat(document.getElementById('inputSubMonto').value) || 0;
@@ -1024,6 +1216,10 @@
     }
 
     function openExcelModal() {
+      if (!hasPermission('posicion', 'modalExcel')) {
+        alert("⚠️ No tienes autorización para usar la ventana modal de Excel.");
+        return;
+      }
       document.getElementById('modalExcel').classList.remove('hidden');
       clearExcelGrid();
       for (let i = 0; i < 5; i++) addExcelGridRow(currentMonth + '-01');
@@ -1177,7 +1373,7 @@
       });
 
       if (opsReclamadas === 0) {
-        body.innerHTML = `<tr><td colspan="15" style="text-align:center; color:#64748b; padding:20px;">No hay registros marcados como reverso en ${currentMonth}. Haz clic en 🔄 en la Posición Bancaria.</td></tr>`;
+        body.innerHTML = `<tr><td colspan="15" style="text-align:center; color:#64748b; padding:20px;">No hay registros marcados como reverso en ${currentMonth}.</td></tr>`;
       }
 
       document.getElementById('kpiOpsReclamadas').innerText = opsReclamadas;
@@ -1208,10 +1404,12 @@
         return `<span class="sla-badge sla-red">${d} días (>30d Crítico)</span>`;
       };
 
+      const canStateChange = hasPermission('auditoria', 'cambiarEstado');
+
       const getStatusSelect = (s) => {
         const cls = 'st-' + s.toLowerCase().replace('_', '-');
         return `
-          <select class="status-select ${cls}" onchange="changeStateGuard('${parentId}', ${subId ? `'${subId}'` : 'null'}, this.value)">
+          <select class="status-select ${cls} ${canStateChange ? '' : 'btn-disabled'}" onchange="changeStateGuard('${parentId}', ${subId ? `'${subId}'` : 'null'}, this.value)">
             <option value="IDENTIFICADO" ${s === 'IDENTIFICADO' ? 'selected' : ''}>1. Identificado</option>
             <option value="PENDIENTE_RADICACION" ${s === 'PENDIENTE_RADICACION' ? 'selected' : ''}>2. Pendiente radicación</option>
             <option value="RADICADO" ${s === 'RADICADO' ? 'selected' : ''}>3. Reclamación radicada</option>
@@ -1245,6 +1443,8 @@
     }
 
     function changeStateGuard(parentId, subId, newState) {
+      if (!hasPermission('auditoria', 'cambiarEstado')) return;
+
       const parent = appData[currentAccount].find(r => r.id === parentId);
       if (!parent) return;
 
@@ -1261,7 +1461,7 @@
       item.reversoState = newState;
       item.lastUpdate = new Date().toISOString().replace('T', ' ').substring(0, 16);
       item.history = item.history || [];
-      item.history.push(`[${item.lastUpdate}] Estado cambiado de '${prev}' a '${newState}' por Stephany Castro.`);
+      item.history.push(`[${item.lastUpdate}] Estado cambiado de '${prev}' a '${newState}' por ${getCurrentUserObj().nombre}.`);
 
       generateReportReversos();
     }
@@ -1318,6 +1518,10 @@
     function closeDetailModal() { document.getElementById('modalDetail').classList.add('hidden'); }
 
     function executePartialReintegro() {
+      if (!hasPermission('auditoria', 'aplicarCruce')) {
+        alert("⚠️ Tu usuario no tiene permiso para cruzar reintegros en auditoría.");
+        return;
+      }
       if (!activeDetailItem) return;
       const val = parseFloat(document.getElementById('selectCruceAbono').value) || 0;
       if (val > 0) {
@@ -1326,7 +1530,7 @@
         activeDetailItem.reversoState = activeDetailItem.reintegradoVal >= totalVal ? 'REINTEGRADO_TOTAL' : 'REINTEGRADO_PARCIAL';
 
         const time = new Date().toISOString().replace('T', ' ').substring(0, 16);
-        activeDetailItem.history.push(`[${time}] Reintegro parcial de ${formatCurrency(val)} abonado y validado en extracto.`);
+        activeDetailItem.history.push(`[${time}] Reintegro parcial de ${formatCurrency(val)} abonado por ${getCurrentUserObj().nombre}.`);
         alert(`Reintegro por ${formatCurrency(val)} cruzado exitosamente.`);
         closeDetailModal();
         generateReportReversos();
@@ -1339,7 +1543,7 @@
       const input = document.getElementById('fileInputSupport');
       if (input.files.length > 0) {
         const f = input.files[0].name;
-        document.getElementById('supportFileList').innerHTML += `<li>📄 ${f} (Subido por Stephany Castro)</li>`;
+        document.getElementById('supportFileList').innerHTML += `<li>📄 ${f} (Subido por ${getCurrentUserObj().nombre})</li>`;
         alert(`Soporte '${f}' adjuntado al expediente.`);
       }
     }
@@ -1401,11 +1605,16 @@
     }
 
     function toggleReversoParent(id) {
+      if (!hasPermission('auditoria', 'marcar')) {
+        alert("⚠️ Tu usuario no tiene permisos para marcar ni desmarcar reversos.");
+        return;
+      }
       const row = appData[currentAccount].find(r => r.id === id);
       if (row) { row.isReverso = !row.isReverso; renderApp(); }
     }
 
     function toggleReversoSub(parentId, subId) {
+      if (!hasPermission('auditoria', 'marcar')) return;
       const parent = appData[currentAccount].find(r => r.id === parentId);
       if (parent) {
         const sub = parent.subtotales.find(s => s.id === subId);
@@ -1414,6 +1623,10 @@
     }
 
     function deleteSubtotal(parentId, subId) {
+      if (!hasPermission('posicion', 'subtotalesAdmin')) {
+        alert("⚠️ No tienes permisos para eliminar subtotales.");
+        return;
+      }
       const parent = appData[currentAccount].find(r => r.id === parentId);
       if (parent) {
         parent.subtotales = parent.subtotales.filter(s => s.id !== subId);
@@ -1422,11 +1635,30 @@
     }
 
     function updateCell(id, field, val) {
+      const canEditAll = hasPermission('posicion', 'editarTodo');
+      const canEditLim = hasPermission('posicion', 'editarLimitado');
+
+      const isLimitedField = ['informacion', 'documento', 'observaciones'].includes(field);
+
+      if (!canEditAll && !(canEditLim && isLimitedField)) {
+        renderApp();
+        return;
+      }
+
       const row = appData[currentAccount].find(r => r.id === id);
       if (row) { row[field] = field.includes('entrada') || field.includes('salida') ? parseFormattedNumber(val) : val.trim(); renderApp(); }
     }
 
     function updateSubCell(parentId, subId, field, val) {
+      const canEditAll = hasPermission('posicion', 'editarTodo');
+      const canEditLim = hasPermission('posicion', 'editarLimitado');
+      const isLimitedField = ['informacion', 'documento', 'observaciones'].includes(field);
+
+      if (!canEditAll && !(canEditLim && isLimitedField)) {
+        renderApp();
+        return;
+      }
+
       const parent = appData[currentAccount].find(r => r.id === parentId);
       if (parent) {
         const sub = parent.subtotales.find(s => s.id === subId);
@@ -1435,6 +1667,7 @@
     }
 
     function openAccountModal() {
+      if (!hasPermission('posicion', 'crear')) return;
       const name = prompt("Nombre de la nueva cuenta bancaria:");
       if (name) {
         appData[name] = [];
@@ -1464,7 +1697,7 @@
         'mod-identificar': ['Pendiente por Identificar', 'Partidas sin cliente o información asignada en la columna INFORMACION'],
         'mod-contabilizar': ['Pendiente por Contabilizar', 'Control de Recibos de Caja (RC) y Facturas (FVE)'],
         'mod-gastos': ['Gasto Bancario Global', 'Acumulado de Gravamen (4x1000), comisiones y cuotas de manejo'],
-        'mod-usuarios': ['Usuarios y Permisos', 'Administración de accesos a empresas por usuario'],
+        'mod-usuarios': ['Usuarios y Permisos', 'Administración de accesos a empresas y matriz de permisos por usuario'],
         'mod-reversos': ['Auditoría de Reversos', 'Sistema Gerencial e Integral de Reclamaciones, Cruces y Recuperación']
       };
 
@@ -1483,14 +1716,61 @@
     function changeMonth() { currentMonth = document.getElementById('monthSelect').value; renderApp(); }
     function changeAccount() { currentAccount = document.getElementById('accountSelect').value; renderApp(); }
 
+    /* GESTIÓN DE PERMISOS DESDE EL MODAL DE USUARIOS */
     function openUserModal() {
+      if (!hasPermission('usuarios', 'gestionar')) {
+        alert("⚠️ Tu usuario no tiene permisos para administrar usuarios o modificar permisos.");
+        return;
+      }
       document.getElementById('inputUserName').value = '';
       document.getElementById('inputUserKey').value = '';
       document.getElementById('inputUserKey').readOnly = false;
+      document.getElementById('inputUserRole').value = 'Líder Contable';
+      applyRoleTemplate('Líder Contable');
       renderEmpresasCheckboxes([]);
       document.getElementById('modalUser').classList.remove('hidden');
     }
     function closeUserModal() { document.getElementById('modalUser').classList.add('hidden'); }
+
+    function applyRoleTemplate(roleName) {
+      const presets = {
+        'Líder Contable': { posicion: { ver: true, crear: true, editarTodo: true, editarLimitado: true, eliminar: true, subtotalesAdmin: true, modalExcel: true }, seguimiento: { ver: true, editar: true }, consolidado: { ver: true }, alertas: { ver: true }, auditoria: { ver: true, marcar: true, cambiarEstado: true, aplicarCruce: true }, usuarios: { ver: true, gestionar: true } },
+        'Tesorería': { posicion: { ver: true, crear: true, editarTodo: true, editarLimitado: true, eliminar: true, subtotalesAdmin: true, modalExcel: true }, seguimiento: { ver: true, editar: true }, consolidado: { ver: true }, alertas: { ver: true }, auditoria: { ver: true, marcar: true, cambiarEstado: true, aplicarCruce: true }, usuarios: { ver: false, gestionar: false } },
+        'Contabilidad': { posicion: { ver: true, crear: false, editarTodo: false, editarLimitado: true, eliminar: false, subtotalesAdmin: false, modalExcel: false }, seguimiento: { ver: true, editar: true }, consolidado: { ver: true }, alertas: { ver: false }, auditoria: { ver: true, marcar: false, cambiarEstado: false, aplicarCruce: false }, usuarios: { ver: false, gestionar: false } },
+        'Auditor Externo': { posicion: { ver: true, crear: false, editarTodo: false, editarLimitado: false, eliminar: false, subtotalesAdmin: false, modalExcel: false }, seguimiento: { ver: true, editar: false }, consolidado: { ver: true }, alertas: { ver: true }, auditoria: { ver: true, marcar: false, cambiarEstado: false, aplicarCruce: false }, usuarios: { ver: false, gestionar: false } }
+      };
+
+      const p = presets[roleName] || presets['Contabilidad'];
+      setCheckboxValue('perm_posicion_ver', p.posicion.ver);
+      setCheckboxValue('perm_posicion_crear', p.posicion.crear);
+      setCheckboxValue('perm_posicion_editar_todo', p.posicion.editarTodo);
+      setCheckboxValue('perm_posicion_editar_limitado', p.posicion.editarLimitado);
+      setCheckboxValue('perm_posicion_eliminar', p.posicion.eliminar);
+      setCheckboxValue('perm_posicion_subtotales_admin', p.posicion.subtotalesAdmin);
+      setCheckboxValue('perm_posicion_modal_excel', p.posicion.modalExcel);
+
+      setCheckboxValue('perm_seguimiento_ver', p.seguimiento.ver);
+      setCheckboxValue('perm_seguimiento_editar', p.seguimiento.editar);
+      setCheckboxValue('perm_consolidado_ver', p.consolidado.ver);
+      setCheckboxValue('perm_alertas_ver', p.alertas.ver);
+
+      setCheckboxValue('perm_auditoria_ver', p.auditoria.ver);
+      setCheckboxValue('perm_auditoria_marcar', p.auditoria.marcar);
+      setCheckboxValue('perm_auditoria_cambiar_estado', p.auditoria.cambiarEstado);
+      setCheckboxValue('perm_auditoria_aplicar_cruce', p.auditoria.aplicarCruce);
+
+      setCheckboxValue('perm_usuarios_ver', p.usuarios.ver);
+      setCheckboxValue('perm_usuarios_gestionar', p.usuarios.gestionar);
+    }
+
+    function setCheckboxValue(id, val) {
+      const el = document.getElementById(id);
+      if (el) el.checked = !!val;
+    }
+    function getCheckboxValue(id) {
+      const el = document.getElementById(id);
+      return el ? el.checked : false;
+    }
 
     function renderEmpresasCheckboxes(selectedNits = []) {
       const container = document.getElementById('empresasCheckboxes');
@@ -1506,26 +1786,61 @@
     }
 
     function saveUser() {
+      if (!hasPermission('usuarios', 'gestionar')) return;
+
       const name = document.getElementById('inputUserName').value.trim();
       const key = document.getElementById('inputUserKey').value.trim();
       const role = document.getElementById('inputUserRole').value;
       const checkedBoxes = document.querySelectorAll('#empresasCheckboxes input[type="checkbox"]:checked');
       const assignedNits = Array.from(checkedBoxes).map(cb => cb.value);
 
-      if (!name || !key) return;
+      if (!name || !key) {
+        alert("Ingresa un nombre y usuario válidos.");
+        return;
+      }
+
+      const userPermissions = {
+        posicion: {
+          ver: getCheckboxValue('perm_posicion_ver'),
+          crear: getCheckboxValue('perm_posicion_crear'),
+          editarTodo: getCheckboxValue('perm_posicion_editar_todo'),
+          editarLimitado: getCheckboxValue('perm_posicion_editar_limitado'),
+          eliminar: getCheckboxValue('perm_posicion_eliminar'),
+          subtotalesAdmin: getCheckboxValue('perm_posicion_subtotales_admin'),
+          modalExcel: getCheckboxValue('perm_posicion_modal_excel')
+        },
+        seguimiento: {
+          ver: getCheckboxValue('perm_seguimiento_ver'),
+          editar: getCheckboxValue('perm_seguimiento_editar')
+        },
+        consolidado: { ver: getCheckboxValue('perm_consolidado_ver') },
+        alertas: { ver: getCheckboxValue('perm_alertas_ver') },
+        auditoria: {
+          ver: getCheckboxValue('perm_auditoria_ver'),
+          marcar: getCheckboxValue('perm_auditoria_marcar'),
+          cambiarEstado: getCheckboxValue('perm_auditoria_cambiar_estado'),
+          aplicarCruce: getCheckboxValue('perm_auditoria_aplicar_cruce')
+        },
+        usuarios: {
+          ver: getCheckboxValue('perm_usuarios_ver'),
+          gestionar: getCheckboxValue('perm_usuarios_gestionar')
+        }
+      };
 
       const existingIndex = usersList.findIndex(u => u.userKey === key);
       if (existingIndex >= 0) {
         usersList[existingIndex].nombre = name;
         usersList[existingIndex].rol = role;
         usersList[existingIndex].empresasAsignadas = assignedNits;
+        usersList[existingIndex].permissions = userPermissions;
       } else {
-        usersList.push({ userKey: key, nombre: name, rol: role, empresasAsignadas: assignedNits });
+        usersList.push({ userKey: key, nombre: name, rol: role, empresasAsignadas: assignedNits, permissions: userPermissions });
       }
 
       closeUserModal();
       renderUsersModule();
       renderUserSessionSwitcher();
+      renderApp();
     }
 
     function renderUsersModule() {
@@ -1537,18 +1852,29 @@
           return emp ? `<span class="badge badge-in" style="margin-right:4px;">${emp.razonSocial}</span>` : '';
         }).join('');
 
+        const isFull = u.permissions && u.permissions.posicion && u.permissions.posicion.editarTodo;
+        const permSummary = isFull 
+          ? '<span class="badge badge-in">Control Total Tesorería</span>' 
+          : '<span class="badge badge-gasto">Edición Restringida (Info/Doc/Obs)</span>';
+
         tbody.innerHTML += `
           <tr>
             <td style="font-weight:bold; color:#0f172a;">${u.nombre}</td>
             <td style="font-family:monospace; color:#2563eb;">${u.userKey}</td>
-            <td><span class="badge badge-gasto">${u.rol}</span></td>
+            <td><span class="badge badge-reverso">${u.rol}</span></td>
             <td>${empNames || '<span style="color:#94a3b8; font-style:italic;">Ninguna</span>'}</td>
-            <td class="text-center"><button onclick="editUser('${u.userKey}')" class="btn-detail">✏️ Editar Permisos</button></td>
+            <td>${permSummary}</td>
+            <td class="text-center"><button onclick="editUser('${u.userKey}')" class="btn-detail">✏️ Configurar Permisos</button></td>
           </tr>`;
       });
     }
 
     function editUser(userKey) {
+      if (!hasPermission('usuarios', 'gestionar')) {
+        alert("⚠️ No tienes autorización para configurar permisos de usuarios.");
+        return;
+      }
+
       const user = usersList.find(u => u.userKey === userKey);
       if (user) {
         document.getElementById('inputUserName').value = user.nombre;
@@ -1556,6 +1882,29 @@
         document.getElementById('inputUserKey').readOnly = true;
         document.getElementById('inputUserRole').value = user.rol;
         renderEmpresasCheckboxes(user.empresasAsignadas);
+
+        const p = user.permissions || {};
+        setCheckboxValue('perm_posicion_ver', p.posicion?.ver);
+        setCheckboxValue('perm_posicion_crear', p.posicion?.crear);
+        setCheckboxValue('perm_posicion_editar_todo', p.posicion?.editarTodo);
+        setCheckboxValue('perm_posicion_editar_limitado', p.posicion?.editarLimitado);
+        setCheckboxValue('perm_posicion_eliminar', p.posicion?.eliminar);
+        setCheckboxValue('perm_posicion_subtotales_admin', p.posicion?.subtotalesAdmin);
+        setCheckboxValue('perm_posicion_modal_excel', p.posicion?.modalExcel);
+
+        setCheckboxValue('perm_seguimiento_ver', p.seguimiento?.ver);
+        setCheckboxValue('perm_seguimiento_editar', p.seguimiento?.editar);
+        setCheckboxValue('perm_consolidado_ver', p.consolidado?.ver);
+        setCheckboxValue('perm_alertas_ver', p.alertas?.ver);
+
+        setCheckboxValue('perm_auditoria_ver', p.auditoria?.ver);
+        setCheckboxValue('perm_auditoria_marcar', p.auditoria?.marcar);
+        setCheckboxValue('perm_auditoria_cambiar_estado', p.auditoria?.cambiarEstado);
+        setCheckboxValue('perm_auditoria_aplicar_cruce', p.auditoria?.aplicarCruce);
+
+        setCheckboxValue('perm_usuarios_ver', p.usuarios?.ver);
+        setCheckboxValue('perm_usuarios_gestionar', p.usuarios?.gestionar);
+
         document.getElementById('modalUser').classList.remove('hidden');
       }
     }
