@@ -99,7 +99,6 @@
     .btn-toggle-reverso { background: #7e22ce; color: white; border: none; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
     .btn-detail { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; }
     
-    /* BOTÓN EYE EN FILA */
     .btn-row-eye { background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
     .btn-row-eye:hover { background: #f1f5f9; }
 
@@ -177,10 +176,14 @@
         <span>💸</span> <span>Gasto Bancario Global</span>
       </div>
 
-      <div class="nav-section-label" style="margin-top: 14px;">Módulo 3: Configuración & Auditoría</div>
+      <!-- MÓDULO 3: CONFIGURACIÓN SEPARADO -->
+      <div class="nav-section-label" style="margin-top: 14px;">Módulo 3: Configuración</div>
       <div id="link-mod-usuarios" onclick="switchModule('mod-usuarios')" class="mod-link">
         <span>👥</span> <span>Usuarios y Permisos</span>
       </div>
+
+      <!-- MÓDULO 4: AUDITORÍA SEPARADO -->
+      <div class="nav-section-label" style="margin-top: 14px;">Módulo 4: Auditoría</div>
       <div id="link-mod-reversos" onclick="switchModule('mod-reversos')" class="mod-link">
         <span>🔄</span> <span>Auditoría de Reversos</span>
       </div>
@@ -358,7 +361,7 @@
         </div>
       </section>
 
-      <!-- MÓDULO USUARIOS Y PERMISOS -->
+      <!-- MÓDULO 3: CONFIGURACIÓN (USUARIOS Y PERMISOS) -->
       <section id="mod-usuarios" class="module-section hidden">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
           <h3 style="font-size:16px; font-weight:800;">👥 Administración de Usuarios y Empresas Asignadas</h3>
@@ -376,7 +379,7 @@
         </div>
       </section>
 
-      <!-- MÓDULO 3: AUDITORÍA DE REVERSOS Y DEVOLUCIONES -->
+      <!-- MÓDULO 4: AUDITORÍA DE REVERSOS -->
       <section id="mod-reversos" class="module-section hidden">
         <div class="kpi-8-grid">
           <div class="kpi-8-card highlight-purple"><div class="kpi-8-label">1. Operaciones Reclamadas</div><div id="kpiOpsReclamadas" class="kpi-8-val">0</div><div class="kpi-8-sub">Casos en sistema</div></div>
@@ -771,7 +774,6 @@
       renderApp();
     }
 
-    /* ALTERNAR SUBTOTALES DE UNA FILA ESPECÍFICA */
     function toggleRowSubtotales(rowId) {
       const row = appData[currentAccount].find(r => r.id === rowId);
       if (row) {
@@ -828,7 +830,6 @@
           const hasSub = row.subtotales && row.subtotales.length > 0;
           const isVisible = row.subtotalesVisible !== false;
           
-          /* BOTÓN OJO INDIVIDUAL PARA CADA FILA PADRE QUE TENGA SUBTOTALES */
           const eyeBtnHtml = hasSub 
             ? `<button onclick="toggleRowSubtotales('${row.id}')" class="btn-row-eye" title="${isVisible ? 'Ocultar subtotales de este grupo' : 'Mostrar subtotales de este grupo'}">${isVisible ? '👁️' : '👁️‍🗨️'}</button>`
             : '';
@@ -853,7 +854,6 @@
           `;
           tbody.appendChild(tr);
 
-          /* RENDERIZAR SUBTOTALES SOLO SI ESTÁN MARCADOS COMO VISIBLES */
           if (hasSub && isVisible) {
             row.subtotales.forEach((sub) => {
               const trSub = document.createElement('tr');
@@ -877,7 +877,6 @@
         }
       });
 
-      /* FILA VACÍA PARA ESCRIBIR O PEGAR EN TABLA PRINCIPAL */
       const trEmpty = document.createElement('tr');
       trEmpty.className = 'row-empty';
       trEmpty.innerHTML = `
@@ -1467,7 +1466,7 @@
         'mod-identificar': ['Pendiente por Identificar', 'Partidas sin cliente o información asignada en la columna INFORMACION'],
         'mod-contabilizar': ['Pendiente por Contabilizar', 'Control de Recibos de Caja (RC) y Facturas (FVE)'],
         'mod-gastos': ['Gasto Bancario Global', 'Acumulado de Gravamen (4x1000), comisiones y cuotas de manejo'],
-        'mod-usuarios': ['Usuarios y Permisos', 'Administración de accesos a empresas por usuario'],
+        'mod-usuarios': ['Configuración de Usuarios y Permisos', 'Administración de accesos a empresas por usuario'],
         'mod-reversos': ['Auditoría de Reversos', 'Sistema Gerencial e Integral de Reclamaciones, Cruces y Recuperación']
       };
 
