@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Tesorería, Empresas y Auditoría</title>
+  <title>Sistema de Tesorería, Empresas y Auditoría de Reversos</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: #f8fafc; color: #0f172a; display: flex; min-height: 100vh; }
@@ -38,6 +38,21 @@
     .kpi-8-card { background: #ffffff; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
     .kpi-8-label { font-size: 10px; font-weight: 800; text-transform: uppercase; color: #64748b; letter-spacing: 0.3px; }
     .kpi-8-val { font-size: 18px; font-weight: 800; margin-top: 6px; color: #0f172a; }
+    .kpi-8-sub { font-size: 10px; font-weight: 700; margin-top: 4px; color: #94a3b8; }
+    
+    .kpi-8-card.highlight-purple { background: #faf5ff; border-color: #e9d5ff; }
+    .kpi-8-card.highlight-purple .kpi-8-val { color: #7e22ce; }
+    .kpi-8-card.highlight-emerald { background: #ecfdf5; border-color: #a7f3d0; }
+    .kpi-8-card.highlight-emerald .kpi-8-val { color: #047857; }
+    .kpi-8-card.highlight-amber { background: #fffbeb; border-color: #fde68a; }
+    .kpi-8-card.highlight-amber .kpi-8-val { color: #b45309; }
+    .kpi-8-card.highlight-rose { background: #fff1f2; border-color: #fecdd3; }
+    .kpi-8-card.highlight-rose .kpi-8-val { color: #be123c; }
+
+    .filter-bar { background: #ffffff; padding: 16px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; align-items: center; }
+    .filter-group { display: flex; flex-direction: column; gap: 4px; }
+    .filter-group label { font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; }
+    .filter-group input, .filter-group select { padding: 8px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; outline: none; background: #ffffff; }
 
     .table-card { background: #ffffff; border-radius: 14px; border: 1px solid #cbd5e1; overflow-x: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
     table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
@@ -49,7 +64,6 @@
     tr.bg-subtotal:hover { background-color: #fde047 !important; }
     td.subtotal-indent { padding-left: 20px !important; font-style: italic; color: #713f12; font-weight: 700; }
 
-    /* Estilos de Fila Vacía al final */
     tr.row-empty { background-color: #f0fdf4 !important; }
     tr.row-empty td { border-bottom: 2px dashed #86efac; color: #166534; }
     td.editable-cell { outline: none; transition: background 0.2s; }
@@ -59,10 +73,30 @@
     .badge-in { background: #d1fae5; color: #065f46; }
     .badge-out { background: #ffe4e6; color: #9f1239; }
     .badge-gasto { background: #e2e8f0; color: #475569; }
+    .badge-reverso { background: #f3e8ff; color: #6b21a8; }
+    .badge-alert { background: #ffe4e6; color: #9f1239; }
+
+    .status-select { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; border: 1px solid #cbd5e1; outline: none; cursor: pointer; }
+    .st-identificado { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+    .st-pendiente-rad { background: #ffedd5; color: #c2410c; border-color: #fdba74; }
+    .st-radicado { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+    .st-seguimiento { background: #e0e7ff; color: #3730a3; border-color: #a5b4fc; }
+    .st-validacion { background: #f3e8ff; color: #6b21a8; border-color: #d8b4fe; }
+    .st-reintegrado-parc { background: #ecfdf5; color: #047857; border-color: #6ee7b7; }
+    .st-reintegrado-tot { background: #10b981; color: #ffffff; border-color: #059669; }
+    .st-rechazado { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+    .st-cerrado { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+
+    .sla-badge { padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; display: inline-block; }
+    .sla-green { background: #d1fae5; color: #065f46; }
+    .sla-yellow { background: #fef08a; color: #713f12; }
+    .sla-orange { background: #ffedd5; color: #9a3412; }
+    .sla-red { background: #fee2e2; color: #991b1b; }
 
     .btn-action { background: #059669; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
     .btn-action:hover { background: #047857; }
     .btn-secondary { background: #0f172a; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .btn-toggle-reverso { background: #7e22ce; color: white; border: none; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
     .btn-toggle-eye { background: #ffffff; color: #084c27; border: 1px solid #ffffff; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; cursor: pointer; margin-left: 4px; }
     .btn-detail { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
@@ -73,8 +107,32 @@
     .modal-title { font-size: 16px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px; }
     .modal-close { background: transparent; border: none; font-size: 20px; font-weight: bold; color: #94a3b8; cursor: pointer; }
 
+    .excel-grid-container { flex: 1; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 16px; background: #ffffff; }
+    .excel-grid-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .excel-grid-table th { background: #107c41; color: white; font-weight: 700; padding: 10px; border: 1px solid #084c27; text-align: left; }
+    .excel-grid-table td { border: 1px solid #cbd5e1; padding: 4px 8px; }
+    .excel-grid-table input { width: 100%; border: none; outline: none; background: transparent; font-size: 12px; font-family: inherit; }
+    .excel-grid-table input:focus { background: #ecfdf5; font-weight: 600; }
+
+    .tab-header { display: flex; gap: 4px; border-bottom: 2px solid #e2e8f0; margin-bottom: 16px; }
+    .tab-btn { padding: 8px 14px; font-size: 12px; font-weight: 700; color: #64748b; background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer; }
+    .tab-btn.active { color: #059669; border-bottom-color: #059669; background: #ecfdf5; border-radius: 6px 6px 0 0; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 12px; }
+    .detail-item { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .detail-item label { font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 2px; }
+    .detail-item span { font-weight: 700; color: #0f172a; }
+
+    .history-log { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; max-height: 220px; overflow-y: auto; font-size: 11px; font-family: monospace; }
+    .log-item { border-bottom: 1px solid #e2e8f0; padding: 6px 0; color: #334155; }
+
     .checkbox-list { max-height: 140px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; background: #f8fafc; }
     .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 6px; font-weight: 600; color: #334155; }
+
+    .pagination-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #ffffff; border-top: 1px solid #e2e8f0; }
+    .page-btn { padding: 4px 10px; border: 1px solid #cbd5e1; background: #ffffff; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; }
 
     .text-right { text-align: right; }
     .text-center { text-align: center; }
@@ -89,7 +147,7 @@
       <div class="sidebar-logo">🏦</div>
       <div class="sidebar-title">
         <h2>GESTIÓN TESORERÍA</h2>
-        <p>Sistema Bancario Multiempresa</p>
+        <p>Sistema Bancario Multiempresa v3.0</p>
       </div>
     </div>
 
@@ -101,8 +159,22 @@
       <div id="link-mod-consolidado" onclick="switchModule('mod-consolidado')" class="mod-link">
         <span>🌐</span> <span>Consolidado de Cuentas</span>
       </div>
+      <div id="link-mod-alertas" onclick="switchModule('mod-alertas')" class="mod-link">
+        <span>⚠️</span> <span>Alerta: Cuentas por Actualizar</span>
+      </div>
 
-      <div class="nav-section-label" style="margin-top: 14px;">Módulo 2: Configuración</div>
+      <div class="nav-section-label" style="margin-top: 14px;">Módulo 2: Seguimiento</div>
+      <div id="link-mod-identificar" onclick="switchModule('mod-identificar')" class="mod-link">
+        <span>🔍</span> <span>Pendiente por Identificar</span>
+      </div>
+      <div id="link-mod-contabilizar" onclick="switchModule('mod-contabilizar')" class="mod-link">
+        <span>📝</span> <span>Pendiente por Contabilizar</span>
+      </div>
+      <div id="link-mod-gastos" onclick="switchModule('mod-gastos')" class="mod-link">
+        <span>💸</span> <span>Gasto Bancario Global</span>
+      </div>
+
+      <div class="nav-section-label" style="margin-top: 14px;">Módulo 3: Configuración & Auditoría</div>
       <div id="link-mod-usuarios" onclick="switchModule('mod-usuarios')" class="mod-link">
         <span>👥</span> <span>Usuarios y Permisos</span>
       </div>
@@ -117,7 +189,7 @@
     <header>
       <div class="top-info">
         <h1 id="moduleTitle">Posición Bancaria</h1>
-        <p id="moduleSubtitle">Edición y Pegado Directo tipo Excel habilitado en la tabla</p>
+        <p id="moduleSubtitle">Control diario de tesorería y subtotales desglosados de adquirencia</p>
       </div>
 
       <div class="header-controls">
@@ -137,6 +209,23 @@
             <option value="2025-04" selected>Abril 2025</option>
             <option value="2025-05">Mayo 2025</option>
             <option value="2025-06">Junio 2025</option>
+            <option value="2025-07">Julio 2025</option>
+            <option value="2025-08">Agosto 2025</option>
+            <option value="2025-09">Septiembre 2025</option>
+            <option value="2025-10">Octubre 2025</option>
+            <option value="2025-11">Noviembre 2025</option>
+            <option value="2025-12">Diciembre 2025</option>
+            <option value="2026-01">Enero 2026</option>
+            <option value="2026-02">Febrero 2026</option>
+            <option value="2026-03">Marzo 2026</option>
+            <option value="2026-04">Abril 2026</option>
+            <option value="2026-05">Mayo 2026</option>
+            <option value="2026-06">Junio 2026</option>
+            <option value="2026-07">Julio 2026</option>
+            <option value="2026-08">Agosto 2026</option>
+            <option value="2026-09">Septiembre 2026</option>
+            <option value="2026-10">Octubre 2026</option>
+            <option value="2026-11">Noviembre 2026</option>
           </select>
         </div>
 
@@ -147,12 +236,13 @@
             <option value="BANCOLOMBIA 9015">BANCOLOMBIA 9015</option>
           </select>
         </div>
+        <button onclick="openAccountModal()" class="btn-add-acc">+ Cuenta</button>
       </div>
     </header>
 
     <main>
 
-      <!-- MÓDULO 1.1: POSICIÓN BANCARIA CON PEGADO DIRECTO -->
+      <!-- MÓDULO 1.1: POSICIÓN BANCARIA -->
       <section id="mod-posicion" class="module-section">
         <div class="kpi-8-grid">
           <div class="kpi-8-card"><div class="kpi-8-label">Saldo Inicial del Mes</div><div id="kpiSaldoInicial" class="kpi-8-val">$0</div></div>
@@ -161,8 +251,9 @@
           <div class="kpi-8-card highlight-emerald"><div class="kpi-8-label">Saldo Final en Banco</div><div id="kpiSaldoFinal" class="kpi-8-val">$0</div></div>
         </div>
 
-        <div style="margin-bottom: 12px; font-size:12px; color:#64748b; background:#f1f5f9; padding:8px 14px; border-radius:8px; border:1px solid #cbd5e1;">
-          💡 <strong>Tip de Escribir / Pegar:</strong> Escribe en la fila verde al final o haz clic y presiona <strong>Ctrl + V</strong> para pegar directamente bloques enteros copiados de Excel.
+        <div style="margin-bottom: 12px; display:flex; justify-content:space-between; align-items:center;">
+          <button onclick="openExcelModal()" class="btn-action">📊 + Agregar Movimientos (Ventana Modal Excel)</button>
+          <span style="font-size:12px; color:#64748b;">💡 Escribe en la fila verde al final o pega con <strong>Ctrl + V</strong> en la propia tabla.</span>
         </div>
 
         <div class="table-card" onpaste="handleDirectTablePaste(event)">
@@ -190,7 +281,83 @@
         </div>
       </section>
 
-      <!-- OTROS MÓDULOS DE USUARIOS Y CONTROL -->
+      <!-- MÓDULO 1.2: CONSOLIDADO DE CUENTAS -->
+      <section id="mod-consolidado" class="module-section hidden">
+        <div class="table-card" style="padding: 24px;">
+          <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">🌐 Resumen Consolidado Global de Cuentas</h3>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Total de saldo disponible en la compañía a través de todas las cuentas bancarias configuradas.</p>
+          <table>
+            <thead>
+              <tr style="background: #0f172a !important;">
+                <th>Cuenta Bancaria</th>
+                <th class="text-right">Saldo Inicial</th>
+                <th class="text-right">Entradas</th>
+                <th class="text-right">Salidas</th>
+                <th class="text-right">Saldo Final</th>
+              </tr>
+            </thead>
+            <tbody id="consolidadoBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- MÓDULO 1.3: ALERTA CUENTAS DESACTUALIZADAS -->
+      <section id="mod-alertas" class="module-section hidden">
+        <div class="table-card" style="padding: 24px;">
+          <table>
+            <thead>
+              <tr style="background: #991b1b !important;">
+                <th>Cuenta Bancaria</th><th>Última Fecha Registrada</th><th>Días Transcurridos</th><th>Estado de Actualización</th>
+              </tr>
+            </thead>
+            <tbody id="alertasBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- MÓDULO 2.1: PENDIENTE POR IDENTIFICAR -->
+      <section id="mod-identificar" class="module-section hidden">
+        <div class="table-card" style="padding: 24px;">
+          <table>
+            <thead>
+              <tr style="background: #475569 !important;">
+                <th>Fecha</th><th>Flujo</th><th>Descripción</th><th class="text-right">Monto</th><th>Información Actual</th><th>Tipo</th>
+              </tr>
+            </thead>
+            <tbody id="reportIdentificarBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- MÓDULO 2.2: PENDIENTE POR CONTABILIZAR -->
+      <section id="mod-contabilizar" class="module-section hidden">
+        <div class="table-card" style="padding: 24px;">
+          <table>
+            <thead>
+              <tr style="background: #334155 !important;">
+                <th>Fecha</th><th>Flujo</th><th>Descripción / Información</th><th class="text-right">Monto</th><th>Estado Documento</th><th>Clasificación</th>
+              </tr>
+            </thead>
+            <tbody id="reportContabilizarBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- MÓDULO 2.3: GASTO BANCARIO GLOBAL -->
+      <section id="mod-gastos" class="module-section hidden">
+        <div class="table-card" style="padding: 24px;">
+          <table>
+            <thead>
+              <tr style="background: #1e293b !important;">
+                <th>Fecha</th><th>Cuenta</th><th>Concepto / Descripción</th><th class="text-right">Valor Gasto</th><th>Clasificación</th>
+              </tr>
+            </thead>
+            <tbody id="reportGastosBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- MÓDULO USUARIOS Y PERMISOS -->
       <section id="mod-usuarios" class="module-section hidden">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
           <h3 style="font-size:16px; font-weight:800;">👥 Administración de Usuarios y Empresas Asignadas</h3>
@@ -208,18 +375,234 @@
         </div>
       </section>
 
-      <section id="mod-consolidado" class="module-section hidden">
-        <div class="table-card" style="padding: 24px;"><h3>🌐 Resumen Consolidado Global de Cuentas</h3></div>
-      </section>
-
+      <!-- MÓDULO 3: AUDITORÍA DE REVERSOS Y DEVOLUCIONES -->
       <section id="mod-reversos" class="module-section hidden">
-        <div class="table-card" style="padding: 24px;"><h3>🔄 Módulo Auditoría de Reversos</h3></div>
+        <div class="kpi-8-grid">
+          <div class="kpi-8-card highlight-purple"><div class="kpi-8-label">1. Operaciones Reclamadas</div><div id="kpiOpsReclamadas" class="kpi-8-val">0</div><div class="kpi-8-sub">Casos en sistema</div></div>
+          <div class="kpi-8-card highlight-purple"><div class="kpi-8-label">2. Valor Total Reclamado</div><div id="kpiValReclamado" class="kpi-8-val">$0</div><div class="kpi-8-sub">Monto bruto</div></div>
+          <div class="kpi-8-card highlight-amber"><div class="kpi-8-label">3. Reclamaciones Pendientes</div><div id="kpiOpsPendientes" class="kpi-8-val">0</div><div class="kpi-8-sub">En trámite activo</div></div>
+          <div class="kpi-8-card highlight-amber"><div class="kpi-8-label">4. Saldo Pendiente Recuperar</div><div id="kpiValPendiente" class="kpi-8-val">$0</div><div class="kpi-8-sub">Por abono en banco</div></div>
+          <div class="kpi-8-card highlight-emerald"><div class="kpi-8-label">5. Devoluciones Recibidas</div><div id="kpiOpsRecibidas" class="kpi-8-val">0</div><div class="kpi-8-sub">Abonos validados</div></div>
+          <div class="kpi-8-card highlight-emerald"><div class="kpi-8-label">6. Valor Recuperado Real</div><div id="kpiValRecuperado" class="kpi-8-val">$0</div><div class="kpi-8-sub">En extracto bancario</div></div>
+          <div class="kpi-8-card highlight-rose"><div class="kpi-8-label">7. Casos Rechazados</div><div id="kpiOpsRechazadas" class="kpi-8-val">0</div><div class="kpi-8-sub">No procedentes</div></div>
+          <div class="kpi-8-card highlight-emerald"><div class="kpi-8-label">8. % Efectividad Recuperación</div><div id="kpiPorcRecuperacion" class="kpi-8-val">0.0%</div><div class="kpi-8-sub">Ratio de éxito</div></div>
+        </div>
+
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label>Buscar / Referencia:</label>
+            <input type="text" id="filterSearch" placeholder="Ref, cliente, causa..." oninput="generateReportReversos()">
+          </div>
+          <div class="filter-group">
+            <label>Entidad / Banco:</label>
+            <select id="filterEntidad" onchange="generateReportReversos()">
+              <option value="">Todas las entidades</option>
+              <option value="Credibanco">Credibanco</option>
+              <option value="Davivienda">Davivienda</option>
+              <option value="Bancolombia">Bancolombia</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Estado Reclamación:</label>
+            <select id="filterEstado" onchange="generateReportReversos()">
+              <option value="">Todos los estados</option>
+              <option value="IDENTIFICADO">1. Identificado</option>
+              <option value="PENDIENTE_RADICACION">2. Pendiente radicación</option>
+              <option value="RADICADO">3. Reclamación radicada</option>
+              <option value="EN_SEGUIMIENTO">4. En seguimiento</option>
+              <option value="EN_VALIDACION">5. En validación</option>
+              <option value="REINTEGRADO_PARCIAL">6. Reintegrado parcial</option>
+              <option value="REINTEGRADO_TOTAL">7. Reintegrado totalmente</option>
+              <option value="RECHAZADO">8. Rechazado</option>
+              <option value="CERRADO">9. Cerrado</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Responsable:</label>
+            <select id="filterResponsable" onchange="generateReportReversos()">
+              <option value="">Todos</option>
+              <option value="Stephany Castro">Stephany Castro</option>
+            </select>
+          </div>
+          <div class="filter-group" style="grid-column: span 2; display:flex; flex-direction:row; gap:8px; align-items:flex-end;">
+            <button onclick="exportToExcel()" class="btn-action" style="background:#107c41; width:100%;">📊 Exportar Excel</button>
+            <button onclick="exportToPDF()" class="btn-action" style="background:#b91c1c; width:100%;">📄 Exportar PDF</button>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr style="background: #6b21a8 !important;">
+                <th>F. Transacción</th>
+                <th>ID Único</th>
+                <th>Ref. Bancaria</th>
+                <th>Flujo</th>
+                <th>Tercero</th>
+                <th>Descripción</th>
+                <th>Banco / Pasarela</th>
+                <th class="text-right">Valor Op.</th>
+                <th>Motivo Reclamación</th>
+                <th>F. Reclamación</th>
+                <th>Responsable</th>
+                <th>Estado Reclamación</th>
+                <th class="text-center">Semáforo Días</th>
+                <th>Última Actualización</th>
+                <th class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="reportReversosBody"></tbody>
+          </table>
+          <div class="pagination-bar">
+            <span style="font-size:11px; color:#64748b;">Mostrando operaciones de auditoría activas</span>
+            <div>
+              <button class="page-btn">« Ant</button>
+              <button class="page-btn" style="background:#059669; color:white;">1</button>
+              <button class="page-btn">Sig »</button>
+            </div>
+          </div>
+        </div>
       </section>
 
     </main>
   </div>
 
-  <!-- MODAL USUARIOS -->
+  <!-- VENTANA MODAL EXCEL PEGADO DIRECTO -->
+  <div id="modalExcel" class="modal-overlay hidden">
+    <div class="modal-excel-box">
+      <div class="modal-header">
+        <h3 class="modal-title">📊 Ventana de Pegado Directo tipo Excel</h3>
+        <button onclick="closeExcelModal()" class="modal-close">✕</button>
+      </div>
+      <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">Haz clic dentro de la tabla y <strong>pega (Ctrl + V)</strong> cualquier bloque copiado de Excel.</p>
+      <div class="excel-grid-container" onpaste="handleGridPaste(event)">
+        <table class="excel-grid-table">
+          <thead>
+            <tr>
+              <th style="width: 40px; text-align: center;">#</th>
+              <th style="width: 130px;">Fecha</th>
+              <th>Descripción</th>
+              <th style="width: 140px;" class="text-right">Entrada ($)</th>
+              <th style="width: 140px;" class="text-right">Salida ($)</th>
+            </tr>
+          </thead>
+          <tbody id="excelGridBody"></tbody>
+        </table>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <button onclick="addExcelGridRow()" class="btn-secondary" style="margin:0;">+ Fila</button>
+          <button onclick="clearExcelGrid()" style="background:#ef4444; color:white; border:none; padding:8px 12px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer;">Limpiar</button>
+        </div>
+        <div>
+          <button onclick="closeExcelModal()" class="btn-secondary" style="margin-right:8px;">Cancelar</button>
+          <button onclick="saveExcelGridData()" class="btn-action">✅ Insertar a la Posición Bancaria</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL SUBTOTAL DESGLOSADO MEJORADO -->
+  <div id="modalSub" class="modal-overlay hidden">
+    <div class="modal-excel-box" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title">↳ Agregar Subtotal Desglosado</h3>
+        <button onclick="closeSubModal()" class="modal-close">✕</button>
+      </div>
+      <input type="hidden" id="subParentId">
+      <div style="margin-bottom: 12px;">
+        <label style="font-size:11px; font-weight:bold; color:#475569; display:block; margin-bottom:4px;">Monto Subtotal ($)</label>
+        <input type="number" id="inputSubMonto" placeholder="Ej: 47559" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
+      </div>
+      <div style="margin-bottom: 12px;">
+        <label style="font-size:11px; font-weight:bold; color:#475569; display:block; margin-bottom:4px;">Información (Cliente / Factura FVE)</label>
+        <input type="text" id="inputSubInfo" placeholder="Ej: INVERSIONES EAMC SAS | FVE 17524" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
+      </div>
+      <div style="margin-bottom: 16px;">
+        <label style="font-size:11px; font-weight:bold; color:#475569; display:block; margin-bottom:4px;">Documento (Recibo de Caja RC)</label>
+        <input type="text" id="inputSubDoc" placeholder="Ej: RC-1-3308" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:8px;">
+        <button onclick="closeSubModal()" class="btn-secondary" style="margin-bottom:0;">Cancelar</button>
+        <button onclick="saveSubtotal()" class="btn-action" style="margin-bottom:0;">Guardar Subtotal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL DE DETALLE AUDITORÍA POR PESTAÑAS (A, B, C, D, E) -->
+  <div id="modalDetail" class="modal-overlay hidden">
+    <div class="modal-excel-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="detailTitle">🔍 Exp. Auditoría Transacción</h3>
+        <button onclick="closeDetailModal()" class="modal-close">✕</button>
+      </div>
+
+      <div class="tab-header">
+        <button class="tab-btn active" onclick="switchTab('tabA')">A. Inf. General</button>
+        <button class="tab-btn" onclick="switchTab('tabB')">B. Reclamación</button>
+        <button class="tab-btn" onclick="switchTab('tabC')">C. Soportes</button>
+        <button class="tab-btn" onclick="switchTab('tabD')">D. Seguimiento</button>
+        <button class="tab-btn" onclick="switchTab('tabE')">E. Recuperación</button>
+      </div>
+
+      <div id="tabA" class="tab-content active">
+        <div class="detail-grid">
+          <div class="detail-item"><label>ID Único Operación</label><span id="detId">--</span></div>
+          <div class="detail-item"><label>Fecha Transacción</label><span id="detFecha">--</span></div>
+          <div class="detail-item"><label>Banco / Pasarela</label><span id="detBanco">--</span></div>
+          <div class="detail-item"><label>Referencia Bancaria</label><span id="detRef">--</span></div>
+          <div class="detail-item"><label>Tercero Relacionado</label><span id="detTercero">--</span></div>
+          <div class="detail-item"><label>Valor Operación Original</label><span id="detValor">--</span></div>
+        </div>
+      </div>
+
+      <div id="tabB" class="tab-content">
+        <div class="detail-grid">
+          <div class="detail-item"><label>Motivo de Reclamación</label><span id="detMotivo">--</span></div>
+          <div class="detail-item"><label>Número de Radicado Entidad</label><span id="detRadicado">RAD-2026-8819</span></div>
+          <div class="detail-item"><label>Fecha Presentación Reclamo</label><span id="detFechaRad">2026-10-15</span></div>
+          <div class="detail-item"><label>Entidad Responsable</label><span id="detEntidadResp">Credibanco Pasarela</span></div>
+          <div class="detail-item" style="grid-column: span 2;"><label>Descripción Detallada Causa</label><span id="detDesc">Reclamación formal por doble cobro en lote de adquirencia.</span></div>
+        </div>
+      </div>
+
+      <div id="tabC" class="tab-content">
+        <p style="font-size:12px; color:#64748b; margin-bottom:10px;">Adjunta comprobantes, extractos o respuestas bancarias:</p>
+        <div style="display:flex; gap:8px; margin-bottom:12px;">
+          <input type="file" id="fileInputSupport" style="font-size:11px;">
+          <button onclick="addSupportFile()" class="btn-action" style="padding:4px 10px; font-size:11px;">+ Adjuntar PDF/Excel</button>
+        </div>
+        <ul id="supportFileList" style="font-size:12px; color:#1d4ed8; padding-left:16px;">
+          <li>📄 Radicado_Credibanco_Oficial_8819.pdf</li>
+        </ul>
+      </div>
+
+      <div id="tabD" class="tab-content">
+        <h4 style="font-size:12px; font-weight:bold; margin-bottom:6px;">📜 Historial Cronológico e Inmutable de Auditoría:</h4>
+        <div id="historyLogContainer" class="history-log"></div>
+      </div>
+
+      <div id="tabE" class="tab-content">
+        <div class="detail-grid" style="margin-bottom:16px;">
+          <div class="detail-item"><label>Valor Total Reclamado</label><span id="recValReclamado">$0</span></div>
+          <div class="detail-item"><label>Valor Efectivamente Reintegrado</label><span id="recValReintegrado" style="color:#047857;">$0</span></div>
+          <div class="detail-item"><label>Saldo Pendiente de Recuperar</label><span id="recSaldoPendiente" style="color:#b45309;">$0</span></div>
+          <div class="detail-item"><label>% Recuperación Obtenido</label><span id="recPorcentaje" style="color:#047857;">0%</span></div>
+        </div>
+        <h4 style="font-size:12px; font-weight:bold; margin-bottom:6px;">Registrar Reintegro Parcial / Total (Cruce Automático con Extracto):</h4>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <select id="selectCruceAbono" style="padding:6px; font-size:11px; border-radius:6px; border:1px solid #cbd5e1; flex:1;"></select>
+          <button onclick="executePartialReintegro()" class="btn-action" style="padding:6px 12px; font-size:11px;">🔗 Aplicar Reintegro</button>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; margin-top:16px;">
+        <button onclick="closeDetailModal()" class="btn-secondary">Cerrar Expediente</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL USUARIOS Y PERMISOS -->
   <div id="modalUser" class="modal-overlay hidden">
     <div class="modal-excel-box" style="max-width: 520px;">
       <div class="modal-header">
@@ -254,38 +637,12 @@
     </div>
   </div>
 
-  <!-- MODAL SUBTOTAL -->
-  <div id="modalSub" class="modal-overlay hidden">
-    <div class="modal-excel-box" style="max-width: 500px;">
-      <div class="modal-header">
-        <h3 class="modal-title">↳ Agregar Subtotal Desglosado</h3>
-        <button onclick="closeSubModal()" class="modal-close">✕</button>
-      </div>
-      <input type="hidden" id="subParentId">
-      <div style="margin-bottom: 12px;">
-        <label style="font-size:11px; font-weight:bold;">Monto Subtotal ($)</label>
-        <input type="number" id="inputSubMonto" placeholder="Ej: 47559" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
-      </div>
-      <div style="margin-bottom: 12px;">
-        <label style="font-size:11px; font-weight:bold;">Información (Cliente / Factura FVE)</label>
-        <input type="text" id="inputSubInfo" placeholder="Ej: INVERSIONES EAMC SAS | FVE 17524" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
-      </div>
-      <div style="margin-bottom: 16px;">
-        <label style="font-size:11px; font-weight:bold;">Documento (Recibo de Caja RC)</label>
-        <input type="text" id="inputSubDoc" placeholder="Ej: RC-1-3308" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
-      </div>
-      <div style="display:flex; justify-content:flex-end; gap:8px;">
-        <button onclick="closeSubModal()" class="btn-secondary">Cancelar</button>
-        <button onclick="saveSubtotal()" class="btn-action">Guardar Subtotal</button>
-      </div>
-    </div>
-  </div>
-
   <script>
     let currentAccount = 'DAVIVIENDA 5152';
     let currentMonth = '2025-04';
     let currentEmpresa = '901234567-1';
     let currentActiveUser = 'stephany.castro';
+    let activeDetailItem = null;
     let showSubtotales = true;
 
     let empresasList = [
@@ -306,12 +663,22 @@
           fecha: '2025-04-01',
           descripcion: 'Ajuste X Gravamen Movimiento Financier',
           referencia: 'REF-001',
+          tercero: 'DIAN / Banco Davivienda',
+          entidad: 'Davivienda',
+          motivo: 'Reclamación GMF exento',
+          responsable: 'Stephany Castro',
           saldoInicial: 9321711255,
           entrada: 0,
           salida: 800464,
           informacion: 'Gastos Bancarios',
           documento: '',
           observaciones: 'movimiento de banco visual',
+          isReverso: false,
+          reversoState: 'IDENTIFICADO',
+          fechaReclamacion: '2025-04-02',
+          lastUpdate: '2026-11-06 09:00',
+          reintegradoVal: 0,
+          history: ['[2026-11-06 09:00] Registrado como IDENTIFICADO por Stephany Castro'],
           subtotales: []
         },
         {
@@ -319,14 +686,26 @@
           fecha: '2025-04-01',
           descripcion: 'Nc Visa T Credito Credibanco',
           referencia: 'CRED-902',
+          tercero: 'Credibanco',
+          entidad: 'Credibanco',
+          motivo: 'Abono de adquirencia desglosado',
+          responsable: 'Stephany Castro',
           saldoInicial: 0,
           entrada: 618273,
           salida: 0,
           informacion: 'SE ABREN MOVIMIENTOS',
           documento: '',
           observaciones: 'movimiento de banco visual',
+          isReverso: false,
+          reversoState: 'IDENTIFICADO',
+          fechaReclamacion: '2025-04-02',
+          lastUpdate: '2026-11-06 09:15',
+          reintegradoVal: 0,
+          history: [],
           subtotales: [
-            { id: 'REV-1002-1', referencia: 47559, informacion: 'INVERSIONES EAMC SAS R-V-10016 | FVE 17524', documento: 'RC-1-3308', observaciones: 'subtotal movimiento banco' }
+            { id: 'REV-1002-1', referencia: 47559, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Doble cobro pasarela', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10016 | FVE 17524', documento: 'RC-1-3308', observaciones: 'subtotal movimiento banco', isReverso: false, reversoState: 'RADICADO', fechaReclamacion: '2025-04-03', lastUpdate: '2026-11-06 10:00', reintegradoVal: 47559, history: ['[2026-11-06 10:00] Reintegrado Total validado en extracto por Stephany Castro'] },
+            { id: 'REV-1002-2', referencia: 285358, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Contracargo tarjeta', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10019 | FVE 17516', documento: 'RC-1-3307', observaciones: 'subtotal movimiento banco', isReverso: false, reversoState: 'EN_SEGUIMIENTO', fechaReclamacion: '2025-04-03', lastUpdate: '2026-11-06 10:15', reintegradoVal: 0, history: ['[2026-11-06 10:15] Pasado a EN_SEGUIMIENTO por Stephany Castro'] },
+            { id: 'REV-1002-3', referencia: 142678, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Error en comisión', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10255 | FVE 17674', documento: 'RC-1-3308', observaciones: 'subtotal movimiento banco', isReverso: false, reversoState: 'EN_VALIDACION', fechaReclamacion: '2025-04-04', lastUpdate: '2026-11-06 10:30', reintegradoVal: 0, history: [] }
           ]
         }
       ],
@@ -390,7 +769,123 @@
       renderApp();
     }
 
-    /* MANEJO DE PEGADO DIRECTO TIPO EXCEL EN LA TABLA PRINCIPAL */
+    function toggleSubtotalesVisibility() {
+      showSubtotales = !showSubtotales;
+      document.getElementById('btnHeaderEye').innerText = showSubtotales ? '👁️' : '👁️‍🗨️';
+      renderApp();
+    }
+
+    function renderApp() {
+      const tbody = document.getElementById('bankTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const data = appData[currentAccount] || [];
+      data.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+      let runningBalance = 0;
+      let monthInitialBalance = 0;
+      let monthEntradas = 0;
+      let monthSalidas = 0;
+      let foundFirstMonthRow = false;
+
+      data.forEach((row) => {
+        const rowMonth = row.fecha.substring(0, 7);
+        const entrada = parseFloat(row.entrada) || 0;
+        const salida = parseFloat(row.salida) || 0;
+
+        if (rowMonth < currentMonth) {
+          if (runningBalance === 0 && row.saldoInicial > 0) runningBalance = parseFloat(row.saldoInicial);
+          runningBalance += (entrada - salida);
+        }
+      });
+
+      monthInitialBalance = runningBalance;
+
+      data.forEach((row) => {
+        const rowMonth = row.fecha.substring(0, 7);
+        const entrada = parseFloat(row.entrada) || 0;
+        const salida = parseFloat(row.salida) || 0;
+
+        if (rowMonth === currentMonth) {
+          if (!foundFirstMonthRow) {
+            if (monthInitialBalance === 0 && row.saldoInicial > 0) {
+              monthInitialBalance = parseFloat(row.saldoInicial);
+              runningBalance = monthInitialBalance;
+            }
+            foundFirstMonthRow = true;
+          }
+
+          monthEntradas += entrada;
+          monthSalidas += salida;
+          runningBalance += (entrada - salida);
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="text-center">
+              <button onclick="openSubModal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 5px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal Desglosado">+</button>
+              <button onclick="toggleReversoParent('${row.id}')" class="btn-toggle-reverso" title="Marcar Reverso">🔄</button>
+            </td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'fecha', this.innerText)">${row.fecha} ${row.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'descripcion', this.innerText)" style="font-weight:700; color:#0f172a;">${row.descripcion}</td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'referencia', this.innerText)" class="text-right" style="color:#94a3b8;">${row.referencia ? formatCurrency(row.referencia) : ''}</td>
+            <td class="text-right" style="font-weight:600;">${formatCurrency(monthInitialBalance)}</td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'entrada', this.innerText)" class="text-right" style="font-weight:800; color:#059669;">${entrada > 0 ? formatCurrency(entrada) : ''}</td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'salida', this.innerText)" class="text-right" style="font-weight:800; color:#dc2626;">${salida > 0 ? formatCurrency(salida) : ''}</td>
+            <td class="text-right" style="font-weight:900; color:#0f172a;">${formatCurrency(runningBalance)}</td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'informacion', this.innerText)">${row.informacion}</td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'documento', this.innerText)">${row.documento}</td>
+            <td contenteditable="true" onblur="updateCell('${row.id}', 'observaciones', this.innerText)" style="font-style:italic; color:#64748b;">${row.observaciones}</td>
+          `;
+          tbody.appendChild(tr);
+
+          if (showSubtotales && row.subtotales && row.subtotales.length > 0) {
+            row.subtotales.forEach((sub) => {
+              const trSub = document.createElement('tr');
+              trSub.className = "bg-subtotal";
+              trSub.innerHTML = `
+                <td class="text-center">
+                  <button onclick="deleteSubtotal('${row.id}', '${sub.id}')" style="background:transparent; color:#dc2626; border:none; font-weight:bold; cursor:pointer;" title="Eliminar Subtotal">✕</button>
+                  <button onclick="toggleReversoSub('${row.id}', '${sub.id}')" class="btn-toggle-reverso" title="Marcar Reverso Subtotal">🔄</button>
+                </td>
+                <td class="text-center" style="color:#a1a1aa;">—</td>
+                <td class="subtotal-indent">↳ Subtotal Desglosado ${sub.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
+                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'referencia', this.innerText)" class="text-right" style="font-weight:800; color:#713f12;">${formatCurrency(sub.referencia)}</td>
+                <td></td><td></td><td></td><td></td>
+                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'informacion', this.innerText)">${sub.informacion}</td>
+                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'documento', this.innerText)">${sub.documento}</td>
+                <td contenteditable="true" onblur="updateSubCell('${row.id}', '${sub.id}', 'observaciones', this.innerText)">${sub.observaciones}</td>
+              `;
+              tbody.appendChild(trSub);
+            });
+          }
+        }
+      });
+
+      /* FILA VACÍA PARA ESCRIBIR O PEGAR EN TABLA PRINCIPAL */
+      const trEmpty = document.createElement('tr');
+      trEmpty.className = 'row-empty';
+      trEmpty.innerHTML = `
+        <td class="text-center" style="font-weight:bold; color:#166534;">+</td>
+        <td contenteditable="true" class="editable-cell" id="new_fecha" placeholder="AAAA-MM-DD">${currentMonth}-01</td>
+        <td contenteditable="true" class="editable-cell" id="new_desc" style="font-weight:700;" onblur="checkSaveNewRow()">+ Escribe o pega aquí (Ctrl+V)...</td>
+        <td contenteditable="true" class="editable-cell text-right" id="new_ref" onblur="checkSaveNewRow()"></td>
+        <td class="text-right" style="color:#94a3b8;">—</td>
+        <td contenteditable="true" class="editable-cell text-right" id="new_entrada" style="color:#059669; font-weight:bold;" onblur="checkSaveNewRow()"></td>
+        <td contenteditable="true" class="editable-cell text-right" id="new_salida" style="color:#dc2626; font-weight:bold;" onblur="checkSaveNewRow()"></td>
+        <td class="text-right" style="color:#94a3b8;">—</td>
+        <td contenteditable="true" class="editable-cell" id="new_info" onblur="checkSaveNewRow()"></td>
+        <td contenteditable="true" class="editable-cell" id="new_doc" onblur="checkSaveNewRow()"></td>
+        <td contenteditable="true" class="editable-cell" id="new_obs" onblur="checkSaveNewRow()"></td>
+      `;
+      tbody.appendChild(trEmpty);
+
+      document.getElementById('kpiSaldoInicial').innerText = formatCurrency(monthInitialBalance);
+      document.getElementById('kpiEntradas').innerText = formatCurrency(monthEntradas);
+      document.getElementById('kpiSalidas').innerText = formatCurrency(monthSalidas);
+      document.getElementById('kpiSaldoFinal').innerText = formatCurrency(runningBalance);
+    }
+
     function handleDirectTablePaste(e) {
       const clipboardData = e.clipboardData || window.clipboardData;
       const pastedData = clipboardData.getData('Text');
@@ -400,7 +895,6 @@
       if (lines.length === 0) return;
 
       e.preventDefault();
-
       const data = appData[currentAccount];
       let insertedCount = 0;
 
@@ -446,6 +940,9 @@
             informacion: '',
             documento: '',
             observaciones: 'Pegado directo en tabla',
+            isReverso: false,
+            reversoState: 'IDENTIFICADO',
+            history: [],
             subtotales: []
           });
           insertedCount++;
@@ -455,83 +952,6 @@
       if (insertedCount > 0) renderApp();
     }
 
-    function renderApp() {
-      const tbody = document.getElementById('bankTableBody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-
-      const data = appData[currentAccount] || [];
-      let runningBalance = 0;
-      let monthEntradas = 0;
-      let monthSalidas = 0;
-
-      data.forEach((row) => {
-        const entrada = parseFloat(row.entrada) || 0;
-        const salida = parseFloat(row.salida) || 0;
-        monthEntradas += entrada;
-        monthSalidas += salida;
-        runningBalance += (entrada - salida);
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="text-center"><button onclick="openSubModal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 6px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal">+</button></td>
-          <td contenteditable="true" onblur="updateCell('${row.id}', 'fecha', this.innerText)">${row.fecha}</td>
-          <td contenteditable="true" onblur="updateCell('${row.id}', 'descripcion', this.innerText)" style="font-weight:700;">${row.descripcion}</td>
-          <td contenteditable="true" onblur="updateCell('${row.id}', 'referencia', this.innerText)" class="text-right">${row.referencia}</td>
-          <td class="text-right">$0</td>
-          <td contenteditable="true" onblur="updateCell('${row.id}', 'entrada', this.innerText)" class="text-right" style="color:#059669; font-weight:bold;">${entrada > 0 ? formatCurrency(entrada) : ''}</td>
-          <td contenteditable="true" onblur="updateCell('${row.id}', 'salida', this.innerText)" class="text-right" style="color:#dc2626; font-weight:bold;">${salida > 0 ? formatCurrency(salida) : ''}</td>
-          <td class="text-right" style="font-weight:bold;">${formatCurrency(runningBalance)}</td>
-          <td contenteditable="true" onblur="updateCell('${row.id}', 'informacion', this.innerText)">${row.informacion}</td>
-          <td contenteditable="true" onblur="updateCell('${row.id}', 'documento', this.innerText)">${row.documento}</td>
-          <td contenteditable="true" onblur="updateCell('${row.id}', 'observaciones', this.innerText)">${row.observaciones}</td>
-        `;
-        tbody.appendChild(tr);
-
-        if (showSubtotales && row.subtotales) {
-          row.subtotales.forEach(sub => {
-            const trSub = document.createElement('tr');
-            trSub.className = "bg-subtotal";
-            trSub.innerHTML = `
-              <td class="text-center"><button onclick="deleteSubtotal('${row.id}', '${sub.id}')" style="background:transparent; color:#dc2626; border:none; font-weight:bold; cursor:pointer;">✕</button></td>
-              <td>—</td>
-              <td class="subtotal-indent">↳ Subtotal Desglosado</td>
-              <td class="text-right">${formatCurrency(sub.referencia)}</td>
-              <td></td><td></td><td></td><td></td>
-              <td>${sub.informacion}</td>
-              <td>${sub.documento}</td>
-              <td>${sub.observaciones}</td>
-            `;
-            tbody.appendChild(trSub);
-          });
-        }
-      });
-
-      /* RENDERIZADO DE LA FILA VACÍA AL FINAL DE LA TABLA */
-      const trEmpty = document.createElement('tr');
-      trEmpty.className = 'row-empty';
-      trEmpty.innerHTML = `
-        <td class="text-center" style="font-weight:bold; color:#166534;">+</td>
-        <td contenteditable="true" class="editable-cell" id="new_fecha" placeholder="AAAA-MM-DD">${currentMonth}-01</td>
-        <td contenteditable="true" class="editable-cell" id="new_desc" style="font-weight:700;" onblur="checkSaveNewRow()">+ Escribe o pega aquí (Ctrl+V)...</td>
-        <td contenteditable="true" class="editable-cell text-right" id="new_ref" onblur="checkSaveNewRow()"></td>
-        <td class="text-right" style="color:#94a3b8;">—</td>
-        <td contenteditable="true" class="editable-cell text-right" id="new_entrada" style="color:#059669; font-weight:bold;" onblur="checkSaveNewRow()"></td>
-        <td contenteditable="true" class="editable-cell text-right" id="new_salida" style="color:#dc2626; font-weight:bold;" onblur="checkSaveNewRow()"></td>
-        <td class="text-right" style="color:#94a3b8;">—</td>
-        <td contenteditable="true" class="editable-cell" id="new_info" onblur="checkSaveNewRow()"></td>
-        <td contenteditable="true" class="editable-cell" id="new_doc" onblur="checkSaveNewRow()"></td>
-        <td contenteditable="true" class="editable-cell" id="new_obs" onblur="checkSaveNewRow()"></td>
-      `;
-      tbody.appendChild(trEmpty);
-
-      document.getElementById('kpiSaldoInicial').innerText = "$0";
-      document.getElementById('kpiEntradas').innerText = formatCurrency(monthEntradas);
-      document.getElementById('kpiSalidas').innerText = formatCurrency(monthSalidas);
-      document.getElementById('kpiSaldoFinal').innerText = formatCurrency(runningBalance);
-    }
-
-    /* GUARDAR AUTOMÁTICAMENTE CUANDO EL USUARIO ESCRIBE EN LA FILA VACÍA FINAL */
     function checkSaveNewRow() {
       const fecha = document.getElementById('new_fecha').innerText.trim();
       const desc = document.getElementById('new_desc').innerText.replace('+ Escribe o pega aquí (Ctrl+V)...', '').trim();
@@ -554,22 +974,20 @@
           informacion: info,
           documento: doc,
           observaciones: obs,
+          isReverso: false,
+          reversoState: 'IDENTIFICADO',
+          history: [],
           subtotales: []
         });
         renderApp();
       }
     }
 
-    function updateCell(id, field, val) {
-      const row = appData[currentAccount].find(r => r.id === id);
-      if (row) {
-        row[field] = field.includes('entrada') || field.includes('salida') ? parseFormattedNumber(val) : val.trim();
-        renderApp();
-      }
-    }
-
     function openSubModal(parentId) {
       document.getElementById('subParentId').value = parentId;
+      document.getElementById('inputSubMonto').value = '';
+      document.getElementById('inputSubInfo').value = '';
+      document.getElementById('inputSubDoc').value = '';
       document.getElementById('modalSub').classList.remove('hidden');
     }
     function closeSubModal() { document.getElementById('modalSub').classList.add('hidden'); }
@@ -578,16 +996,411 @@
       const parentId = document.getElementById('subParentId').value;
       const parent = appData[currentAccount].find(r => r.id === parentId);
       const monto = parseFloat(document.getElementById('inputSubMonto').value) || 0;
+
       if (parent && monto > 0) {
         parent.subtotales.push({
           id: parentId + '-' + (parent.subtotales.length + 1),
           referencia: monto,
-          informacion: document.getElementById('inputSubInfo').value || 'Subtotal',
-          documento: document.getElementById('inputSubDoc').value,
-          observaciones: 'Subtotal'
+          informacion: document.getElementById('inputSubInfo').value.trim() || 'Subtotal Desglosado',
+          documento: document.getElementById('inputSubDoc').value.trim(),
+          observaciones: 'Subtotal desglosado',
+          isReverso: false,
+          reversoState: 'IDENTIFICADO',
+          history: []
         });
         closeSubModal();
         renderApp();
+      } else {
+        alert("Ingresa un monto válido para el subtotal.");
+      }
+    }
+
+    function openExcelModal() {
+      document.getElementById('modalExcel').classList.remove('hidden');
+      clearExcelGrid();
+      for (let i = 0; i < 5; i++) addExcelGridRow(currentMonth + '-01');
+    }
+    function closeExcelModal() { document.getElementById('modalExcel').classList.add('hidden'); }
+    function clearExcelGrid() { document.getElementById('excelGridBody').innerHTML = ''; }
+
+    function addExcelGridRow(fecha = '', desc = '', entrada = '', salida = '') {
+      const tbody = document.getElementById('excelGridBody');
+      const rowCount = tbody.children.length + 1;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="text-center" style="color:#94a3b8; font-weight:bold;">${rowCount}</td>
+        <td><input type="text" class="grid-cell-fecha" value="${fecha || currentMonth + '-01'}" placeholder="AAAA-MM-DD"></td>
+        <td><input type="text" class="grid-cell-desc" value="${desc}" placeholder="Descripción de la transacción"></td>
+        <td><input type="text" class="grid-cell-entrada text-right" value="${entrada}" placeholder="0"></td>
+        <td><input type="text" class="grid-cell-salida text-right" value="${salida}" placeholder="0"></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    function handleGridPaste(e) {
+      e.preventDefault();
+      const clipboardData = e.clipboardData || window.clipboardData;
+      const pastedData = clipboardData.getData('Text');
+      if (!pastedData) return;
+
+      const lines = pastedData.trim().split(/\r\n|\n|\r/);
+      clearExcelGrid();
+
+      lines.forEach((line) => {
+        if (!line.trim()) return;
+        const cols = line.split('\t');
+        const firstColUpper = (cols[0] || '').toUpperCase();
+        if (firstColUpper.includes('FECHA') || firstColUpper.includes('DESC') || firstColUpper.includes('MONTO')) return;
+
+        let rawFecha = currentMonth + '-01';
+        let rawDesc = '';
+        let rawEntrada = '0';
+        let rawSalida = '0';
+
+        if (cols.length === 1) { rawDesc = cols[0].trim(); }
+        else if (cols.length === 2) { rawFecha = cols[0].trim() || rawFecha; rawDesc = cols[1].trim(); }
+        else if (cols.length === 3) {
+          rawFecha = cols[0].trim() || rawFecha; rawDesc = cols[1].trim();
+          const val = parseFormattedNumber(cols[2]);
+          if (val >= 0) rawEntrada = val.toString(); else rawSalida = Math.abs(val).toString();
+        } else if (cols.length >= 4) {
+          rawFecha = cols[0].trim() || rawFecha; rawDesc = cols[1].trim();
+          rawEntrada = parseFormattedNumber(cols[2]).toString(); rawSalida = parseFormattedNumber(cols[3]).toString();
+        }
+
+        addExcelGridRow(rawFecha, rawDesc, rawEntrada !== '0' ? rawEntrada : '', rawSalida !== '0' ? rawSalida : '');
+      });
+    }
+
+    function saveExcelGridData() {
+      const rows = document.querySelectorAll('#excelGridBody tr');
+      const data = appData[currentAccount];
+      let insertedCount = 0;
+
+      rows.forEach(tr => {
+        const fecha = tr.querySelector('.grid-cell-fecha').value.trim();
+        const desc = tr.querySelector('.grid-cell-desc').value.trim();
+        const entradaVal = parseFormattedNumber(tr.querySelector('.grid-cell-entrada').value);
+        const salidaVal = parseFormattedNumber(tr.querySelector('.grid-cell-salida').value);
+
+        if (desc !== '' || entradaVal > 0 || salidaVal > 0) {
+          data.push({
+            id: 'MOV-' + Date.now().toString() + Math.random().toString(36).substr(2, 3),
+            fecha: fecha || (currentMonth + '-01'),
+            descripcion: desc || 'Movimiento de Banco',
+            referencia: '',
+            saldoInicial: 0,
+            entrada: entradaVal,
+            salida: salidaVal,
+            informacion: '',
+            documento: '',
+            observaciones: 'Cargado vía pegado Excel',
+            isReverso: false,
+            reversoState: 'IDENTIFICADO',
+            history: [],
+            subtotales: []
+          });
+          insertedCount++;
+        }
+      });
+
+      if (insertedCount > 0) { closeExcelModal(); renderApp(); }
+    }
+
+    function generateReportReversos() {
+      const data = appData[currentAccount] || [];
+      const body = document.getElementById('reportReversosBody');
+      body.innerHTML = '';
+      
+      let opsReclamadas = 0, valReclamado = 0;
+      let opsPendientes = 0, valPendiente = 0;
+      let opsRecibidas = 0, valRecuperado = 0;
+      let opsRechazadas = 0;
+
+      const fSearch = (document.getElementById('filterSearch').value || '').toLowerCase();
+      const fEntidad = document.getElementById('filterEntidad').value;
+      const fEstado = document.getElementById('filterEstado').value;
+      const fResp = document.getElementById('filterResponsable').value;
+      const fechaHoy = new Date('2026-11-06');
+
+      data.forEach(row => {
+        if (row.fecha.substring(0, 7) === currentMonth) {
+          const flujoBadge = row.entrada > 0 ? '<span class="badge badge-in">INGRESO</span>' : '<span class="badge badge-out">EGRESO</span>';
+          
+          if (row.isReverso) {
+            const monto = row.entrada > 0 ? row.entrada : row.salida;
+            const state = row.reversoState || 'IDENTIFICADO';
+            const reintegrado = row.reintegradoVal || 0;
+            const saldoPend = monto - reintegrado;
+            const dias = Math.max(0, Math.floor((fechaHoy - new Date(row.fecha)) / (1000 * 60 * 60 * 24)));
+
+            opsReclamadas++; valReclamado += monto;
+            valRecuperado += reintegrado;
+            if (reintegrado > 0) opsRecibidas++;
+            if (state === 'RECHAZADO') opsRechazadas++;
+            if (!['REINTEGRADO_TOTAL', 'CERRADO', 'RECHAZADO'].includes(state)) { opsPendientes++; valPendiente += saldoPend; }
+
+            if (applyFilters(row, fSearch, fEntidad, fEstado, fResp)) {
+              body.innerHTML += buildAuditRow(row.fecha, row.id, row.referencia || 'SIN-REF', flujoBadge, row.tercero || 'DIAN', row.descripcion, row.entidad || currentAccount, monto, row.motivo || 'Devolución', row.fechaReclamacion || row.fecha, row.responsable || 'Stephany Castro', state, dias, row.lastUpdate || '2026-11-06', row.id, null);
+            }
+          }
+
+          row.subtotales.forEach(sub => {
+            if (sub.isReverso) {
+              const monto = sub.referencia;
+              const state = sub.reversoState || 'IDENTIFICADO';
+              const reintegrado = sub.reintegradoVal || 0;
+              const saldoPend = monto - reintegrado;
+              const dias = Math.max(0, Math.floor((fechaHoy - new Date(row.fecha)) / (1000 * 60 * 60 * 24)));
+
+              opsReclamadas++; valReclamado += monto;
+              valRecuperado += reintegrado;
+              if (reintegrado > 0) opsRecibidas++;
+              if (state === 'RECHAZADO') opsRechazadas++;
+              if (!['REINTEGRADO_TOTAL', 'CERRADO', 'RECHAZADO'].includes(state)) { opsPendientes++; valPendiente += saldoPend; }
+
+              if (applyFilters(sub, fSearch, fEntidad, fEstado, fResp)) {
+                body.innerHTML += buildAuditRow(row.fecha, sub.id, sub.documento || 'SUB-REF', flujoBadge, sub.tercero || 'Cliente EAMC', sub.informacion, sub.entidad || 'Credibanco', monto, sub.motivo || 'Reversión Adquirencia', sub.fechaReclamacion || row.fecha, sub.responsable || 'Stephany Castro', state, dias, sub.lastUpdate || '2026-11-06', row.id, sub.id);
+              }
+            }
+          });
+        }
+      });
+
+      if (opsReclamadas === 0) {
+        body.innerHTML = `<tr><td colspan="15" style="text-align:center; color:#64748b; padding:20px;">No hay registros marcados como reverso en ${currentMonth}. Haz clic en 🔄 en la Posición Bancaria.</td></tr>`;
+      }
+
+      document.getElementById('kpiOpsReclamadas').innerText = opsReclamadas;
+      document.getElementById('kpiValReclamado').innerText = formatCurrency(valReclamado);
+      document.getElementById('kpiOpsPendientes').innerText = opsPendientes;
+      document.getElementById('kpiValPendiente').innerText = formatCurrency(valPendiente);
+      document.getElementById('kpiOpsRecibidas').innerText = opsRecibidas;
+      document.getElementById('kpiValRecuperado').innerText = formatCurrency(valRecuperado);
+      document.getElementById('kpiOpsRechazadas').innerText = opsRechazadas;
+
+      const porc = valReclamado > 0 ? ((valRecuperado / valReclamado) * 100).toFixed(1) : '0.0';
+      document.getElementById('kpiPorcRecuperacion').innerText = `${porc}%`;
+    }
+
+    function applyFilters(item, search, entidad, estado, resp) {
+      const matchSearch = !search || (item.descripcion || item.informacion || '').toLowerCase().includes(search) || (item.referencia || item.documento || '').toLowerCase().includes(search);
+      const matchEntidad = !entidad || (item.entidad || '').includes(entidad);
+      const matchEstado = !estado || (item.reversoState === estado);
+      const matchResp = !resp || (item.responsable === resp);
+      return matchSearch && matchEntidad && matchEstado && matchResp;
+    }
+
+    function buildAuditRow(fecha, idUnico, ref, flujo, tercero, desc, entidad, monto, motivo, fReclam, resp, state, dias, lastUp, parentId, subId) {
+      const getSlaBadge = (d) => {
+        if (d <= 5) return `<span class="sla-badge sla-green">${d} días (Al día)</span>`;
+        if (d <= 10) return `<span class="sla-badge sla-yellow">${d} días (Alerta 5d)</span>`;
+        if (d <= 15) return `<span class="sla-badge sla-orange">${d} días (Alerta 10d)</span>`;
+        return `<span class="sla-badge sla-red">${d} días (>30d Crítico)</span>`;
+      };
+
+      const getStatusSelect = (s) => {
+        const cls = 'st-' + s.toLowerCase().replace('_', '-');
+        return `
+          <select class="status-select ${cls}" onchange="changeStateGuard('${parentId}', ${subId ? `'${subId}'` : 'null'}, this.value)">
+            <option value="IDENTIFICADO" ${s === 'IDENTIFICADO' ? 'selected' : ''}>1. Identificado</option>
+            <option value="PENDIENTE_RADICACION" ${s === 'PENDIENTE_RADICACION' ? 'selected' : ''}>2. Pendiente radicación</option>
+            <option value="RADICADO" ${s === 'RADICADO' ? 'selected' : ''}>3. Reclamación radicada</option>
+            <option value="EN_SEGUIMIENTO" ${s === 'EN_SEGUIMIENTO' ? 'selected' : ''}>4. En seguimiento</option>
+            <option value="EN_VALIDACION" ${s === 'EN_VALIDACION' ? 'selected' : ''}>5. En validación</option>
+            <option value="REINTEGRADO_PARCIAL" ${s === 'REINTEGRADO_PARCIAL' ? 'selected' : ''}>6. Reintegrado parcial</option>
+            <option value="REINTEGRADO_TOTAL" ${s === 'REINTEGRADO_TOTAL' ? 'selected' : ''}>7. Reintegrado total</option>
+            <option value="RECHAZADO" ${s === 'RECHAZADO' ? 'selected' : ''}>8. Rechazado</option>
+            <option value="CERRADO" ${s === 'CERRADO' ? 'selected' : ''}>9. Cerrado</option>
+          </select>`;
+      };
+
+      return `
+        <tr>
+          <td>${fecha}</td>
+          <td style="font-weight:bold; font-family:monospace; color:#2563eb;">${idUnico}</td>
+          <td style="font-weight:bold;">${ref}</td>
+          <td>${flujo}</td>
+          <td>${tercero}</td>
+          <td>${desc}</td>
+          <td>${entidad}</td>
+          <td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(monto)}</td>
+          <td>${motivo}</td>
+          <td>${fReclam}</td>
+          <td>${resp}</td>
+          <td>${getStatusSelect(state)}</td>
+          <td class="text-center">${getSlaBadge(dias)}</td>
+          <td style="font-size:10px; color:#64748b;">${lastUp}</td>
+          <td class="text-center"><button onclick="openDetailModal('${parentId}', ${subId ? `'${subId}'` : 'null'})" class="btn-detail">🔍 Expediente</button></td>
+        </tr>`;
+    }
+
+    function changeStateGuard(parentId, subId, newState) {
+      const parent = appData[currentAccount].find(r => r.id === parentId);
+      if (!parent) return;
+
+      let item = parent;
+      if (subId && subId !== 'null') item = parent.subtotales.find(s => s.id === subId);
+
+      if (newState === 'CERRADO' && (item.reintegradoVal || 0) <= 0) {
+        alert("⚠️ REGLA DE AUDITORÍA: No se puede cerrar una reclamación sin verificar el reintegro en el extracto bancario.");
+        generateReportReversos();
+        return;
+      }
+
+      const prev = item.reversoState;
+      item.reversoState = newState;
+      item.lastUpdate = new Date().toISOString().replace('T', ' ').substring(0, 16);
+      item.history = item.history || [];
+      item.history.push(`[${item.lastUpdate}] Estado cambiado de '${prev}' a '${newState}' por Stephany Castro.`);
+
+      generateReportReversos();
+    }
+
+    function openDetailModal(parentId, subId) {
+      const parent = appData[currentAccount].find(r => r.id === parentId);
+      if (!parent) return;
+
+      let item = parent;
+      if (subId && subId !== 'null') item = parent.subtotales.find(s => s.id === subId);
+      activeDetailItem = item;
+
+      document.getElementById('detId').innerText = item.id;
+      document.getElementById('detFecha').innerText = parent.fecha;
+      document.getElementById('detBanco').innerText = item.entidad || currentAccount;
+      document.getElementById('detRef').innerText = item.referencia || item.documento || 'REF-NUL';
+      document.getElementById('detTercero').innerText = item.tercero || 'Cámara de Comercio / Pasarela';
+      document.getElementById('detValor').innerText = formatCurrency(item.entrada || item.salida || item.referencia);
+
+      document.getElementById('detMotivo').innerText = item.motivo || 'Devolución adquirencia';
+      document.getElementById('detDesc').innerText = item.descripcion || item.informacion;
+
+      const hBox = document.getElementById('historyLogContainer');
+      hBox.innerHTML = '';
+      (item.history || []).forEach(h => { hBox.innerHTML += `<div class="log-item">${h}</div>`; });
+
+      const montoVal = parseFloat(item.entrada || item.salida || item.referencia) || 0;
+      const reintegrado = item.reintegradoVal || 0;
+      const saldo = montoVal - reintegrado;
+      const porc = montoVal > 0 ? ((reintegrado / montoVal) * 100).toFixed(1) : 0;
+
+      document.getElementById('recValReclamado').innerText = formatCurrency(montoVal);
+      document.getElementById('recValReintegrado').innerText = formatCurrency(reintegrado);
+      document.getElementById('recSaldoPendiente').innerText = formatCurrency(saldo);
+      document.getElementById('recPorcentaje').innerText = `${porc}%`;
+
+      const selectCruce = document.getElementById('selectCruceAbono');
+      selectCruce.innerHTML = '<option value="">-- Seleccionar abono en extracto --</option>';
+      (appData[currentAccount] || []).filter(r => r.entrada > 0).forEach(e => {
+        selectCruce.innerHTML += `<option value="${e.entrada}">${e.fecha} | Abono en banco ${formatCurrency(e.entrada)} (${e.descripcion})</option>`;
+      });
+
+      switchTab('tabA');
+      document.getElementById('modalDetail').classList.remove('hidden');
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function closeDetailModal() { document.getElementById('modalDetail').classList.add('hidden'); }
+
+    function executePartialReintegro() {
+      if (!activeDetailItem) return;
+      const val = parseFloat(document.getElementById('selectCruceAbono').value) || 0;
+      if (val > 0) {
+        activeDetailItem.reintegradoVal = (activeDetailItem.reintegradoVal || 0) + val;
+        const totalVal = parseFloat(activeDetailItem.entrada || activeDetailItem.salida || activeDetailItem.referencia) || 0;
+        activeDetailItem.reversoState = activeDetailItem.reintegradoVal >= totalVal ? 'REINTEGRADO_TOTAL' : 'REINTEGRADO_PARCIAL';
+
+        const time = new Date().toISOString().replace('T', ' ').substring(0, 16);
+        activeDetailItem.history.push(`[${time}] Reintegro parcial de ${formatCurrency(val)} abonado y validado en extracto.`);
+        alert(`Reintegro por ${formatCurrency(val)} cruzado exitosamente.`);
+        closeDetailModal();
+        generateReportReversos();
+      } else {
+        alert("Selecciona un movimiento de abono válido para cruzar.");
+      }
+    }
+
+    function addSupportFile() {
+      const input = document.getElementById('fileInputSupport');
+      if (input.files.length > 0) {
+        const f = input.files[0].name;
+        document.getElementById('supportFileList').innerHTML += `<li>📄 ${f} (Subido por Stephany Castro)</li>`;
+        alert(`Soporte '${f}' adjuntado al expediente.`);
+      }
+    }
+
+    function exportToExcel() { alert("📥 Exportando reporte gerencial a Excel (.xlsx)..."); }
+    function exportToPDF() { alert("📄 Generando informe gerencial en PDF..."); }
+
+    function generateAlertas() {
+      const body = document.getElementById('alertasBody'); body.innerHTML = '';
+      const hoy = new Date('2026-11-06');
+      Object.keys(appData).forEach(acc => {
+        const rows = appData[acc];
+        if (rows.length === 0) {
+          body.innerHTML += `<tr><td>${acc}</td><td>Sin datos</td><td>—</td><td><span class="badge badge-alert">⚠️ Sin Movimientos</span></td></tr>`;
+        } else {
+          const ult = rows[rows.length - 1].fecha;
+          const diff = Math.floor((hoy - new Date(ult)) / (1000 * 60 * 60 * 24));
+          body.innerHTML += `<tr><td>${acc}</td><td>${ult}</td><td>${diff} días</td><td><span class="badge ${diff>30?'badge-alert':'badge-in'}">${diff>30?'Desactualizada':'Al día'}</span></td></tr>`;
+        }
+      });
+    }
+
+    function generateReportGastos() {
+      const body = document.getElementById('reportGastosBody'); body.innerHTML = '';
+      (appData[currentAccount] || []).forEach(row => {
+        if (row.fecha.substring(0, 7) === currentMonth && ((row.informacion||'').toLowerCase().includes('gastos') || (row.descripcion||'').toLowerCase().includes('gravamen'))) {
+          body.innerHTML += `<tr><td>${row.fecha}</td><td>${currentAccount}</td><td>${row.descripcion}</td><td class="text-right">${formatCurrency(row.salida)}</td><td><span class="badge badge-gasto">Gasto Bancario</span></td></tr>`;
+        }
+      });
+    }
+
+    function generateReportIdentificar() {
+      const body = document.getElementById('reportIdentificarBody'); body.innerHTML = '';
+      (appData[currentAccount] || []).forEach(row => {
+        if (row.fecha.substring(0, 7) === currentMonth && (!row.informacion || row.informacion.trim() === '')) {
+          body.innerHTML += `<tr><td>${row.fecha}</td><td><span class="badge badge-out">SALIDA</span></td><td>${row.descripcion}</td><td class="text-right">${formatCurrency(row.salida||row.entrada)}</td><td>Sin Información</td><td>Banco</td></tr>`;
+        }
+      });
+    }
+
+    function generateReportContabilizar() {
+      const body = document.getElementById('reportContabilizarBody'); body.innerHTML = '';
+      (appData[currentAccount] || []).forEach(row => {
+        if (row.fecha.substring(0, 7) === currentMonth && !row.documento) {
+          body.innerHTML += `<tr><td>${row.fecha}</td><td><span class="badge badge-in">ENTRADA</span></td><td>${row.descripcion}</td><td class="text-right">${formatCurrency(row.entrada||row.salida)}</td><td>Sin RC/FVE</td><td>Pendiente</td></tr>`;
+        }
+      });
+    }
+
+    function generateConsolidado() {
+      const body = document.getElementById('consolidadoBody'); body.innerHTML = '';
+      Object.keys(appData).forEach(acc => {
+        const rows = appData[acc];
+        let init = rows.length > 0 ? rows[0].saldoInicial : 0;
+        let inT = rows.reduce((s, r) => s + (parseFloat(r.entrada)||0), 0);
+        let outT = rows.reduce((s, r) => s + (parseFloat(r.salida)||0), 0);
+        body.innerHTML += `<tr><td>${acc}</td><td class="text-right">${formatCurrency(init)}</td><td class="text-right">${formatCurrency(inT)}</td><td class="text-right">${formatCurrency(outT)}</td><td class="text-right">${formatCurrency(init+inT-outT)}</td></tr>`;
+      });
+    }
+
+    function toggleReversoParent(id) {
+      const row = appData[currentAccount].find(r => r.id === id);
+      if (row) { row.isReverso = !row.isReverso; renderApp(); }
+    }
+
+    function toggleReversoSub(parentId, subId) {
+      const parent = appData[currentAccount].find(r => r.id === parentId);
+      if (parent) {
+        const sub = parent.subtotales.find(s => s.id === subId);
+        if (sub) { sub.isReverso = !sub.isReverso; renderApp(); }
       }
     }
 
@@ -599,10 +1412,31 @@
       }
     }
 
-    function toggleSubtotalesVisibility() {
-      showSubtotales = !showSubtotales;
-      document.getElementById('btnHeaderEye').innerText = showSubtotales ? '👁️' : '👁️‍🗨️';
-      renderApp();
+    function updateCell(id, field, val) {
+      const row = appData[currentAccount].find(r => r.id === id);
+      if (row) { row[field] = field.includes('entrada') || field.includes('salida') ? parseFormattedNumber(val) : val.trim(); renderApp(); }
+    }
+
+    function updateSubCell(parentId, subId, field, val) {
+      const parent = appData[currentAccount].find(r => r.id === parentId);
+      if (parent) {
+        const sub = parent.subtotales.find(s => s.id === subId);
+        if (sub) { sub[field] = field === 'referencia' ? parseFormattedNumber(val) : val.trim(); renderApp(); }
+      }
+    }
+
+    function openAccountModal() {
+      const name = prompt("Nombre de la nueva cuenta bancaria:");
+      if (name) {
+        appData[name] = [];
+        const select = document.getElementById('accountSelect');
+        const opt = document.createElement('option');
+        opt.value = name; opt.innerText = name;
+        select.appendChild(opt);
+        select.value = name;
+        currentAccount = name;
+        renderApp();
+      }
     }
 
     function switchModule(modId) {
@@ -613,7 +1447,28 @@
       if (document.getElementById('link-' + modId)) {
         document.getElementById('link-' + modId).classList.add('active');
       }
+
+      const titles = {
+        'mod-posicion': ['Posición Bancaria', 'Control diario de tesorería y subtotales desglosados de adquirencia'],
+        'mod-consolidado': ['Consolidado de Cuentas', 'Resumen total de dinero disponible en la compañía'],
+        'mod-alertas': ['Alerta: Cuentas por Actualizar', 'Control de frescura y actualización de extractos bancarios'],
+        'mod-identificar': ['Pendiente por Identificar', 'Partidas sin cliente o información asignada en la columna INFORMACION'],
+        'mod-contabilizar': ['Pendiente por Contabilizar', 'Control de Recibos de Caja (RC) y Facturas (FVE)'],
+        'mod-gastos': ['Gasto Bancario Global', 'Acumulado de Gravamen (4x1000), comisiones y cuotas de manejo'],
+        'mod-usuarios': ['Usuarios y Permisos', 'Administración de accesos a empresas por usuario'],
+        'mod-reversos': ['Auditoría de Reversos', 'Sistema Gerencial e Integral de Reclamaciones, Cruces y Recuperación']
+      };
+
+      document.getElementById('moduleTitle').innerText = titles[modId][0];
+      document.getElementById('moduleSubtitle').innerText = titles[modId][1];
+
+      if (modId === 'mod-consolidado') generateConsolidado();
+      if (modId === 'mod-alertas') generateAlertas();
+      if (modId === 'mod-identificar') generateReportIdentificar();
+      if (modId === 'mod-contabilizar') generateReportContabilizar();
+      if (modId === 'mod-gastos') generateReportGastos();
       if (modId === 'mod-usuarios') renderUsersModule();
+      if (modId === 'mod-reversos') generateReportReversos();
     }
 
     function changeMonth() { currentMonth = document.getElementById('monthSelect').value; renderApp(); }
