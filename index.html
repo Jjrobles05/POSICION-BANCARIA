@@ -176,16 +176,16 @@
         <span>💸</span> <span>Gasto Bancario Global</span>
       </div>
 
-      <!-- MÓDULO 3: CONFIGURACIÓN SEPARADO -->
-      <div class="nav-section-label" style="margin-top: 14px;">Módulo 3: Configuración</div>
-      <div id="link-mod-usuarios" onclick="switchModule('mod-usuarios')" class="mod-link">
-        <span>👥</span> <span>Usuarios y Permisos</span>
-      </div>
-
-      <!-- MÓDULO 4: AUDITORÍA SEPARADO -->
-      <div class="nav-section-label" style="margin-top: 14px;">Módulo 4: Auditoría</div>
+      <!-- MÓDULO 3 SEPARADO -->
+      <div class="nav-section-label" style="margin-top: 14px;">Módulo 3: Auditoría</div>
       <div id="link-mod-reversos" onclick="switchModule('mod-reversos')" class="mod-link">
         <span>🔄</span> <span>Auditoría de Reversos</span>
+      </div>
+
+      <!-- MÓDULO 4 SEPARADO -->
+      <div class="nav-section-label" style="margin-top: 14px;">Módulo 4: Configuración</div>
+      <div id="link-mod-usuarios" onclick="switchModule('mod-usuarios')" class="mod-link">
+        <span>👥</span> <span>Usuarios y Permisos</span>
       </div>
     </nav>
   </aside>
@@ -361,25 +361,7 @@
         </div>
       </section>
 
-      <!-- MÓDULO 3: CONFIGURACIÓN (USUARIOS Y PERMISOS) -->
-      <section id="mod-usuarios" class="module-section hidden">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-          <h3 style="font-size:16px; font-weight:800;">👥 Administración de Usuarios y Empresas Asignadas</h3>
-          <button onclick="openUserModal()" class="btn-action">+ Crear Nuevo Usuario</button>
-        </div>
-        <div class="table-card">
-          <table>
-            <thead>
-              <tr style="background:#0f172a !important;">
-                <th>Usuario (Nombre)</th><th>Correo / Usuario</th><th>Rol</th><th>Empresas Asignadas (Permisos)</th><th class="text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="usersTableBody"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- MÓDULO 4: AUDITORÍA DE REVERSOS -->
+      <!-- MÓDULO 3: AUDITORÍA DE REVERSOS Y DEVOLUCIONES -->
       <section id="mod-reversos" class="module-section hidden">
         <div class="kpi-8-grid">
           <div class="kpi-8-card highlight-purple"><div class="kpi-8-label">1. Operaciones Reclamadas</div><div id="kpiOpsReclamadas" class="kpi-8-val">0</div><div class="kpi-8-sub">Casos en sistema</div></div>
@@ -465,6 +447,24 @@
               <button class="page-btn">Sig »</button>
             </div>
           </div>
+        </div>
+      </section>
+
+      <!-- MÓDULO 4: CONFIGURACIÓN (USUARIOS Y PERMISOS UNICAMENTE) -->
+      <section id="mod-usuarios" class="module-section hidden">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+          <h3 style="font-size:16px; font-weight:800;">👥 Administración de Usuarios y Empresas Asignadas</h3>
+          <button onclick="openUserModal()" class="btn-action">+ Crear Nuevo Usuario</button>
+        </div>
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr style="background:#0f172a !important;">
+                <th>Usuario (Nombre)</th><th>Correo / Usuario</th><th>Rol</th><th>Empresas Asignadas (Permisos)</th><th class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody"></tbody>
+          </table>
         </div>
       </section>
 
@@ -1429,143 +1429,4 @@
     }
 
     function updateSubCell(parentId, subId, field, val) {
-      const parent = appData[currentAccount].find(r => r.id === parentId);
-      if (parent) {
-        const sub = parent.subtotales.find(s => s.id === subId);
-        if (sub) { sub[field] = field === 'referencia' ? parseFormattedNumber(val) : val.trim(); renderApp(); }
-      }
-    }
-
-    function openAccountModal() {
-      const name = prompt("Nombre de la nueva cuenta bancaria:");
-      if (name) {
-        appData[name] = [];
-        const select = document.getElementById('accountSelect');
-        const opt = document.createElement('option');
-        opt.value = name; opt.innerText = name;
-        select.appendChild(opt);
-        select.value = name;
-        currentAccount = name;
-        renderApp();
-      }
-    }
-
-    function switchModule(modId) {
-      document.querySelectorAll('.module-section').forEach(s => s.classList.add('hidden'));
-      document.querySelectorAll('.mod-link').forEach(l => l.classList.remove('active'));
-
-      document.getElementById(modId).classList.remove('hidden');
-      if (document.getElementById('link-' + modId)) {
-        document.getElementById('link-' + modId).classList.add('active');
-      }
-
-      const titles = {
-        'mod-posicion': ['Posición Bancaria', 'Control diario de tesorería y subtotales desglosados de adquirencia'],
-        'mod-consolidado': ['Consolidado de Cuentas', 'Resumen total de dinero disponible en la compañía'],
-        'mod-alertas': ['Alerta: Cuentas por Actualizar', 'Control de frescura y actualización de extractos bancarios'],
-        'mod-identificar': ['Pendiente por Identificar', 'Partidas sin cliente o información asignada en la columna INFORMACION'],
-        'mod-contabilizar': ['Pendiente por Contabilizar', 'Control de Recibos de Caja (RC) y Facturas (FVE)'],
-        'mod-gastos': ['Gasto Bancario Global', 'Acumulado de Gravamen (4x1000), comisiones y cuotas de manejo'],
-        'mod-usuarios': ['Configuración de Usuarios y Permisos', 'Administración de accesos a empresas por usuario'],
-        'mod-reversos': ['Auditoría de Reversos', 'Sistema Gerencial e Integral de Reclamaciones, Cruces y Recuperación']
-      };
-
-      document.getElementById('moduleTitle').innerText = titles[modId][0];
-      document.getElementById('moduleSubtitle').innerText = titles[modId][1];
-
-      if (modId === 'mod-consolidado') generateConsolidado();
-      if (modId === 'mod-alertas') generateAlertas();
-      if (modId === 'mod-identificar') generateReportIdentificar();
-      if (modId === 'mod-contabilizar') generateReportContabilizar();
-      if (modId === 'mod-gastos') generateReportGastos();
-      if (modId === 'mod-usuarios') renderUsersModule();
-      if (modId === 'mod-reversos') generateReportReversos();
-    }
-
-    function changeMonth() { currentMonth = document.getElementById('monthSelect').value; renderApp(); }
-    function changeAccount() { currentAccount = document.getElementById('accountSelect').value; renderApp(); }
-
-    function openUserModal() {
-      document.getElementById('inputUserName').value = '';
-      document.getElementById('inputUserKey').value = '';
-      document.getElementById('inputUserKey').readOnly = false;
-      renderEmpresasCheckboxes([]);
-      document.getElementById('modalUser').classList.remove('hidden');
-    }
-    function closeUserModal() { document.getElementById('modalUser').classList.add('hidden'); }
-
-    function renderEmpresasCheckboxes(selectedNits = []) {
-      const container = document.getElementById('empresasCheckboxes');
-      container.innerHTML = '';
-      empresasList.forEach(e => {
-        const isChecked = selectedNits.includes(e.nit) ? 'checked' : '';
-        container.innerHTML += `
-          <label class="checkbox-item">
-            <input type="checkbox" value="${e.nit}" ${isChecked}>
-            <span>${e.razonSocial} <small style="color:#64748b;">(${e.nit})</small></span>
-          </label>`;
-      });
-    }
-
-    function saveUser() {
-      const name = document.getElementById('inputUserName').value.trim();
-      const key = document.getElementById('inputUserKey').value.trim();
-      const role = document.getElementById('inputUserRole').value;
-      const checkedBoxes = document.querySelectorAll('#empresasCheckboxes input[type="checkbox"]:checked');
-      const assignedNits = Array.from(checkedBoxes).map(cb => cb.value);
-
-      if (!name || !key) return;
-
-      const existingIndex = usersList.findIndex(u => u.userKey === key);
-      if (existingIndex >= 0) {
-        usersList[existingIndex].nombre = name;
-        usersList[existingIndex].rol = role;
-        usersList[existingIndex].empresasAsignadas = assignedNits;
-      } else {
-        usersList.push({ userKey: key, nombre: name, rol: role, empresasAsignadas: assignedNits });
-      }
-
-      closeUserModal();
-      renderUsersModule();
-      renderUserSessionSwitcher();
-    }
-
-    function renderUsersModule() {
-      const tbody = document.getElementById('usersTableBody');
-      tbody.innerHTML = '';
-      usersList.forEach(u => {
-        const empNames = u.empresasAsignadas.map(nit => {
-          const emp = empresasList.find(e => e.nit === nit);
-          return emp ? `<span class="badge badge-in" style="margin-right:4px;">${emp.razonSocial}</span>` : '';
-        }).join('');
-
-        tbody.innerHTML += `
-          <tr>
-            <td style="font-weight:bold; color:#0f172a;">${u.nombre}</td>
-            <td style="font-family:monospace; color:#2563eb;">${u.userKey}</td>
-            <td><span class="badge badge-gasto">${u.rol}</span></td>
-            <td>${empNames || '<span style="color:#94a3b8; font-style:italic;">Ninguna</span>'}</td>
-            <td class="text-center"><button onclick="editUser('${u.userKey}')" class="btn-detail">✏️ Editar Permisos</button></td>
-          </tr>`;
-      });
-    }
-
-    function editUser(userKey) {
-      const user = usersList.find(u => u.userKey === userKey);
-      if (user) {
-        document.getElementById('inputUserName').value = user.nombre;
-        document.getElementById('inputUserKey').value = user.userKey;
-        document.getElementById('inputUserKey').readOnly = true;
-        document.getElementById('inputUserRole').value = user.rol;
-        renderEmpresasCheckboxes(user.empresasAsignadas);
-        document.getElementById('modalUser').classList.remove('hidden');
-      }
-    }
-
-    window.onload = function() {
-      renderUserSessionSwitcher();
-      renderApp();
-    };
-  </script>
-</body>
-</html>
+      const parent = app
