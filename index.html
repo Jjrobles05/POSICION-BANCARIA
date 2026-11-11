@@ -98,6 +98,10 @@
     .btn-secondary { background: #0f172a; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
     .btn-toggle-reverso { background: #7e22ce; color: white; border: none; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
     .btn-detail { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; }
+    
+    /* BOTÓN EYE EN FILA */
+    .btn-row-eye { background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
+    .btn-row-eye:hover { background: #f1f5f9; }
 
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 999; }
     .modal-excel-box { background: white; border-radius: 16px; width: 92%; max-width: 950px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid #cbd5e1; display: flex; flex-direction: column; max-height: 90vh; }
@@ -235,11 +239,6 @@
             <option value="BANCOLOMBIA 9015">BANCOLOMBIA 9015</option>
           </select>
         </div>
-        
-        <!-- BOTÓN EN EL HEADER PARA OCULTAR/MOSTRAR SUBTOTALES -->
-        <button id="btnHeaderEyeControls" onclick="toggleSubtotalesVisibility()" class="btn-secondary" style="background:#475569;">
-          👁️ Ocultar Subtotales
-        </button>
 
         <button onclick="openAccountModal()" class="btn-add-acc">+ Cuenta</button>
       </div>
@@ -265,7 +264,7 @@
           <table>
             <thead>
               <tr>
-                <th class="text-center" style="white-space:nowrap; width:80px;">Acción</th>
+                <th class="text-center" style="white-space:nowrap; width:100px;">Acción</th>
                 <th>Fecha</th>
                 <th>Descripción</th>
                 <th class="text-right">Referencia</th>
@@ -645,7 +644,6 @@
     let currentEmpresa = '901234567-1';
     let currentActiveUser = 'stephany.castro';
     let activeDetailItem = null;
-    let showSubtotales = true;
 
     let empresasList = [
       { nit: '901234567-1', razonSocial: 'WeTravel Colombia SAS' },
@@ -681,6 +679,7 @@
           lastUpdate: '2026-11-06 09:00',
           reintegradoVal: 0,
           history: ['[2026-11-06 09:00] Registrado como IDENTIFICADO por Stephany Castro'],
+          subtotalesVisible: true,
           subtotales: []
         },
         {
@@ -704,6 +703,7 @@
           lastUpdate: '2026-11-06 09:15',
           reintegradoVal: 0,
           history: [],
+          subtotalesVisible: true,
           subtotales: [
             { id: 'REV-1002-1', referencia: 47559, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Doble cobro pasarela', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10016 | FVE 17524', documento: 'RC-1-3308', observaciones: 'subtotal movimiento banco', isReverso: false, reversoState: 'RADICADO', fechaReclamacion: '2025-04-03', lastUpdate: '2026-11-06 10:00', reintegradoVal: 47559, history: ['[2026-11-06 10:00] Reintegrado Total validado en extracto por Stephany Castro'] },
             { id: 'REV-1002-2', referencia: 285358, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Contracargo tarjeta', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10019 | FVE 17516', documento: 'RC-1-3307', observaciones: 'subtotal movimiento banco', isReverso: false, reversoState: 'EN_SEGUIMIENTO', fechaReclamacion: '2025-04-03', lastUpdate: '2026-11-06 10:15', reintegradoVal: 0, history: ['[2026-11-06 10:15] Pasado a EN_SEGUIMIENTO por Stephany Castro'] },
@@ -771,18 +771,13 @@
       renderApp();
     }
 
-    /* ALTERNANCIA DE SUBTOTALES EN EL HEADER */
-    function toggleSubtotalesVisibility() {
-      showSubtotales = !showSubtotales;
-      const btn = document.getElementById('btnHeaderEyeControls');
-      if (showSubtotales) {
-        btn.innerText = '👁️ Ocultar Subtotales';
-        btn.style.background = '#475569';
-      } else {
-        btn.innerText = '👁️‍🗨️ Mostrar Subtotales';
-        btn.style.background = '#059669';
+    /* ALTERNAR SUBTOTALES DE UNA FILA ESPECÍFICA */
+    function toggleRowSubtotales(rowId) {
+      const row = appData[currentAccount].find(r => r.id === rowId);
+      if (row) {
+        row.subtotalesVisible = row.subtotalesVisible === undefined ? false : !row.subtotalesVisible;
+        renderApp();
       }
-      renderApp();
     }
 
     function renderApp() {
@@ -830,11 +825,20 @@
           monthSalidas += salida;
           runningBalance += (entrada - salida);
 
+          const hasSub = row.subtotales && row.subtotales.length > 0;
+          const isVisible = row.subtotalesVisible !== false;
+          
+          /* BOTÓN OJO INDIVIDUAL PARA CADA FILA PADRE QUE TENGA SUBTOTALES */
+          const eyeBtnHtml = hasSub 
+            ? `<button onclick="toggleRowSubtotales('${row.id}')" class="btn-row-eye" title="${isVisible ? 'Ocultar subtotales de este grupo' : 'Mostrar subtotales de este grupo'}">${isVisible ? '👁️' : '👁️‍🗨️'}</button>`
+            : '';
+
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td class="text-center">
-              <button onclick="openSubModal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 5px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal Desglosado">+</button>
+            <td class="text-center" style="display:flex; gap:3px; justify-content:center; align-items:center;">
+              <button onclick="openSubModal('${row.id}')" style="background:#d1fae5; color:#065f46; border:none; padding:4px 6px; border-radius:4px; font-weight:bold; cursor:pointer;" title="Agregar Subtotal Desglosado">+</button>
               <button onclick="toggleReversoParent('${row.id}')" class="btn-toggle-reverso" title="Marcar Reverso">🔄</button>
+              ${eyeBtnHtml}
             </td>
             <td contenteditable="true" onblur="updateCell('${row.id}', 'fecha', this.innerText)">${row.fecha} ${row.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
             <td contenteditable="true" onblur="updateCell('${row.id}', 'descripcion', this.innerText)" style="font-weight:700; color:#0f172a;">${row.descripcion}</td>
@@ -849,7 +853,8 @@
           `;
           tbody.appendChild(tr);
 
-          if (showSubtotales && row.subtotales && row.subtotales.length > 0) {
+          /* RENDERIZAR SUBTOTALES SOLO SI ESTÁN MARCADOS COMO VISIBLES */
+          if (hasSub && isVisible) {
             row.subtotales.forEach((sub) => {
               const trSub = document.createElement('tr');
               trSub.className = "bg-subtotal";
@@ -946,6 +951,7 @@
             isReverso: false,
             reversoState: 'IDENTIFICADO',
             history: [],
+            subtotalesVisible: true,
             subtotales: []
           });
           insertedCount++;
@@ -980,6 +986,7 @@
           isReverso: false,
           reversoState: 'IDENTIFICADO',
           history: [],
+          subtotalesVisible: true,
           subtotales: []
         });
         renderApp();
@@ -1011,6 +1018,7 @@
           reversoState: 'IDENTIFICADO',
           history: []
         });
+        parent.subtotalesVisible = true;
         closeSubModal();
         renderApp();
       } else {
@@ -1101,6 +1109,7 @@
             isReverso: false,
             reversoState: 'IDENTIFICADO',
             history: [],
+            subtotalesVisible: true,
             subtotales: []
           });
           insertedCount++;
