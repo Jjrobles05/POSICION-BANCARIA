@@ -10,7 +10,7 @@
 
     aside { width: 270px; background-color: #0f172a; color: #ffffff; display: flex; flex-direction: column; flex-shrink: 0; border-right: 1px solid #1e293b; }
     .sidebar-header { padding: 20px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; gap: 12px; }
-    .sidebar-logo { background: #10b981; color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: justify; font-size: 20px; font-weight: bold; }
+    .sidebar-logo { background: #10b981; color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
     .sidebar-title h2 { font-size: 15px; font-weight: 800; color: #ffffff; }
     .sidebar-title p { font-size: 11px; color: #64748b; }
 
@@ -104,6 +104,9 @@
     .btn-row-eye:hover { background: #f1f5f9; }
 
     .btn-disabled { opacity: 0.4 !important; cursor: not-allowed !important; pointer-events: none !important; }
+
+    .drag-drop-box { border: 2px dashed #059669; background: #ecfdf5; padding: 20px; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 14px; }
+    .drag-drop-box:hover { background: #d1fae5; border-color: #047857; }
 
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 999; }
     .modal-excel-box { background: white; border-radius: 16px; width: 92%; max-width: 950px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid #cbd5e1; display: flex; flex-direction: column; max-height: 90vh; }
@@ -263,8 +266,11 @@
           <div class="kpi-8-card highlight-emerald"><div class="kpi-8-label">Saldo Final en Banco</div><div id="kpiSaldoFinal" class="kpi-8-val">$0</div></div>
         </div>
 
-        <div style="margin-bottom: 12px; display:flex; justify-content:space-between; align-items:center;">
-          <button id="btnOpenExcelModal" onclick="openExcelModal()" class="btn-action">📊 + Agregar Movimientos (Ventana Modal Excel)</button>
+        <div style="margin-bottom: 12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <div style="display:flex; gap:8px;">
+            <button id="btnOpenExcelModal" onclick="openExcelModal()" class="btn-action">📊 Pegado Directo tipo Excel</button>
+            <button id="btnOpenCargueMasivo" onclick="openCargueMasivoModal()" class="btn-action" style="background:#0f172a;">📥 CARGUE MASIVO EXCEL</button>
+          </div>
           <span style="font-size:12px; color:#64748b;">💡 Escribe en la fila verde al final o pega con <strong>Ctrl + V</strong> en la propia tabla.</span>
         </div>
 
@@ -476,6 +482,69 @@
     </main>
   </div>
 
+  <!-- MODAL DE CARGUE MASIVO EXCEL (NUEVA FUNCIONALIDAD COMPLETA) -->
+  <div id="modalCargueMasivo" class="modal-overlay hidden">
+    <div class="modal-excel-box" style="max-width: 900px;">
+      <div class="modal-header">
+        <h3 class="modal-title">📥 Cargue Masivo de Movimientos Bancarios</h3>
+        <button onclick="closeCargueMasivoModal()" class="modal-close">✕</button>
+      </div>
+      
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; background:#f1f5f9; padding:12px; border-radius:8px;">
+        <div>
+          <strong style="font-size:13px; color:#0f172a;">Pasos para el cargue:</strong>
+          <p style="font-size:11px; color:#64748b;">1. Descarga la plantilla oficial → 2. Diligencia los movimientos → 3. Carga el archivo aquí.</p>
+        </div>
+        <button onclick="downloadExcelTemplate()" class="btn-action" style="background:#107c41;">📄 DESCARGAR PLANTILLA EXCEL</button>
+      </div>
+
+      <div class="drag-drop-box" id="dropArea" onclick="document.getElementById('fileInputExcel').click()">
+        <span style="font-size:28px;">📂</span>
+        <h4 style="font-size:14px; color:#0f172a; margin-top:4px;">Haz clic aquí o arrastra tu archivo Excel / CSV</h4>
+        <p style="font-size:11px; color:#64748b;">Solo 8 campos soportados. Los saldos serán calculados automáticamente por el sistema.</p>
+        <input type="file" id="fileInputExcel" accept=".csv, .xlsx, .xls, .tsv, .txt" style="display:none;" onchange="handleExcelFileUpload(event)">
+      </div>
+
+      <div id="fileValidationStatus" style="font-size:12px; font-weight:bold; margin-bottom:8px; color:#059669;"></div>
+
+      <!-- RESUMEN DE VALIDACIÓN -->
+      <div id="summaryGrid" class="kpi-8-grid hidden" style="grid-template-columns: repeat(4, 1fr); gap:8px; margin-bottom:12px;">
+        <div class="kpi-8-card" style="padding:10px;"><div class="kpi-8-label">Total Encontrados</div><div id="valTotalFound" class="kpi-8-val">0</div></div>
+        <div class="kpi-8-card highlight-emerald" style="padding:10px;"><div class="kpi-8-label">Válidos</div><div id="valValidCount" class="kpi-8-val">0</div></div>
+        <div class="kpi-8-card highlight-rose" style="padding:10px;"><div class="kpi-8-label">Con Errores</div><div id="valErrorCount" class="kpi-8-val">0</div></div>
+        <div class="kpi-8-card highlight-amber" style="padding:10px;"><div class="kpi-8-label">Duplicados</div><div id="valDupCount" class="kpi-8-val">0</div></div>
+      </div>
+
+      <div class="excel-grid-container" style="max-height: 240px;">
+        <table class="excel-grid-table">
+          <thead>
+            <tr>
+              <th style="width:40px;">Status</th>
+              <th>Fecha</th>
+              <th>Descripción</th>
+              <th class="text-right">Entrada ($)</th>
+              <th class="text-right">Salida ($)</th>
+              <th>Información</th>
+              <th>Documento</th>
+              <th>Observaciones / Diagnóstico</th>
+            </tr>
+          </thead>
+          <tbody id="carguePreviewBody">
+            <tr><td colspan="8" class="text-center" style="color:#94a3b8; padding:20px;">No se ha cargado ningún archivo.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+        <span style="font-size:11px; color:#64748b;">🔒 Regla: Saldo Inicial y Saldo Real serán asignados automáticamente por el sistema al procesar.</span>
+        <div style="display:flex; gap:8px;">
+          <button onclick="closeCargueMasivoModal()" class="btn-secondary">Cancelar</button>
+          <button id="btnConfirmarCargue" onclick="confirmarCargueMasivo()" class="btn-action btn-disabled">CONFIRMAR CARGUE MASIVO</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- VENTANA MODAL EXCEL PEGADO DIRECTO -->
   <div id="modalExcel" class="modal-overlay hidden">
     <div class="modal-excel-box">
@@ -656,7 +725,7 @@
             <label class="checkbox-item"><input type="checkbox" id="perm_posicion_editar_limitado"> <span>Editar Info/Doc/Obs</span></label>
             <label class="checkbox-item"><input type="checkbox" id="perm_posicion_eliminar"> <span>Eliminar Registros</span></label>
             <label class="checkbox-item"><input type="checkbox" id="perm_posicion_subtotales_admin"> <span>Crear/Eliminar Subtotales</span></label>
-            <label class="checkbox-item"><input type="checkbox" id="perm_posicion_modal_excel"> <span>Usar Modal/Pegado Excel</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="perm_posicion_modal_excel"> <span>Usar Modal/Pegado Excel / Cargue Masivo</span></label>
           </div>
 
           <div class="perm-box">
@@ -697,6 +766,7 @@
     let currentEmpresa = '901234567-1';
     let currentActiveUser = 'stephany.castro';
     let activeDetailItem = null;
+    let validParsedRowsForCargue = [];
 
     let empresasList = [
       { nit: '901234567-1', razonSocial: 'WeTravel Colombia SAS' },
@@ -704,7 +774,6 @@
       { nit: '900555111-9', razonSocial: 'Comercializadora EAMC SAS' }
     ];
 
-    /* BASE DE DATOS DE USUARIOS CON CONFIGURACIÓN INDEPENDIENTE DE PERMISOS POR ÁREA Y ACCIÓN */
     let usersList = [
       { 
         userKey: 'stephany.castro', 
@@ -833,7 +902,6 @@
       return parseFloat(val.toString().replace(/[^0-9.-]/g, '')) || 0;
     }
 
-    /* FUNCIÓN GUARDIANA DE PERMISOS */
     function getCurrentUserObj() {
       return usersList.find(u => u.userKey === currentActiveUser) || usersList[0];
     }
@@ -865,9 +933,6 @@
     }
 
     function updateNavigationPermissions() {
-      const user = getCurrentUserObj();
-      
-      // Ocultar / Mostrar Módulos en el menú lateral según permisos
       toggleNavLink('link-mod-posicion', hasPermission('posicion', 'ver'));
       toggleNavLink('link-mod-consolidado', hasPermission('consolidado', 'ver'));
       toggleNavLink('link-mod-alertas', hasPermission('alertas', 'ver'));
@@ -877,14 +942,18 @@
       toggleNavLink('link-mod-usuarios', hasPermission('usuarios', 'ver'));
       toggleNavLink('link-mod-reversos', hasPermission('auditoria', 'ver'));
 
-      // Botón superior Excel modal
       const btnExcel = document.getElementById('btnOpenExcelModal');
       if (btnExcel) {
         if (hasPermission('posicion', 'modalExcel')) btnExcel.classList.remove('hidden');
         else btnExcel.classList.add('hidden');
       }
 
-      // Botón + Cuenta
+      const btnCargue = document.getElementById('btnOpenCargueMasivo');
+      if (btnCargue) {
+        if (hasPermission('posicion', 'modalExcel') || hasPermission('posicion', 'crear')) btnCargue.classList.remove('hidden');
+        else btnCargue.classList.add('hidden');
+      }
+
       const btnAcc = document.getElementById('btnAddAccountHeader');
       if (btnAcc) {
         if (hasPermission('posicion', 'crear')) btnAcc.classList.remove('hidden');
@@ -935,6 +1004,7 @@
       }
     }
 
+    /* LÓGICA CORE DE RENDERIZADO Y CÁLCULO DE SALDOS CONSERVADA E INTACTA */
     function renderApp() {
       updateNavigationPermissions();
 
@@ -991,12 +1061,10 @@
           const hasSub = row.subtotales && row.subtotales.length > 0;
           const isVisible = row.subtotalesVisible !== false;
           
-          /* BOTÓN VER DE SUB-TOTALES (SIEMPRE VISIBLE Y UTILIZABLE POR TODOS) */
           const eyeBtnHtml = hasSub 
             ? `<button onclick="toggleRowSubtotales('${row.id}')" class="btn-row-eye" title="${isVisible ? 'Ocultar subtotales' : 'Mostrar subtotales'}">${isVisible ? '👁️' : '👁️‍🗨️'}</button>`
             : '';
 
-          /* BOTONES ADMINISTRATIVOS DE ACCIÓN (BLOQUEADOS PARA OTROS USUARIOS) */
           const addSubBtnHtml = `<button onclick="openSubModal('${row.id}')" class="${canSubAdmin ? '' : 'btn-disabled'}" style="background:#d1fae5; color:#065f46; border:none; padding:4px 6px; border-radius:4px; font-weight:bold; cursor:pointer;" title="${canSubAdmin ? 'Agregar Subtotal' : 'No Autorizado'}">+</button>`;
           const reversoBtnHtml = `<button onclick="toggleReversoParent('${row.id}')" class="btn-toggle-reverso ${canReversoMarcar ? '' : 'btn-disabled'}" title="${canReversoMarcar ? 'Marcar Reverso' : 'No Autorizado'}">🔄</button>`;
 
@@ -1050,7 +1118,6 @@
         }
       });
 
-      /* FILA VACÍA FINAL SOLO VISIBLE PARA TESORERÍA / USUARIOS CON PERMISO DE CREAR */
       if (canCreate) {
         const trEmpty = document.createElement('tr');
         trEmpty.className = 'row-empty';
@@ -1074,6 +1141,175 @@
       document.getElementById('kpiEntradas').innerText = formatCurrency(monthEntradas);
       document.getElementById('kpiSalidas').innerText = formatCurrency(monthSalidas);
       document.getElementById('kpiSaldoFinal').innerText = formatCurrency(runningBalance);
+    }
+
+    /* NUEVAS FUNCIONES DE GENERACIÓN Y DESCARGA DE PLANTILLA EXCEL */
+    function downloadExcelTemplate() {
+      const csvContent = "FECHA;DESCRIPCION;REFERENCIA;ENTRADA;SALIDA;INFORMACION;DOCUMENTO;OBSERVACIONES\n" +
+        "2025-04-05;Pago Nomina Quincenal;REF-8802;0;4500000;Nomenclatura Tesoreria;CE-1002;Abono empleados\n" +
+        "2025-04-06;Recaudo Factura Venta 102;REF-4491;2800000;0;Cliente Inversiones EAMC;RC-441;Pago transferencia\n" +
+        "2025-04-07;Transferencia Interbancaria;REF-1105;0;150000;Gasto Comision;G-902;Sin factura";
+
+      const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download', `Plantilla_Cargue_Masivo_PosicionBancaria_${currentMonth}.csv`);
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function openCargueMasivoModal() {
+      if (!hasPermission('posicion', 'modalExcel') && !hasPermission('posicion', 'crear')) {
+        alert("⚠️ No tienes autorización de Tesorería para utilizar el Cargue Masivo.");
+        return;
+      }
+      validParsedRowsForCargue = [];
+      document.getElementById('fileValidationStatus').innerText = '';
+      document.getElementById('summaryGrid').classList.add('hidden');
+      document.getElementById('carguePreviewBody').innerHTML = '<tr><td colspan="8" class="text-center" style="color:#94a3b8; padding:20px;">No se ha cargado ningún archivo.</td></tr>';
+      document.getElementById('btnConfirmarCargue').classList.add('btn-disabled');
+      document.getElementById('modalCargueMasivo').classList.remove('hidden');
+    }
+
+    function closeCargueMasivoModal() {
+      document.getElementById('modalCargueMasivo').classList.add('hidden');
+    }
+
+    function handleExcelFileUpload(event) {
+      const file = event.target.files[0];
+      if (file) parseUploadedFile(file);
+    }
+
+    const dropArea = document.getElementById('dropArea');
+    if (dropArea) {
+      dropArea.addEventListener('dragover', (e) => { e.preventDefault(); dropArea.style.background = '#d1fae5'; });
+      dropArea.addEventListener('dragleave', (e) => { e.preventDefault(); dropArea.style.background = '#ecfdf5'; });
+      dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.style.background = '#ecfdf5';
+        if (e.dataTransfer.files.length > 0) parseUploadedFile(e.dataTransfer.files[0]);
+      });
+    }
+
+    function parseUploadedFile(file) {
+      document.getElementById('fileValidationStatus').innerText = `📄 Procesando y validando: ${file.name}...`;
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        const text = e.target.result;
+        const lines = text.split(/\r\n|\n|\r/);
+
+        let totalFound = 0, validCount = 0, errorCount = 0, dupCount = 0;
+        const previewBody = document.getElementById('carguePreviewBody');
+        previewBody.innerHTML = '';
+        validParsedRowsForCargue = [];
+
+        const existingRefs = (appData[currentAccount] || []).map(r => (r.referencia || '').trim().toLowerCase()).filter(r => r !== '');
+
+        lines.forEach((line, index) => {
+          if (!line.trim()) return;
+          
+          let cols = line.includes(';') ? line.split(';') : line.split(',');
+          if (cols.length < 3 && line.includes('\t')) cols = line.split('\t');
+
+          const firstCol = (cols[0] || '').trim().toUpperCase();
+          if (firstCol === 'FECHA' || firstCol.includes('DESCRIP')) return; // Omitir encabezado
+
+          totalFound++;
+          const rawFecha = (cols[0] || '').trim();
+          const rawDesc = (cols[1] || '').trim();
+          const rawRef = (cols[2] || '').trim();
+          const rawEntrada = parseFormattedNumber(cols[3]);
+          const rawSalida = parseFormattedNumber(cols[4]);
+          const rawInfo = (cols[5] || '').trim();
+          const rawDoc = (cols[6] || '').trim();
+          const rawObs = (cols[7] || '').trim();
+
+          let errors = [];
+
+          if (!rawFecha || !/^\d{4}-\d{2}-\d{2}$/.test(rawFecha)) errors.push("Fecha inválida (usar AAAA-MM-DD)");
+          if (!rawDesc) errors.push("Descripción obligatoria vacía");
+          if (isNaN(rawEntrada) || isNaN(rawSalida)) errors.push("Entrada/Salida deben ser números");
+          if (rawEntrada === 0 && rawSalida === 0) errors.push("Registra monto en Entrada o Salida");
+
+          const isDup = rawRef !== '' && existingRefs.includes(rawRef.toLowerCase());
+          if (isDup) dupCount++;
+
+          const isValid = errors.length === 0;
+
+          if (isValid) {
+            validCount++;
+            validParsedRowsForCargue.push({
+              id: 'MOV-' + Date.now().toString() + Math.random().toString(36).substr(2, 3),
+              fecha: rawFecha,
+              descripcion: rawDesc,
+              referencia: rawRef,
+              saldoInicial: 0,
+              entrada: rawEntrada,
+              salida: rawSalida,
+              informacion: rawInfo,
+              documento: rawDoc,
+              observaciones: rawObs || 'Cargado vía archivo masivo',
+              isReverso: false,
+              reversoState: 'IDENTIFICADO',
+              history: [],
+              subtotalesVisible: true,
+              subtotales: []
+            });
+          } else {
+            errorCount++;
+          }
+
+          const statusIcon = isValid ? '<span style="color:#059669; font-weight:bold;">✅ OK</span>' : '<span style="color:#dc2626; font-weight:bold;">❌ Error</span>';
+          const rowBg = isValid ? '' : 'style="background:#fff1f2;"';
+
+          previewBody.innerHTML += `
+            <tr ${rowBg}>
+              <td class="text-center">${statusIcon}</td>
+              <td>${rawFecha || '—'}</td>
+              <td style="font-weight:bold;">${rawDesc || '—'}</td>
+              <td class="text-right" style="color:#059669;">${formatCurrency(rawEntrada)}</td>
+              <td class="text-right" style="color:#dc2626;">${formatCurrency(rawSalida)}</td>
+              <td>${rawInfo}</td>
+              <td>${rawDoc}</td>
+              <td style="font-size:10px; color:${isValid ? '#64748b' : '#b91c1c'};">${isValid ? (isDup ? '⚠️ Referencia Duplicada' : 'Listo para procesar') : errors.join(', ')}</td>
+            </tr>`;
+        });
+
+        document.getElementById('valTotalFound').innerText = totalFound;
+        document.getElementById('valValidCount').innerText = validCount;
+        document.getElementById('valErrorCount').innerText = errorCount;
+        document.getElementById('valDupCount').innerText = dupCount;
+        document.getElementById('summaryGrid').classList.remove('hidden');
+
+        if (validCount > 0 && errorCount === 0) {
+          document.getElementById('fileValidationStatus').innerText = `✅ Archivo validado correctamente (${validCount} registros listos).`;
+          document.getElementById('btnConfirmarCargue').classList.remove('btn-disabled');
+        } else if (validCount > 0 && errorCount > 0) {
+          document.getElementById('fileValidationStatus').innerText = `⚠️ Archivo con ${errorCount} errores. Corrige el archivo para confirmar.`;
+          document.getElementById('btnConfirmarCargue').classList.add('btn-disabled');
+        } else {
+          document.getElementById('fileValidationStatus').innerText = `❌ No se encontraron registros válidos para cargar.`;
+          document.getElementById('btnConfirmarCargue').classList.add('btn-disabled');
+        }
+      };
+
+      reader.readAsText(file);
+    }
+
+    function confirmarCargueMasivo() {
+      if (validParsedRowsForCargue.length === 0) return;
+
+      const currentData = appData[currentAccount];
+      validParsedRowsForCargue.forEach(row => {
+        currentData.push(row);
+      });
+
+      alert(`✅ Cargue Exitoso: Se han incorporado ${validParsedRowsForCargue.length} movimientos a la Posición Bancaria.\n\nLos saldos iniciales y saldos reales han sido recalculados automáticamente.`);
+      closeCargueMasivoModal();
+      renderApp();
     }
 
     function handleDirectTablePaste(e) {
@@ -1716,7 +1952,6 @@
     function changeMonth() { currentMonth = document.getElementById('monthSelect').value; renderApp(); }
     function changeAccount() { currentAccount = document.getElementById('accountSelect').value; renderApp(); }
 
-    /* GESTIÓN DE PERMISOS DESDE EL MODAL DE USUARIOS */
     function openUserModal() {
       if (!hasPermission('usuarios', 'gestionar')) {
         alert("⚠️ Tu usuario no tiene permisos para administrar usuarios o modificar permisos.");
