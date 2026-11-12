@@ -252,6 +252,9 @@
         </div>
 
         <button id="btnAddAccountHeader" onclick="openAccountModal()" class="btn-add-acc">+ Cuenta</button>
+        <button onclick="exportBackup()" class="btn-add-acc" title="Descargar respaldo (.json)">💾 Respaldo</button>
+        <button onclick="document.getElementById('backupFileInput').click()" class="btn-add-acc" title="Restaurar desde respaldo">📂 Restaurar</button>
+        <input type="file" id="backupFileInput" accept=".json" style="display:none;" onchange="importBackup(event)">
       </div>
     </header>
 
@@ -1392,7 +1395,7 @@
 
       if (desc !== '' || entrada > 0 || salida > 0) {
         appData[currentAccount].push({
-          id: 'MOV-' + Date.now().toString(),
+          id: 'MOV-' + Date.now().toString() + Math.random().toString(36).substr(2, 3),
           fecha: fecha || (currentMonth + '-01'),
           descripcion: desc || 'Movimiento Registrado',
           referencia: ref,
@@ -2144,7 +2147,115 @@
       }
     }
 
+    /* ===== PERSISTENCIA (localStorage) + RESPALDO ===== */
+    const STORAGE_KEY = 'tesoreria_sistema_v1';
+    let persistenceReady = false;
+    let storageWarned = false;
+
+    function buildSnapshot() {
+      return { version: 1, savedAt: new Date().toISOString(), appData, empresasList, usersList, currentAccount, currentMonth, currentActiveUser };
+    }
+
+    function saveState() {
+      if (!persistenceReady) return;   // nunca guardar antes de cargar (evita pisar datos con los de ejemplo)
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(buildSnapshot()));
+      } catch (err) {
+        if (!storageWarned) {
+          storageWarned = true;
+          alert("⚠️ No se pudo guardar automáticamente en este navegador (" + err.name + "). Usa el botón 💾 Respaldo para no perder tu información.");
+        }
+      }
+    }
+
+    function applySnapshot(s) {
+      if (!s || typeof s.appData !== 'object') throw new Error('Formato inválido');
+      appData = s.appData;
+      if (Array.isArray(s.empresasList)) empresasList = s.empresasList;
+      if (Array.isArray(s.usersList) && s.usersList.length) usersList = s.usersList;
+      if (s.currentMonth) currentMonth = s.currentMonth;
+      if (s.currentActiveUser && usersList.some(u => u.userKey === s.currentActiveUser)) currentActiveUser = s.currentActiveUser;
+      currentAccount = (s.currentAccount && appData[s.currentAccount]) ? s.currentAccount : Object.keys(appData)[0];
+    }
+
+    function rebuildAccountSelect() {
+      const select = document.getElementById('accountSelect');
+      select.innerHTML = '';
+      Object.keys(appData).forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name; opt.textContent = name;
+        select.appendChild(opt);
+      });
+      select.value = currentAccount;
+      const monthSel = document.getElementById('monthSelect');
+      if (monthSel) {
+        if (![...monthSel.options].some(o => o.value === currentMonth)) {
+          const o = document.createElement('option'); o.value = currentMonth; o.textContent = currentMonth; monthSel.appendChild(o);
+        }
+        monthSel.value = currentMonth;
+      }
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return false;
+        applySnapshot(JSON.parse(raw));
+        return true;
+      } catch (err) {
+        console.error('No se pudo cargar el estado guardado:', err);
+        return false;
+      }
+    }
+
+    function exportBackup() {
+      const blob = new Blob([JSON.stringify(buildSnapshot(), null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'respaldo-tesoreria-' + new Date().toISOString().slice(0, 10) + '.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    }
+
+    function importBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const snap = JSON.parse(e.target.result);
+          if (!confirm('Esto reemplazará TODA la información actual por la del respaldo. ¿Continuar?')) return;
+          applySnapshot(snap);
+          rebuildAccountSelect();
+          renderUserSessionSwitcher();
+          renderApp();
+          saveState();
+          alert('✅ Respaldo restaurado correctamente.');
+        } catch (err) {
+          alert('❌ El archivo no es un respaldo válido: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    // Guardar después de cada render y de cada cambio en auditoría
+    (function hookSaves() {
+      const _renderApp = renderApp;
+      renderApp = function() { _renderApp.apply(this, arguments); saveState(); };
+      const _genRev = generateReportReversos;
+      generateReportReversos = function() { _genRev.apply(this, arguments); saveState(); };
+    })();
+
+    // Red de seguridad: ediciones que no pasan por un render (notas, reintegros, etc.)
+    setInterval(saveState, 5000);
+    window.addEventListener('beforeunload', saveState);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveState(); });
+
     window.onload = function() {
+      loadState();
+      rebuildAccountSelect();
+      persistenceReady = true;
       renderUserSessionSwitcher();
       renderApp();
     };
