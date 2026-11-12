@@ -252,6 +252,7 @@
         </div>
 
         <button id="btnAddAccountHeader" onclick="openAccountModal()" class="btn-add-acc">+ Cuenta</button>
+        <button onclick="openSaldoInicial()" class="btn-add-acc" title="Definir con cuánto dinero inicia la cuenta">⚖️ Saldo inicial</button>
         <button onclick="exportBackup()" class="btn-add-acc" title="Descargar respaldo (.json)">💾 Respaldo</button>
         <button onclick="document.getElementById('backupFileInput').click()" class="btn-add-acc" title="Restaurar desde respaldo">📂 Restaurar</button>
         <input type="file" id="backupFileInput" accept=".json" style="display:none;" onchange="importBackup(event)">
@@ -498,7 +499,10 @@
           <strong style="font-size:13px; color:#0f172a;">Pasos para el cargue:</strong>
           <p style="font-size:11px; color:#64748b;">1. Descarga la plantilla oficial → 2. Diligencia los movimientos → 3. Carga el archivo aquí.</p>
         </div>
-        <button onclick="downloadExcelTemplate()" class="btn-action" style="background:#107c41;">📄 DESCARGAR PLANTILLA EXCEL</button>
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <button onclick="downloadExcelTemplate()" class="btn-action" style="background:#107c41;">📄 DESCARGAR PLANTILLA EXCEL</button>
+          <button onclick="undoUltimoCargue()" class="btn-action" style="background:#b91c1c;" title="Elimina los movimientos del último cargue masivo">↩️ DESHACER ÚLTIMO CARGUE</button>
+        </div>
       </div>
 
       <div class="drag-drop-box" id="dropArea" onclick="document.getElementById('fileInputExcel').click()">
@@ -509,6 +513,9 @@
       </div>
 
       <div id="fileValidationStatus" style="font-size:12px; font-weight:bold; margin-bottom:8px; color:#059669;"></div>
+      <label style="display:flex; align-items:center; gap:6px; font-size:11px; color:#64748b; margin-bottom:8px; cursor:pointer;">
+        <input type="checkbox" id="chkIncluirDuplicados" onchange="renderCarguePreview()"> Cargar también los movimientos duplicados (misma fecha, referencia y monto)
+      </label>
 
       <!-- RESUMEN DE VALIDACIÓN -->
       <div id="summaryGrid" class="kpi-8-grid hidden" style="grid-template-columns: repeat(4, 1fr); gap:8px; margin-bottom:12px;">
@@ -837,60 +844,7 @@
     ];
 
     let appData = {
-      'DAVIVIENDA 5152': [
-        {
-          id: 'REV-1001',
-          fecha: '2025-04-01',
-          descripcion: 'Ajuste X Gravamen Movimiento Financier',
-          referencia: 'REF-001',
-          tercero: 'DIAN / Banco Davivienda',
-          entidad: 'Davivienda',
-          motivo: 'Reclamación GMF exento',
-          responsable: 'Stephany Castro',
-          saldoInicial: 9321711255,
-          entrada: 0,
-          salida: 800464,
-          informacion: 'Gastos Bancarios',
-          documento: '',
-          observaciones: 'movimiento de banco visual',
-          isReverso: false,
-          reversoState: 'IDENTIFICADO',
-          fechaReclamacion: '2025-04-02',
-          lastUpdate: '2026-11-06 09:00',
-          reintegradoVal: 0,
-          history: ['[2026-11-06 09:00] Registrado como IDENTIFICADO por Stephany Castro'],
-          subtotalesVisible: true,
-          subtotales: []
-        },
-        {
-          id: 'REV-1002',
-          fecha: '2025-04-01',
-          descripcion: 'Nc Visa T Credito Credibanco',
-          referencia: 'CRED-902',
-          tercero: 'Credibanco',
-          entidad: 'Credibanco',
-          motivo: 'Abono de adquirencia desglosado',
-          responsable: 'Stephany Castro',
-          saldoInicial: 0,
-          entrada: 618273,
-          salida: 0,
-          informacion: 'SE ABREN MOVIMIENTOS',
-          documento: '',
-          observaciones: 'movimiento de banco visual',
-          isReverso: false,
-          reversoState: 'IDENTIFICADO',
-          fechaReclamacion: '2025-04-02',
-          lastUpdate: '2026-11-06 09:15',
-          reintegradoVal: 0,
-          history: [],
-          subtotalesVisible: true,
-          subtotales: [
-            { id: 'REV-1002-1', referencia: 47559, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Doble cobro pasarela', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10016 | FVE 17524', documento: 'RC-1-3308', observaciones: 'subtotal movimiento banco', isReverso: false, reversoState: 'RADICADO', fechaReclamacion: '2025-04-03', lastUpdate: '2026-11-06 10:00', reintegradoVal: 47559, history: ['[2026-11-06 10:00] Reintegrado Total validado en extracto por Stephany Castro'] },
-            { id: 'REV-1002-2', referencia: 285358, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Contracargo tarjeta', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10019 | FVE 17516', documento: 'RC-1-3307', observaciones: 'subtotal movimiento banco', isReverso: false, reversoState: 'EN_SEGUIMIENTO', fechaReclamacion: '2025-04-03', lastUpdate: '2026-11-06 10:15', reintegradoVal: 0, history: ['[2026-11-06 10:15] Pasado a EN_SEGUIMIENTO por Stephany Castro'] },
-            { id: 'REV-1002-3', referencia: 142678, tercero: 'INVERSIONES EAMC SAS', entidad: 'Credibanco', motivo: 'Error en comisión', responsable: 'Stephany Castro', informacion: 'INVERSIONES EAMC SAS R-V-10255 | FVE 17674', documento: 'RC-1-3308', observaciones: 'subtotal movimiento banco', isReverso: false, reversoState: 'EN_VALIDACION', fechaReclamacion: '2025-04-04', lastUpdate: '2026-11-06 10:30', reintegradoVal: 0, history: [] }
-          ]
-        }
-      ],
+      'DAVIVIENDA 5152': [],
       'BANCOLOMBIA 9015': []
     };
 
@@ -900,9 +854,28 @@
     }
 
     function parseFormattedNumber(val) {
-      if (typeof val === 'number') return val;
-      if (!val) return 0;
-      return parseFloat(val.toString().replace(/[^0-9.-]/g, '')) || 0;
+      if (typeof val === 'number') return isFinite(val) ? val : 0;
+      if (val === null || val === undefined) return 0;
+      const original = String(val).trim();
+      let s = original.replace(/[^\d.,\-]/g, '');
+      if (!s) return 0;
+      const neg = s.startsWith('-') || /^\(.*\)$/.test(original);   // -123 o (123)
+      s = s.replace(/-/g, '');
+      const hasDot = s.includes('.'), hasComma = s.includes(',');
+      if (hasDot && hasComma) {
+        // el último separador es el decimal: 1.234.567,89 (es-CO) o 1,234,567.89 (en-US)
+        const dec = s.lastIndexOf(',') > s.lastIndexOf('.') ? ',' : '.';
+        const mil = dec === ',' ? '.' : ',';
+        s = s.split(mil).join('').replace(dec, '.');
+      } else if (hasComma) {
+        s = /^\d+,\d{1,2}$/.test(s) ? s.replace(',', '.') : s.replace(/,/g, '');
+      } else if (hasDot) {
+        // 1.234 / 1.234.567 = miles (formato es-CO); 1234.5 = decimal
+        if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '');
+      }
+      const n = parseFloat(s);
+      if (isNaN(n)) return 0;
+      return Math.round((neg ? -n : n) * 100) / 100;
     }
 
     function getCurrentUserObj() {
@@ -990,13 +963,17 @@
           opt.innerText = emp.razonSocial;
           select.appendChild(opt);
         });
-        currentEmpresa = allowedEmpresas[0].nit;
+        if (!allowedEmpresas.some(e => e.nit === currentEmpresa)) currentEmpresa = allowedEmpresas[0].nit;
+        select.value = currentEmpresa;
       }
     }
 
     function changeEmpresa() {
       currentEmpresa = document.getElementById('empresaSelect').value;
+      currentAccount = '';
+      syncEmpresaData();
       renderApp();
+      refreshActiveModule();
     }
 
     function toggleRowSubtotales(rowId) {
@@ -1022,7 +999,7 @@
       const canReversoMarcar = hasPermission('auditoria', 'marcar');
 
       const data = appData[currentAccount] || [];
-      data.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+      data.sort((a, b) => (a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : 0) || ((b.esSaldoInicial ? 1 : 0) - (a.esSaldoInicial ? 1 : 0)));   // el saldo inicial va primero del día
 
       let runningBalance = 0;
       let monthInitialBalance = 0;
@@ -1036,8 +1013,11 @@
         const salida = parseFloat(row.salida) || 0;
 
         if (rowMonth < currentMonth) {
-          if (runningBalance === 0 && row.saldoInicial > 0) runningBalance = parseFloat(row.saldoInicial);
-          runningBalance += (entrada - salida);
+          if (row.esSaldoInicial) runningBalance = parseFloat(row.saldoInicial) || 0;
+          else {
+            if (runningBalance === 0 && row.saldoInicial > 0) runningBalance = parseFloat(row.saldoInicial);
+            runningBalance += (entrada - salida);
+          }
         }
       });
 
@@ -1049,7 +1029,11 @@
         const salida = parseFloat(row.salida) || 0;
 
         if (rowMonth === currentMonth) {
-          if (!foundFirstMonthRow) {
+          if (row.esSaldoInicial) {
+            monthInitialBalance = parseFloat(row.saldoInicial) || 0;
+            runningBalance = monthInitialBalance;
+            foundFirstMonthRow = true;
+          } else if (!foundFirstMonthRow) {
             if (monthInitialBalance === 0 && row.saldoInicial > 0) {
               monthInitialBalance = parseFloat(row.saldoInicial);
               runningBalance = monthInitialBalance;
@@ -1069,6 +1053,7 @@
             : '';
 
           const addSubBtnHtml = `<button onclick="openSubModal('${row.id}')" class="${canSubAdmin ? '' : 'btn-disabled'}" style="background:#d1fae5; color:#065f46; border:none; padding:4px 6px; border-radius:4px; font-weight:bold; cursor:pointer;" title="${canSubAdmin ? 'Agregar Subtotal' : 'No Autorizado'}">+</button>`;
+          const delRowBtnHtml = canEditAll ? `<button onclick="deleteRow('${row.id}')" style="background:transparent; color:#dc2626; border:none; font-weight:bold; cursor:pointer;" title="Eliminar movimiento">🗑️</button>` : '';
           const reversoBtnHtml = `<button onclick="toggleReversoParent('${row.id}')" class="btn-toggle-reverso ${canReversoMarcar ? '' : 'btn-disabled'}" title="${canReversoMarcar ? 'Marcar Reverso' : 'No Autorizado'}">🔄</button>`;
 
           const attrFullEdit = canEditAll ? 'contenteditable="true" class="editable-cell"' : 'contenteditable="false" class="readonly-cell"';
@@ -1080,17 +1065,18 @@
               ${addSubBtnHtml}
               ${reversoBtnHtml}
               ${eyeBtnHtml}
+              ${delRowBtnHtml}
             </td>
-            <td ${attrFullEdit} onblur="updateCell('${row.id}', 'fecha', this.innerText)">${row.fecha} ${row.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
-            <td ${attrFullEdit} onblur="updateCell('${row.id}', 'descripcion', this.innerText)" style="font-weight:700; color:#0f172a;">${row.descripcion}</td>
-            <td ${attrFullEdit} onblur="updateCell('${row.id}', 'referencia', this.innerText)" class="text-right" style="color:#94a3b8;">${row.referencia ? formatCurrency(row.referencia) : ''}</td>
+            <td ${attrFullEdit} onblur="updateCell('${row.id}', 'fecha', this.innerText)">${escapeHtml(row.fecha)} ${row.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
+            <td ${attrFullEdit} onblur="updateCell('${row.id}', 'descripcion', this.innerText)" style="font-weight:700; color:#0f172a;">${escapeHtml(row.descripcion)}</td>
+            <td ${attrFullEdit} onblur="updateCell('${row.id}', 'referencia', this.innerText)" class="text-right" style="color:#94a3b8;">${row.referencia ? escapeHtml(row.referencia) : ''}</td>
             <td class="text-right" style="font-weight:600;">${formatCurrency(monthInitialBalance)}</td>
             <td ${attrFullEdit} onblur="updateCell('${row.id}', 'entrada', this.innerText)" class="text-right" style="font-weight:800; color:#059669;">${entrada > 0 ? formatCurrency(entrada) : ''}</td>
             <td ${attrFullEdit} onblur="updateCell('${row.id}', 'salida', this.innerText)" class="text-right" style="font-weight:800; color:#dc2626;">${salida > 0 ? formatCurrency(salida) : ''}</td>
             <td class="text-right" style="font-weight:900; color:#0f172a;">${formatCurrency(runningBalance)}</td>
-            <td ${attrLimEdit} onblur="updateCell('${row.id}', 'informacion', this.innerText)">${row.informacion}</td>
-            <td ${attrLimEdit} onblur="updateCell('${row.id}', 'documento', this.innerText)">${row.documento}</td>
-            <td ${attrLimEdit} onblur="updateCell('${row.id}', 'observaciones', this.innerText)" style="font-style:italic; color:#64748b;">${row.observaciones}</td>
+            <td ${attrLimEdit} onblur="updateCell('${row.id}', 'informacion', this.innerText)">${escapeHtml(row.informacion)}</td>
+            <td ${attrLimEdit} onblur="updateCell('${row.id}', 'documento', this.innerText)">${escapeHtml(row.documento)}</td>
+            <td ${attrLimEdit} onblur="updateCell('${row.id}', 'observaciones', this.innerText)" style="font-style:italic; color:#64748b;">${escapeHtml(row.observaciones)}</td>
           `;
           tbody.appendChild(tr);
 
@@ -1111,9 +1097,9 @@
                 <td class="subtotal-indent">↳ Subtotal Desglosado ${sub.isReverso ? '<span class="badge badge-reverso">REVERSO</span>' : ''}</td>
                 <td ${attrFullEdit} onblur="updateSubCell('${row.id}', '${sub.id}', 'referencia', this.innerText)" class="text-right" style="font-weight:800; color:#713f12;">${formatCurrency(sub.referencia)}</td>
                 <td></td><td></td><td></td><td></td>
-                <td ${attrLimEdit} onblur="updateSubCell('${row.id}', '${sub.id}', 'informacion', this.innerText)">${sub.informacion}</td>
-                <td ${attrLimEdit} onblur="updateSubCell('${row.id}', '${sub.id}', 'documento', this.innerText)">${sub.documento}</td>
-                <td ${attrLimEdit} onblur="updateSubCell('${row.id}', '${sub.id}', 'observaciones', this.innerText)">${sub.observaciones}</td>
+                <td ${attrLimEdit} onblur="updateSubCell('${row.id}', '${sub.id}', 'informacion', this.innerText)">${escapeHtml(sub.informacion)}</td>
+                <td ${attrLimEdit} onblur="updateSubCell('${row.id}', '${sub.id}', 'documento', this.innerText)">${escapeHtml(sub.documento)}</td>
+                <td ${attrLimEdit} onblur="updateSubCell('${row.id}', '${sub.id}', 'observaciones', this.innerText)">${escapeHtml(sub.observaciones)}</td>
               `;
               tbody.appendChild(trSub);
             });
@@ -1169,6 +1155,8 @@
         return;
       }
       validParsedRowsForCargue = [];
+      cargueParsed = [];
+      document.getElementById('chkIncluirDuplicados').checked = false;
       document.getElementById('fileValidationStatus').innerText = '';
       document.getElementById('summaryGrid').classList.add('hidden');
       document.getElementById('carguePreviewBody').innerHTML = '<tr><td colspan="8" class="text-center" style="color:#94a3b8; padding:20px;">No se ha cargado ningún archivo.</td></tr>';
@@ -1182,6 +1170,7 @@
 
     function handleExcelFileUpload(event) {
       const file = event.target.files[0];
+      event.target.value = '';            // permite volver a elegir el mismo archivo
       if (file) parseUploadedFile(file);
     }
 
@@ -1196,121 +1185,285 @@
       });
     }
 
-    function parseUploadedFile(file) {
-      document.getElementById('fileValidationStatus').innerText = `📄 Procesando y validando: ${file.name}...`;
-      const reader = new FileReader();
+    /* ===== CARGUE MASIVO: lectores de CSV y Excel (.xlsx) sin librerías externas ===== */
+    let cargueParsed = [];
 
-      reader.onload = function(e) {
-        const text = e.target.result;
-        const lines = text.split(/\r\n|\n|\r/);
+    function decodeTextBuffer(buf) {
+      try { return new TextDecoder('utf-8', { fatal: true }).decode(buf); }
+      catch (e) { return new TextDecoder('windows-1252').decode(buf); }   // CSV guardado por Excel en español
+    }
 
-        let totalFound = 0, validCount = 0, errorCount = 0, dupCount = 0;
-        const previewBody = document.getElementById('carguePreviewBody');
-        previewBody.innerHTML = '';
-        validParsedRowsForCargue = [];
+    // CSV/TSV con comillas ("Pago, nómina"), saltos de línea dentro de comillas y delimitador automático
+    function parseDelimited(text) {
+      text = text.replace(/^\uFEFF/, '');
+      const firstLine = text.split(/\r\n|\n|\r/).find(l => l.trim() !== '') || '';
+      const count = ch => { let n = 0, q = false; for (const c of firstLine) { if (c === '"') q = !q; else if (!q && c === ch) n++; } return n; };
+      let delim = ';', best = -1;
+      [';', '\t', ','].forEach(d => { const n = count(d); if (n > best) { best = n; delim = d; } });
+      const rows = []; let row = [], cur = '', q = false;
+      const pushRow = () => { row.push(cur); cur = ''; if (row.some(v => String(v).trim() !== '')) rows.push(row); row = []; };
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (q) {
+          if (c === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; }
+          else cur += c;
+        } else if (c === '"' && cur === '') q = true;
+        else if (c === delim) { row.push(cur); cur = ''; }
+        else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; pushRow(); }
+        else cur += c;
+      }
+      pushRow();
+      return rows;
+    }
 
-        const existingRefs = (appData[currentAccount] || []).map(r => (r.referencia || '').trim().toLowerCase()).filter(r => r !== '');
+    // --- .xlsx = ZIP con XML. Se lee con DecompressionStream del navegador ---
+    async function inflateRaw(bytes) {
+      const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+      return new Uint8Array(await new Response(stream).arrayBuffer());
+    }
 
-        lines.forEach((line, index) => {
-          if (!line.trim()) return;
-          
-          let cols = line.includes(';') ? line.split(';') : line.split(',');
-          if (cols.length < 3 && line.includes('\t')) cols = line.split('\t');
-
-          const firstCol = (cols[0] || '').trim().toUpperCase();
-          if (firstCol === 'FECHA' || firstCol.includes('DESCRIP')) return; // Omitir encabezado
-
-          totalFound++;
-          const rawFecha = (cols[0] || '').trim();
-          const rawDesc = (cols[1] || '').trim();
-          const rawRef = (cols[2] || '').trim();
-          const rawEntrada = parseFormattedNumber(cols[3]);
-          const rawSalida = parseFormattedNumber(cols[4]);
-          const rawInfo = (cols[5] || '').trim();
-          const rawDoc = (cols[6] || '').trim();
-          const rawObs = (cols[7] || '').trim();
-
-          let errors = [];
-
-          if (!rawFecha || !/^\d{4}-\d{2}-\d{2}$/.test(rawFecha)) errors.push("Fecha inválida (usar AAAA-MM-DD)");
-          if (!rawDesc) errors.push("Descripción obligatoria vacía");
-          if (isNaN(rawEntrada) || isNaN(rawSalida)) errors.push("Entrada/Salida deben ser números");
-          if (rawEntrada === 0 && rawSalida === 0) errors.push("Registra monto en Entrada o Salida");
-
-          const isDup = rawRef !== '' && existingRefs.includes(rawRef.toLowerCase());
-          if (isDup) dupCount++;
-
-          const isValid = errors.length === 0;
-
-          if (isValid) {
-            validCount++;
-            validParsedRowsForCargue.push({
-              id: 'MOV-' + Date.now().toString() + Math.random().toString(36).substr(2, 3),
-              fecha: rawFecha,
-              descripcion: rawDesc,
-              referencia: rawRef,
-              saldoInicial: 0,
-              entrada: rawEntrada,
-              salida: rawSalida,
-              informacion: rawInfo,
-              documento: rawDoc,
-              observaciones: rawObs || 'Cargado vía archivo masivo',
-              isReverso: false,
-              reversoState: 'IDENTIFICADO',
-              history: [],
-              subtotalesVisible: true,
-              subtotales: []
-            });
-          } else {
-            errorCount++;
-          }
-
-          const statusIcon = isValid ? '<span style="color:#059669; font-weight:bold;">✅ OK</span>' : '<span style="color:#dc2626; font-weight:bold;">❌ Error</span>';
-          const rowBg = isValid ? '' : 'style="background:#fff1f2;"';
-
-          previewBody.innerHTML += `
-            <tr ${rowBg}>
-              <td class="text-center">${statusIcon}</td>
-              <td>${rawFecha || '—'}</td>
-              <td style="font-weight:bold;">${rawDesc || '—'}</td>
-              <td class="text-right" style="color:#059669;">${formatCurrency(rawEntrada)}</td>
-              <td class="text-right" style="color:#dc2626;">${formatCurrency(rawSalida)}</td>
-              <td>${rawInfo}</td>
-              <td>${rawDoc}</td>
-              <td style="font-size:10px; color:${isValid ? '#64748b' : '#b91c1c'};">${isValid ? (isDup ? '⚠️ Referencia Duplicada' : 'Listo para procesar') : errors.join(', ')}</td>
-            </tr>`;
-        });
-
-        document.getElementById('valTotalFound').innerText = totalFound;
-        document.getElementById('valValidCount').innerText = validCount;
-        document.getElementById('valErrorCount').innerText = errorCount;
-        document.getElementById('valDupCount').innerText = dupCount;
-        document.getElementById('summaryGrid').classList.remove('hidden');
-
-        if (validCount > 0 && errorCount === 0) {
-          document.getElementById('fileValidationStatus').innerText = `✅ Archivo validado correctamente (${validCount} registros listos).`;
-          document.getElementById('btnConfirmarCargue').classList.remove('btn-disabled');
-        } else if (validCount > 0 && errorCount > 0) {
-          document.getElementById('fileValidationStatus').innerText = `⚠️ Archivo con ${errorCount} errores. Corrige el archivo para confirmar.`;
-          document.getElementById('btnConfirmarCargue').classList.add('btn-disabled');
-        } else {
-          document.getElementById('fileValidationStatus').innerText = `❌ No se encontraron registros válidos para cargar.`;
-          document.getElementById('btnConfirmarCargue').classList.add('btn-disabled');
+    function unzipEntries(buf) {
+      const dv = new DataView(buf), u8 = new Uint8Array(buf), dec = new TextDecoder();
+      let eocd = -1;
+      for (let i = u8.length - 22; i >= Math.max(0, u8.length - 65557); i--) {
+        if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+      }
+      if (eocd < 0) throw new Error('El archivo no es un .xlsx válido.');
+      const total = dv.getUint16(eocd + 10, true);
+      let p = dv.getUint32(eocd + 16, true);
+      const entries = {};
+      for (let k = 0; k < total; k++) {
+        if (dv.getUint32(p, true) !== 0x02014b50) break;
+        const nlen = dv.getUint16(p + 28, true), elen = dv.getUint16(p + 30, true), clen = dv.getUint16(p + 32, true);
+        entries[dec.decode(u8.subarray(p + 46, p + 46 + nlen))] = {
+          method: dv.getUint16(p + 10, true), csize: dv.getUint32(p + 20, true), lho: dv.getUint32(p + 42, true)
+        };
+        p += 46 + nlen + elen + clen;
+      }
+      return {
+        async read(name) {
+          const e = entries[name]; if (!e) return null;
+          const start = e.lho + 30 + dv.getUint16(e.lho + 26, true) + dv.getUint16(e.lho + 28, true);
+          const data = u8.subarray(start, start + e.csize);
+          if (e.method === 0) return dec.decode(data);
+          if (e.method === 8) return dec.decode(await inflateRaw(data));
+          throw new Error('Compresión de .xlsx no soportada.');
         }
       };
+    }
 
-      reader.readAsText(file);
+    function serialToISO(n, date1904) {
+      const epoch = date1904 ? Date.UTC(1904, 0, 1) : Date.UTC(1899, 11, 30);
+      return new Date(epoch + Math.floor(n) * 86400000).toISOString().slice(0, 10);
+    }
+
+    async function readXlsxRows(buf) {
+      if (typeof DecompressionStream === 'undefined') throw new Error('Este navegador no puede leer .xlsx. Guarda el archivo como CSV o usa Chrome/Edge actualizado.');
+      const zip = unzipEntries(buf);
+      const xml = s => new DOMParser().parseFromString(s, 'application/xml');
+      const NS_R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+
+      const wbText = await zip.read('xl/workbook.xml');
+      if (!wbText) throw new Error('El archivo no parece un libro de Excel (.xlsx).');
+      const wb = xml(wbText);
+      const pr = wb.getElementsByTagName('workbookPr')[0];
+      const date1904 = !!pr && ['1', 'true'].includes(pr.getAttribute('date1904'));
+      const sheetEl = wb.getElementsByTagName('sheet')[0];
+      if (!sheetEl) throw new Error('El libro de Excel no tiene hojas.');
+      const rid = sheetEl.getAttributeNS(NS_R, 'id') || sheetEl.getAttribute('r:id');
+      let path = 'xl/worksheets/sheet1.xml';
+      const relsText = await zip.read('xl/_rels/workbook.xml.rels');
+      if (relsText) {
+        [...xml(relsText).getElementsByTagName('Relationship')].forEach(r => {
+          if (r.getAttribute('Id') === rid) { const t = r.getAttribute('Target'); path = t.startsWith('/') ? t.slice(1) : 'xl/' + t; }
+        });
+      }
+      const sheetText = await zip.read(path);
+      if (!sheetText) throw new Error('No se pudo leer la primera hoja del Excel.');
+
+      const ssText = await zip.read('xl/sharedStrings.xml');
+      const shared = ssText ? [...xml(ssText).getElementsByTagName('si')].map(si =>
+        [...si.getElementsByTagName('t')].filter(t => t.parentNode.localName !== 'rPh').map(t => t.textContent).join('')) : [];
+
+      // Qué estilos de celda son fechas
+      const dateXf = new Set();
+      const stText = await zip.read('xl/styles.xml');
+      if (stText) {
+        const st = xml(stText), custom = {};
+        [...st.getElementsByTagName('numFmt')].forEach(n => { custom[n.getAttribute('numFmtId')] = n.getAttribute('formatCode') || ''; });
+        const isDateCode = code => /[dmyhs]/i.test(code.replace(/"[^"]*"|\[[^\]]*\]|\\./g, ''));
+        const xfs = st.getElementsByTagName('cellXfs')[0];
+        if (xfs) [...xfs.getElementsByTagName('xf')].forEach((xf, i) => {
+          const id = parseInt(xf.getAttribute('numFmtId'), 10);
+          if ((id >= 14 && id <= 22) || (id >= 45 && id <= 47) || (custom[id] && isDateCode(custom[id]))) dateXf.add(i);
+        });
+      }
+
+      const colIdx = ref => { let n = 0; for (const ch of ref.match(/^[A-Z]+/)[0]) n = n * 26 + ch.charCodeAt(0) - 64; return n - 1; };
+      const rows = [];
+      [...xml(sheetText).getElementsByTagName('row')].forEach(rowEl => {
+        const r = [];
+        [...rowEl.getElementsByTagName('c')].forEach(c => {
+          const ref = c.getAttribute('r'), ci = ref ? colIdx(ref) : r.length;
+          const t = c.getAttribute('t'), s = parseInt(c.getAttribute('s') || '0', 10);
+          const vEl = c.getElementsByTagName('v')[0], v = vEl ? vEl.textContent : '';
+          let val = '';
+          if (t === 's') val = shared[parseInt(v, 10)] || '';
+          else if (t === 'inlineStr') val = [...c.getElementsByTagName('t')].map(x => x.textContent).join('');
+          else if (t === 'str') val = v;
+          else if (t === 'b' || t === 'e') val = '';
+          else if (v !== '') { const num = parseFloat(v); val = dateXf.has(s) ? serialToISO(num, date1904) : num; }
+          while (r.length < ci) r.push('');
+          r[ci] = val;
+        });
+        rows.push(r);
+      });
+      return rows;
+    }
+
+    // --- Normalización y validación de filas ---
+    function isoFromParts(y, m, d) {
+      const dt = new Date(Date.UTC(y, m - 1, d));
+      if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== m - 1 || dt.getUTCDate() !== d) return null;
+      return y + '-' + String(m).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    }
+    function normalizeFechaCarga(v) {
+      if (typeof v === 'number') return (v > 20000 && v < 80000) ? serialToISO(v, false) : null;
+      const s = String(v === undefined || v === null ? '' : v).trim();
+      let m = s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})(?:[ T].*)?$/);
+      if (m) return isoFromParts(+m[1], +m[2], +m[3]);
+      m = s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})$/);          // DD/MM/AAAA (Colombia)
+      if (m) return isoFromParts(+m[3], +m[2], +m[1]);
+      return null;
+    }
+    function cargueKey(fecha, ref, entrada, salida, desc) {
+      const r = String(ref || '').trim().toLowerCase();
+      return [fecha, r, round2(entrada), round2(salida), r ? '' : String(desc || '').trim().toLowerCase()].join('|');
+    }
+    const isBadNumber = c => typeof c === 'string' && c.trim() !== '' && !/\d/.test(c);
+
+    function processCargueRows(rows) {
+      const existing = new Set((appData[currentAccount] || []).map(r => cargueKey(r.fecha, r.referencia, r.entrada, r.salida, r.descripcion)));
+      const seen = new Set();
+      cargueParsed = [];
+      const stamp = Date.now().toString();
+
+      rows.forEach(cols => {
+        const c0 = String(cols[0] === undefined || cols[0] === null ? '' : cols[0]).replace(/^\uFEFF/, '').trim().toUpperCase();
+        if (c0 === 'FECHA' || c0.includes('DESCRIP')) return;                  // encabezado
+        if (!cols.some(v => String(v === undefined || v === null ? '' : v).trim() !== '')) return;
+
+        const txt = i => String(cols[i] === undefined || cols[i] === null ? '' : cols[i]).trim();
+        const rawFecha = txt(0), rawDesc = txt(1), rawRef = txt(2), rawInfo = txt(5), rawDoc = txt(6), rawObs = txt(7);
+        const fecha = normalizeFechaCarga(cols[0]);
+        const entrada = parseFormattedNumber(cols[3]), salida = parseFormattedNumber(cols[4]);
+
+        const errors = [];
+        if (!fecha) errors.push('Fecha inválida (usar AAAA-MM-DD o DD/MM/AAAA)');
+        if (!rawDesc) errors.push('Descripción obligatoria vacía');
+        if (isBadNumber(cols[3]) || isBadNumber(cols[4])) errors.push('Entrada/Salida deben ser números');
+        else if (entrada < 0 || salida < 0) errors.push('Los montos no pueden ser negativos');
+        else if (entrada === 0 && salida === 0) errors.push('Registra monto en Entrada o Salida');
+        else if (entrada > 0 && salida > 0) errors.push('Una fila no puede tener Entrada y Salida a la vez');
+
+        let dup = null, row = null;
+        if (errors.length === 0) {
+          const key = cargueKey(fecha, rawRef, entrada, salida, rawDesc);
+          if (existing.has(key)) dup = 'existente'; else if (seen.has(key)) dup = 'archivo';
+          seen.add(key);
+          row = {
+            id: 'MOV-' + stamp + '-' + cargueParsed.length + Math.random().toString(36).slice(2, 5),
+            fecha, descripcion: rawDesc, referencia: rawRef, saldoInicial: 0, entrada, salida,
+            informacion: rawInfo, documento: rawDoc, observaciones: rawObs || 'Cargado vía archivo masivo',
+            isReverso: false, reversoState: 'IDENTIFICADO', history: [], subtotalesVisible: true, subtotales: []
+          };
+        }
+        cargueParsed.push({ rawFecha, rawDesc, rawInfo, rawDoc, entrada, salida, errors, dup, row });
+      });
+      renderCarguePreview();
+    }
+
+    function renderCarguePreview() {
+      if (cargueParsed.length === 0 && document.getElementById('summaryGrid').classList.contains('hidden')) return;   // aún no hay archivo
+      const incluirDup = document.getElementById('chkIncluirDuplicados').checked;
+      const total = cargueParsed.length;
+      const errores = cargueParsed.filter(p => p.errors.length).length;
+      const dups = cargueParsed.filter(p => !p.errors.length && p.dup).length;
+      const aCargar = cargueParsed.filter(p => !p.errors.length && (incluirDup || !p.dup));
+      validParsedRowsForCargue = aCargar.map(p => p.row);
+
+      const MAX = 300;
+      let html = cargueParsed.slice(0, MAX).map(p => {
+        const bad = p.errors.length > 0, omitida = !bad && p.dup && !incluirDup;
+        const icon = bad ? '<span style="color:#dc2626; font-weight:bold;">❌ Error</span>'
+          : omitida ? '<span style="color:#d97706; font-weight:bold;">⏭️ Omitida</span>'
+          : '<span style="color:#059669; font-weight:bold;">✅ OK</span>';
+        let nota;
+        if (bad) nota = p.errors.join(', ');
+        else if (p.dup) nota = (p.dup === 'existente' ? '⚠️ Ya existe en la cuenta' : '⚠️ Repetida en el archivo') + (incluirDup ? ' (se cargará)' : ' (se omitirá)');
+        else nota = 'Listo para procesar';
+        return `<tr ${bad ? 'style="background:#fff1f2;"' : ''}>
+          <td class="text-center">${icon}</td>
+          <td>${escapeHtml(p.rawFecha) || '—'}</td>
+          <td style="font-weight:bold;">${escapeHtml(p.rawDesc) || '—'}</td>
+          <td class="text-right" style="color:#059669;">${formatCurrency(p.entrada)}</td>
+          <td class="text-right" style="color:#dc2626;">${formatCurrency(p.salida)}</td>
+          <td>${escapeHtml(p.rawInfo)}</td>
+          <td>${escapeHtml(p.rawDoc)}</td>
+          <td style="font-size:10px; color:${bad ? '#b91c1c' : '#64748b'};">${escapeHtml(nota)}</td>
+        </tr>`;
+      }).join('');
+      if (total > MAX) html += `<tr><td colspan="8" class="text-center" style="color:#64748b; padding:8px;">… y ${total - MAX} filas más (no se muestran, pero sí se procesan)</td></tr>`;
+      document.getElementById('carguePreviewBody').innerHTML = html;
+
+      document.getElementById('valTotalFound').innerText = total;
+      document.getElementById('valValidCount').innerText = aCargar.length;
+      document.getElementById('valErrorCount').innerText = errores;
+      document.getElementById('valDupCount').innerText = dups;
+      document.getElementById('summaryGrid').classList.remove('hidden');
+
+      const status = document.getElementById('fileValidationStatus'), btn = document.getElementById('btnConfirmarCargue');
+      let ok = false;
+      if (total === 0) status.innerText = '❌ No se encontraron registros en el archivo.';
+      else if (errores > 0) status.innerText = `⚠️ Archivo con ${errores} fila(s) con errores. Corrige el archivo para confirmar.`;
+      else if (aCargar.length === 0) status.innerText = 'ℹ️ Todos los movimientos ya existen en esta cuenta (duplicados). No hay nada nuevo que cargar.';
+      else {
+        ok = true;
+        status.innerText = `✅ Archivo validado: ${aCargar.length} registro(s) listos` + (dups && !incluirDup ? ` (${dups} duplicado(s) omitido(s)).` : '.');
+      }
+      btn.classList.toggle('btn-disabled', !ok);
+    }
+
+    async function parseUploadedFile(file) {
+      const status = document.getElementById('fileValidationStatus');
+      status.innerText = '📄 Procesando y validando: ' + file.name + '...';
+      try {
+        const name = file.name.toLowerCase();
+        let rows;
+        if (name.endsWith('.xlsx') || name.endsWith('.xlsm')) rows = await readXlsxRows(await file.arrayBuffer());
+        else if (name.endsWith('.xls')) throw new Error('El formato antiguo .xls no se puede leer aquí. Ábrelo en Excel y guárdalo como .xlsx o CSV.');
+        else rows = parseDelimited(decodeTextBuffer(await file.arrayBuffer()));
+        document.getElementById('summaryGrid').classList.remove('hidden');
+        processCargueRows(rows);
+      } catch (err) {
+        cargueParsed = []; validParsedRowsForCargue = [];
+        status.innerText = '❌ ' + err.message;
+        document.getElementById('summaryGrid').classList.add('hidden');
+        document.getElementById('btnConfirmarCargue').classList.add('btn-disabled');
+      }
     }
 
     function confirmarCargueMasivo() {
       if (validParsedRowsForCargue.length === 0) return;
 
-      const currentData = appData[currentAccount];
-      validParsedRowsForCargue.forEach(row => {
-        currentData.push(row);
-      });
+      const currentData = appData[currentAccount]; if (!currentData) { alert("⚠️ Selecciona una empresa y una cuenta antes de cargar movimientos."); return; }
+      const cantidad = validParsedRowsForCargue.length;
+      const lote = 'CG-' + Date.now().toString(36);
+      validParsedRowsForCargue.forEach(row => { row.lote = lote; currentData.push(row); });
+      lastCargue = { empresa: currentEmpresa, cuenta: currentAccount, lote, count: cantidad, at: new Date().toISOString() };
+      validParsedRowsForCargue = []; cargueParsed = [];      // evita cargar dos veces con doble clic
 
-      alert(`✅ Cargue Exitoso: Se han incorporado ${validParsedRowsForCargue.length} movimientos a la Posición Bancaria.\n\nLos saldos iniciales y saldos reales han sido recalculados automáticamente.`);
+      alert(`✅ Cargue Exitoso: Se han incorporado ${cantidad} movimientos a la Posición Bancaria.\n\nSi te equivocaste, usa "Deshacer último cargue". Te recomiendo descargar un respaldo (💾).`);
       closeCargueMasivoModal();
       renderApp();
     }
@@ -1330,7 +1483,7 @@
       if (lines.length === 0) return;
 
       e.preventDefault();
-      const data = appData[currentAccount];
+      const data = appData[currentAccount]; if (!data) { alert("⚠️ Selecciona una empresa y una cuenta antes de cargar movimientos."); return; }
       let insertedCount = 0;
 
       lines.forEach((line) => {
@@ -1383,6 +1536,7 @@
 
     function checkSaveNewRow() {
       if (!hasPermission('posicion', 'crear')) return;
+      if (!appData[currentAccount]) return;
 
       const fecha = document.getElementById('new_fecha').innerText.trim();
       const desc = document.getElementById('new_desc').innerText.replace('+ Escribe o pega aquí (Ctrl+V)...', '').trim();
@@ -1396,7 +1550,7 @@
       if (desc !== '' || entrada > 0 || salida > 0) {
         appData[currentAccount].push({
           id: 'MOV-' + Date.now().toString() + Math.random().toString(36).substr(2, 3),
-          fecha: fecha || (currentMonth + '-01'),
+          fecha: normalizeDate(fecha) || (currentMonth + '-01'),
           descripcion: desc || 'Movimiento Registrado',
           referencia: ref,
           saldoInicial: 0,
@@ -1472,10 +1626,10 @@
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td class="text-center" style="color:#94a3b8; font-weight:bold;">${rowCount}</td>
-        <td><input type="text" class="grid-cell-fecha" value="${fecha || currentMonth + '-01'}" placeholder="AAAA-MM-DD"></td>
-        <td><input type="text" class="grid-cell-desc" value="${desc}" placeholder="Descripción de la transacción"></td>
-        <td><input type="text" class="grid-cell-entrada text-right" value="${entrada}" placeholder="0"></td>
-        <td><input type="text" class="grid-cell-salida text-right" value="${salida}" placeholder="0"></td>
+        <td><input type="text" class="grid-cell-fecha" value="${escapeHtml(fecha || currentMonth + '-01')}" placeholder="AAAA-MM-DD"></td>
+        <td><input type="text" class="grid-cell-desc" value="${escapeHtml(desc)}" placeholder="Descripción de la transacción"></td>
+        <td><input type="text" class="grid-cell-entrada text-right" value="${escapeHtml(entrada)}" placeholder="0"></td>
+        <td><input type="text" class="grid-cell-salida text-right" value="${escapeHtml(salida)}" placeholder="0"></td>
       `;
       tbody.appendChild(tr);
     }
@@ -1517,7 +1671,7 @@
 
     function saveExcelGridData() {
       const rows = document.querySelectorAll('#excelGridBody tr');
-      const data = appData[currentAccount];
+      const data = appData[currentAccount]; if (!data) { alert("⚠️ Selecciona una empresa y una cuenta antes de cargar movimientos."); return; }
       let insertedCount = 0;
 
       rows.forEach(tr => {
@@ -1529,7 +1683,7 @@
         if (desc !== '' || entradaVal > 0 || salidaVal > 0) {
           data.push({
             id: 'MOV-' + Date.now().toString() + Math.random().toString(36).substr(2, 3),
-            fecha: fecha || (currentMonth + '-01'),
+            fecha: normalizeDate(fecha) || (currentMonth + '-01'),
             descripcion: desc || 'Movimiento de Banco',
             referencia: '',
             saldoInicial: 0,
@@ -1663,20 +1817,20 @@
 
       return `
         <tr>
-          <td>${fecha}</td>
-          <td style="font-weight:bold; font-family:monospace; color:#2563eb;">${idUnico}</td>
-          <td style="font-weight:bold;">${ref}</td>
+          <td>${escapeHtml(fecha)}</td>
+          <td style="font-weight:bold; font-family:monospace; color:#2563eb;">${escapeHtml(idUnico)}</td>
+          <td style="font-weight:bold;">${escapeHtml(ref)}</td>
           <td>${flujo}</td>
-          <td>${tercero}</td>
-          <td>${desc}</td>
-          <td>${entidad}</td>
+          <td>${escapeHtml(tercero)}</td>
+          <td>${escapeHtml(desc)}</td>
+          <td>${escapeHtml(entidad)}</td>
           <td class="text-right" style="font-weight:bold; color:#7e22ce;">${formatCurrency(monto)}</td>
-          <td>${motivo}</td>
-          <td>${fReclam}</td>
-          <td>${resp}</td>
+          <td>${escapeHtml(motivo)}</td>
+          <td>${escapeHtml(fReclam)}</td>
+          <td>${escapeHtml(resp)}</td>
           <td>${getStatusSelect(state)}</td>
           <td class="text-center">${getSlaBadge(dias)}</td>
-          <td style="font-size:10px; color:#64748b;">${lastUp}</td>
+          <td style="font-size:10px; color:#64748b;">${escapeHtml(lastUp)}</td>
           <td class="text-center"><button onclick="openDetailModal('${parentId}', ${subId ? `'${subId}'` : 'null'})" class="btn-detail">🔍 Expediente</button></td>
         </tr>`;
     }
@@ -1725,7 +1879,7 @@
 
       const hBox = document.getElementById('historyLogContainer');
       hBox.innerHTML = '';
-      (item.history || []).forEach(h => { hBox.innerHTML += `<div class="log-item">${h}</div>`; });
+      (item.history || []).forEach(h => { hBox.innerHTML += `<div class="log-item">${escapeHtml(h)}</div>`; });
 
       const montoVal = parseFloat(item.entrada || item.salida || item.referencia) || 0;
       const reintegrado = item.reintegradoVal || 0;
@@ -1738,10 +1892,26 @@
       document.getElementById('recPorcentaje').innerText = `${porc}%`;
 
       const selectCruce = document.getElementById('selectCruceAbono');
-      selectCruce.innerHTML = '<option value="">-- Seleccionar abono en extracto --</option>';
-      (appData[currentAccount] || []).filter(r => r.entrada > 0).forEach(e => {
-        selectCruce.innerHTML += `<option value="${e.entrada}">${e.fecha} | Abono en banco ${formatCurrency(e.entrada)} (${e.descripcion})</option>`;
+      selectCruce.innerHTML = '';
+      const optBase = document.createElement('option');
+      optBase.value = ''; optBase.textContent = '-- Seleccionar abono en extracto --';
+      selectCruce.appendChild(optBase);
+      let hayAbonos = false;
+      const usoMap = getAbonosUsoMap();
+      const candidatos = (appData[currentAccount] || []).filter(r => r.entrada > 0 && r.id !== item.id &&
+        ((parseFloat(r.entrada) || 0) - (usoMap[r.id] || 0)) > 0);
+      const MAX_ABONOS = 500;
+      const mostrar = candidatos.length > MAX_ABONOS ? candidatos.slice(-MAX_ABONOS) : candidatos;   // los más recientes
+      mostrar.forEach(e => {
+        const disponible = (parseFloat(e.entrada) || 0) - (usoMap[e.id] || 0);
+        hayAbonos = true;
+        const o = document.createElement('option');
+        o.value = e.id;
+        o.textContent = e.fecha + ' | Abono ' + formatCurrency(e.entrada) + ' (disponible ' + formatCurrency(disponible) + ') - ' + (e.descripcion || '');
+        selectCruce.appendChild(o);
       });
+      if (!hayAbonos) optBase.textContent = '-- No hay abonos disponibles en esta cuenta --';
+      else if (candidatos.length > MAX_ABONOS) optBase.textContent = '-- Seleccionar abono (se muestran los ' + MAX_ABONOS + ' más recientes de ' + candidatos.length + ') --';
 
       switchTab('tabA');
       document.getElementById('modalDetail').classList.remove('hidden');
@@ -1762,27 +1932,50 @@
         return;
       }
       if (!activeDetailItem) return;
-      const val = parseFloat(document.getElementById('selectCruceAbono').value) || 0;
-      if (val > 0) {
-        activeDetailItem.reintegradoVal = (activeDetailItem.reintegradoVal || 0) + val;
-        const totalVal = parseFloat(activeDetailItem.entrada || activeDetailItem.salida || activeDetailItem.referencia) || 0;
-        activeDetailItem.reversoState = activeDetailItem.reintegradoVal >= totalVal ? 'REINTEGRADO_TOTAL' : 'REINTEGRADO_PARCIAL';
+      const abonoId = document.getElementById('selectCruceAbono').value;
+      if (!abonoId) { alert("Selecciona un movimiento de abono válido para cruzar."); return; }
 
-        const time = new Date().toISOString().replace('T', ' ').substring(0, 16);
-        activeDetailItem.history.push(`[${time}] Reintegro parcial de ${formatCurrency(val)} abonado por ${getCurrentUserObj().nombre}.`);
-        alert(`Reintegro por ${formatCurrency(val)} cruzado exitosamente.`);
-        closeDetailModal();
-        generateReportReversos();
-      } else {
-        alert("Selecciona un movimiento de abono válido para cruzar.");
-      }
+      const abono = (appData[currentAccount] || []).find(r => r.id === abonoId);
+      if (!abono) { alert("No se encontró el abono seleccionado."); return; }
+
+      const item = activeDetailItem;
+      const totalVal = parseFloat(item.entrada || item.salida || item.referencia) || 0;
+      const yaReintegrado = parseFloat(item.reintegradoVal) || 0;
+      const pendiente = round2(totalVal - yaReintegrado);
+      if (pendiente <= 0) { alert("Este reverso ya está reintegrado en su totalidad."); return; }
+
+      const disponible = round2((parseFloat(abono.entrada) || 0) - getAbonoUsado(abono.id));
+      if (disponible <= 0) { alert("Este abono ya fue aplicado por completo a otras reclamaciones."); return; }
+
+      const aplicar = Math.min(disponible, pendiente);
+      const nombre = getCurrentUserObj().nombre;
+      const ahora = new Date().toISOString().replace('T', ' ').substring(0, 16);
+
+      item.reintegradoVal = round2(yaReintegrado + aplicar);
+      item.abonosAplicados = item.abonosAplicados || [];
+      item.abonosAplicados.push({ abonoId: abono.id, monto: aplicar, fecha: ahora, usuario: nombre });
+
+      const total = item.reintegradoVal >= totalVal;
+      item.reversoState = total ? 'REINTEGRADO_TOTAL' : 'REINTEGRADO_PARCIAL';
+      item.lastUpdate = ahora;
+      item.history = item.history || [];
+      item.history.push('[' + ahora + '] Reintegro ' + (total ? 'total' : 'parcial') + ' de ' + formatCurrency(aplicar) +
+        ' aplicado desde abono ' + abono.id + ' (' + (abono.descripcion || 'sin descripción') + ') por ' + nombre + '.');
+
+      let msg = "Reintegro por " + formatCurrency(aplicar) + " cruzado exitosamente.";
+      if (aplicar < disponible) msg += " El abono conserva " + formatCurrency(round2(disponible - aplicar)) + " disponible.";
+      if (!total) msg += " Pendiente por reintegrar: " + formatCurrency(round2(totalVal - item.reintegradoVal)) + ".";
+      alert(msg);
+
+      closeDetailModal();
+      generateReportReversos();
     }
 
     function addSupportFile() {
       const input = document.getElementById('fileInputSupport');
       if (input.files.length > 0) {
         const f = input.files[0].name;
-        document.getElementById('supportFileList').innerHTML += `<li>📄 ${f} (Subido por ${getCurrentUserObj().nombre})</li>`;
+        document.getElementById('supportFileList').innerHTML += `<li>📄 ${escapeHtml(f)} (Subido por ${escapeHtml(getCurrentUserObj().nombre)})</li>`;
         alert(`Soporte '${f}' adjuntado al expediente.`);
       }
     }
@@ -1796,11 +1989,11 @@
       Object.keys(appData).forEach(acc => {
         const rows = appData[acc];
         if (rows.length === 0) {
-          body.innerHTML += `<tr><td>${acc}</td><td>Sin datos</td><td>—</td><td><span class="badge badge-alert">⚠️ Sin Movimientos</span></td></tr>`;
+          body.innerHTML += `<tr><td>${escapeHtml(acc)}</td><td>Sin datos</td><td>—</td><td><span class="badge badge-alert">⚠️ Sin Movimientos</span></td></tr>`;
         } else {
           const ult = rows[rows.length - 1].fecha;
           const diff = Math.floor((hoy - new Date(ult)) / (1000 * 60 * 60 * 24));
-          body.innerHTML += `<tr><td>${acc}</td><td>${ult}</td><td>${diff} días</td><td><span class="badge ${diff>30?'badge-alert':'badge-in'}">${diff>30?'Desactualizada':'Al día'}</span></td></tr>`;
+          body.innerHTML += `<tr><td>${escapeHtml(acc)}</td><td>${escapeHtml(ult)}</td><td>${diff} días</td><td><span class="badge ${diff>30?'badge-alert':'badge-in'}">${diff>30?'Desactualizada':'Al día'}</span></td></tr>`;
         }
       });
     }
@@ -1809,7 +2002,7 @@
       const body = document.getElementById('reportGastosBody'); body.innerHTML = '';
       (appData[currentAccount] || []).forEach(row => {
         if (row.fecha.substring(0, 7) === currentMonth && ((row.informacion||'').toLowerCase().includes('gastos') || (row.descripcion||'').toLowerCase().includes('gravamen'))) {
-          body.innerHTML += `<tr><td>${row.fecha}</td><td>${currentAccount}</td><td>${row.descripcion}</td><td class="text-right">${formatCurrency(row.salida)}</td><td><span class="badge badge-gasto">Gasto Bancario</span></td></tr>`;
+          body.innerHTML += `<tr><td>${escapeHtml(row.fecha)}</td><td>${escapeHtml(currentAccount)}</td><td>${escapeHtml(row.descripcion)}</td><td class="text-right">${formatCurrency(row.salida)}</td><td><span class="badge badge-gasto">Gasto Bancario</span></td></tr>`;
         }
       });
     }
@@ -1817,8 +2010,8 @@
     function generateReportIdentificar() {
       const body = document.getElementById('reportIdentificarBody'); body.innerHTML = '';
       (appData[currentAccount] || []).forEach(row => {
-        if (row.fecha.substring(0, 7) === currentMonth && (!row.informacion || row.informacion.trim() === '')) {
-          body.innerHTML += `<tr><td>${row.fecha}</td><td><span class="badge badge-out">SALIDA</span></td><td>${row.descripcion}</td><td class="text-right">${formatCurrency(row.salida||row.entrada)}</td><td>Sin Información</td><td>Banco</td></tr>`;
+        if (row.fecha.substring(0, 7) === currentMonth && !row.esSaldoInicial && (!row.informacion || row.informacion.trim() === '')) {
+          body.innerHTML += `<tr><td>${escapeHtml(row.fecha)}</td><td><span class="badge badge-out">SALIDA</span></td><td>${escapeHtml(row.descripcion)}</td><td class="text-right">${formatCurrency(row.salida||row.entrada)}</td><td>Sin Información</td><td>Banco</td></tr>`;
         }
       });
     }
@@ -1826,8 +2019,8 @@
     function generateReportContabilizar() {
       const body = document.getElementById('reportContabilizarBody'); body.innerHTML = '';
       (appData[currentAccount] || []).forEach(row => {
-        if (row.fecha.substring(0, 7) === currentMonth && !row.documento) {
-          body.innerHTML += `<tr><td>${row.fecha}</td><td><span class="badge badge-in">ENTRADA</span></td><td>${row.descripcion}</td><td class="text-right">${formatCurrency(row.entrada||row.salida)}</td><td>Sin RC/FVE</td><td>Pendiente</td></tr>`;
+        if (row.fecha.substring(0, 7) === currentMonth && !row.esSaldoInicial && !row.documento) {
+          body.innerHTML += `<tr><td>${escapeHtml(row.fecha)}</td><td><span class="badge badge-in">ENTRADA</span></td><td>${escapeHtml(row.descripcion)}</td><td class="text-right">${formatCurrency(row.entrada||row.salida)}</td><td>Sin RC/FVE</td><td>Pendiente</td></tr>`;
         }
       });
     }
@@ -1836,10 +2029,11 @@
       const body = document.getElementById('consolidadoBody'); body.innerHTML = '';
       Object.keys(appData).forEach(acc => {
         const rows = appData[acc];
-        let init = rows.length > 0 ? rows[0].saldoInicial : 0;
+        const apertura = rows.find(r => r.esSaldoInicial);
+        let init = apertura ? (parseFloat(apertura.saldoInicial) || 0) : (rows.length > 0 ? (parseFloat(rows[0].saldoInicial) || 0) : 0);
         let inT = rows.reduce((s, r) => s + (parseFloat(r.entrada)||0), 0);
         let outT = rows.reduce((s, r) => s + (parseFloat(r.salida)||0), 0);
-        body.innerHTML += `<tr><td>${acc}</td><td class="text-right">${formatCurrency(init)}</td><td class="text-right">${formatCurrency(inT)}</td><td class="text-right">${formatCurrency(outT)}</td><td class="text-right">${formatCurrency(init+inT-outT)}</td></tr>`;
+        body.innerHTML += `<tr><td>${escapeHtml(acc)}</td><td class="text-right">${formatCurrency(init)}</td><td class="text-right">${formatCurrency(inT)}</td><td class="text-right">${formatCurrency(outT)}</td><td class="text-right">${formatCurrency(init+inT-outT)}</td></tr>`;
       });
     }
 
@@ -1875,49 +2069,67 @@
 
     function updateCell(id, field, val) {
       const canEditAll = hasPermission('posicion', 'editarTodo');
-      const canEditLim = hasPermission('posicion', 'editarLimitado');
-
+      const canEditLimited = hasPermission('posicion', 'editarLimitado');
       const isLimitedField = ['informacion', 'documento', 'observaciones'].includes(field);
+      if (!(canEditAll || (canEditLimited && isLimitedField))) { renderApp(); return; }
 
-      if (!canEditAll && !(canEditLim && isLimitedField)) {
-        renderApp();
-        return;
+      const row = (appData[currentAccount] || []).find(r => r.id === id);
+      if (!row) return;
+      const text = String(val).replace(/\u00a0/g, ' ').trim();
+
+      if (field === 'fecha') {
+        const f = normalizeDate(text);
+        if (!f) { alert("⚠️ Fecha inválida. Usa el formato AAAA-MM-DD (ej: 2025-04-15)."); renderApp(); return; }
+        if (f === row.fecha) return;               // sin cambios
+        row.fecha = f; renderApp(); return;
       }
-
-      const row = appData[currentAccount].find(r => r.id === id);
-      if (row) { row[field] = field.includes('entrada') || field.includes('salida') ? parseFormattedNumber(val) : val.trim(); renderApp(); }
+      if (field === 'entrada' || field === 'salida') {
+        const actual = parseFloat(row[field]) || 0;
+        const nuevo = Math.abs(parseFormattedNumber(text));
+        if (nuevo === actual) return;              // sin cambios: no se toca el dato
+        row[field] = nuevo; renderApp(); return;
+      }
+      const prev = String(row[field] === undefined || row[field] === null ? '' : row[field]).trim();
+      if (text === prev) return;                   // sin cambios
+      row[field] = text;
+      renderApp();
     }
 
     function updateSubCell(parentId, subId, field, val) {
-      const canEditAll = hasPermission('posicion', 'editarTodo');
-      const canEditLim = hasPermission('posicion', 'editarLimitado');
-      const isLimitedField = ['informacion', 'documento', 'observaciones'].includes(field);
-
-      if (!canEditAll && !(canEditLim && isLimitedField)) {
-        renderApp();
-        return;
+      if (!hasPermission('posicion', 'editarTodo')) { renderApp(); return; }
+      const parent = (appData[currentAccount] || []).find(r => r.id === parentId);
+      if (!parent) return;
+      const sub = (parent.subtotales || []).find(s => s.id === subId);
+      if (!sub) return;
+      const text = String(val).replace(/\u00a0/g, ' ').trim();
+      if (field === 'referencia') {
+        const nuevo = Math.abs(parseFormattedNumber(text));
+        if (nuevo === (parseFloat(sub.referencia) || 0)) return;
+        sub.referencia = nuevo;
+      } else {
+        if (text === String(sub[field] === undefined || sub[field] === null ? '' : sub[field]).trim()) return;
+        sub[field] = text;
       }
-
-      const parent = appData[currentAccount].find(r => r.id === parentId);
-      if (parent) {
-        const sub = parent.subtotales.find(s => s.id === subId);
-        if (sub) { sub[field] = field === 'referencia' ? parseFormattedNumber(val) : val.trim(); renderApp(); }
-      }
+      renderApp();
     }
 
     function openAccountModal() {
       if (!hasPermission('posicion', 'crear')) return;
-      const name = prompt("Nombre de la nueva cuenta bancaria:");
-      if (name) {
+      if (!currentEmpresa) { alert("⚠️ Selecciona una empresa antes de crear una cuenta."); return; }
+      const input = prompt("Nombre de la nueva cuenta bancaria (ej: BANCOLOMBIA 1234):");
+      const name = (input || '').trim();
+      if (!name) return;
+      const existing = Object.keys(appData).find(k => k.toLowerCase() === name.toLowerCase());
+      if (existing) {
+        alert('La cuenta "' + existing + '" ya existe en esta empresa. Se abrirá sin borrar sus movimientos.');
+        currentAccount = existing;
+      } else {
         appData[name] = [];
-        const select = document.getElementById('accountSelect');
-        const opt = document.createElement('option');
-        opt.value = name; opt.innerText = name;
-        select.appendChild(opt);
-        select.value = name;
         currentAccount = name;
-        renderApp();
       }
+      rebuildAccountSelect();
+      renderApp();
+      refreshActiveModule();
     }
 
     function switchModule(modId) {
@@ -1953,7 +2165,7 @@
     }
 
     function changeMonth() { currentMonth = document.getElementById('monthSelect').value; renderApp(); }
-    function changeAccount() { currentAccount = document.getElementById('accountSelect').value; renderApp(); }
+    function changeAccount() { currentAccount = document.getElementById('accountSelect').value; renderApp(); refreshActiveModule(); }
 
     function openUserModal() {
       if (!hasPermission('usuarios', 'gestionar')) {
@@ -2017,8 +2229,8 @@
         const isChecked = selectedNits.includes(e.nit) ? 'checked' : '';
         container.innerHTML += `
           <label class="checkbox-item">
-            <input type="checkbox" value="${e.nit}" ${isChecked}>
-            <span>${e.razonSocial} <small style="color:#64748b;">(${e.nit})</small></span>
+            <input type="checkbox" value="${escapeHtml(e.nit)}" ${isChecked}>
+            <span>${escapeHtml(e.razonSocial)} <small style="color:#64748b;">(${escapeHtml(e.nit)})</small></span>
           </label>`;
       });
     }
@@ -2027,7 +2239,7 @@
       if (!hasPermission('usuarios', 'gestionar')) return;
 
       const name = document.getElementById('inputUserName').value.trim();
-      const key = document.getElementById('inputUserKey').value.trim();
+      const key = document.getElementById('inputUserKey').value.trim().replace(/[^\w.\-]/g, '_');   // se usa dentro de onclick
       const role = document.getElementById('inputUserRole').value;
       const checkedBoxes = document.querySelectorAll('#empresasCheckboxes input[type="checkbox"]:checked');
       const assignedNits = Array.from(checkedBoxes).map(cb => cb.value);
@@ -2087,7 +2299,7 @@
       usersList.forEach(u => {
         const empNames = u.empresasAsignadas.map(nit => {
           const emp = empresasList.find(e => e.nit === nit);
-          return emp ? `<span class="badge badge-in" style="margin-right:4px;">${emp.razonSocial}</span>` : '';
+          return emp ? `<span class="badge badge-in" style="margin-right:4px;">${escapeHtml(emp.razonSocial)}</span>` : '';
         }).join('');
 
         const isFull = u.permissions && u.permissions.posicion && u.permissions.posicion.editarTodo;
@@ -2097,9 +2309,9 @@
 
         tbody.innerHTML += `
           <tr>
-            <td style="font-weight:bold; color:#0f172a;">${u.nombre}</td>
-            <td style="font-family:monospace; color:#2563eb;">${u.userKey}</td>
-            <td><span class="badge badge-reverso">${u.rol}</span></td>
+            <td style="font-weight:bold; color:#0f172a;">${escapeHtml(u.nombre)}</td>
+            <td style="font-family:monospace; color:#2563eb;">${escapeHtml(u.userKey)}</td>
+            <td><span class="badge badge-reverso">${escapeHtml(u.rol)}</span></td>
             <td>${empNames || '<span style="color:#94a3b8; font-style:italic;">Ninguna</span>'}</td>
             <td>${permSummary}</td>
             <td class="text-center"><button onclick="editUser('${u.userKey}')" class="btn-detail">✏️ Configurar Permisos</button></td>
@@ -2149,33 +2361,154 @@
 
     /* ===== PERSISTENCIA (localStorage) + RESPALDO ===== */
     const STORAGE_KEY = 'tesoreria_sistema_v1';
+    const SEED_NIT = currentEmpresa;                 // los datos de ejemplo pertenecen a la primera empresa
+    let empresasData = { [SEED_NIT]: appData };       // { nit: { cuenta: [movimientos] } }
+    let lastCargue = null;                            // { empresa, cuenta, lote, count, at }
     let persistenceReady = false;
     let storageWarned = false;
 
     function buildSnapshot() {
-      return { version: 1, savedAt: new Date().toISOString(), appData, empresasList, usersList, currentAccount, currentMonth, currentActiveUser };
+      return { version: 2, savedAt: new Date().toISOString(), empresasData, empresasList, usersList, currentEmpresa, currentAccount, currentMonth, currentActiveUser, lastCargue };
     }
 
+    /* ===== Almacenamiento: IndexedDB (cientos de MB) con localStorage como alternativa ===== */
+    const IDB_NAME = 'tesoreria_db', IDB_STORE = 'kv', IDB_KEY = 'state';
+    let idbPromise = null, useIDB = false, saving = false, pendingSave = false, saveTimer = null, lastSaved = '';
+
+    function openDB() {
+      if (idbPromise) return idbPromise;
+      idbPromise = new Promise((resolve, reject) => {
+        if (!window.indexedDB) return reject(new Error('IndexedDB no disponible'));
+        const req = indexedDB.open(IDB_NAME, 1);
+        req.onupgradeneeded = () => req.result.createObjectStore(IDB_STORE);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+      return idbPromise;
+    }
+    async function idbGet(key) {
+      const db = await openDB();
+      return new Promise((resolve, reject) => {
+        const r = db.transaction(IDB_STORE, 'readonly').objectStore(IDB_STORE).get(key);
+        r.onsuccess = () => resolve(r.result); r.onerror = () => reject(r.error);
+      });
+    }
+    async function idbSet(key, val) {
+      const db = await openDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).put(val, key);
+        tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error); tx.onabort = () => reject(tx.error);
+      });
+    }
+
+    // Se llama después de cada cambio: agrupa los guardados (espera 0,4 s) para no frenar la pantalla
     function saveState() {
-      if (!persistenceReady) return;   // nunca guardar antes de cargar (evita pisar datos con los de ejemplo)
+      if (!persistenceReady) return;
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(flushSave, 400);
+    }
+
+    async function flushSave() {
+      if (!persistenceReady) return;
+      clearTimeout(saveTimer);
+      if (saving) { pendingSave = true; return; }
+      saving = true;
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(buildSnapshot()));
+        const snap = buildSnapshot(); delete snap.savedAt;
+        const json = JSON.stringify(snap);
+        if (json !== lastSaved) {                      // solo escribe si algo cambió
+          if (useIDB) await idbSet(IDB_KEY, json);
+          else localStorage.setItem(STORAGE_KEY, json);
+          lastSaved = json;
+        }
       } catch (err) {
         if (!storageWarned) {
           storageWarned = true;
-          alert("⚠️ No se pudo guardar automáticamente en este navegador (" + err.name + "). Usa el botón 💾 Respaldo para no perder tu información.");
+          alert("⚠️ No se pudo guardar automáticamente en este navegador (" + (err && err.name || 'error') + "). Usa el botón 💾 Respaldo para no perder tu información.");
         }
+      } finally {
+        saving = false;
+        if (pendingSave) { pendingSave = false; flushSave(); }
       }
     }
 
     function applySnapshot(s) {
-      if (!s || typeof s.appData !== 'object') throw new Error('Formato inválido');
-      appData = s.appData;
+      if (!s || typeof s !== 'object') throw new Error('Formato inválido');
+      let store = s.empresasData;
+      if (!store && s.appData && typeof s.appData === 'object') store = { [SEED_NIT]: s.appData };   // respaldo versión 1
+      if (!store || typeof store !== 'object') throw new Error('Formato inválido');
+      Object.values(store).forEach(cuentas => {
+        if (!cuentas || typeof cuentas !== 'object') throw new Error('Formato inválido');
+        Object.values(cuentas).forEach(rows => { if (!Array.isArray(rows)) throw new Error('Formato inválido'); });
+      });
+      // Los IDs se usan dentro de atributos onclick: solo letras, números, punto, guion y guion bajo
+      const safeId = v => String(v === undefined || v === null ? '' : v).replace(/[^\w.\-]/g, '_');
+      const newId = () => 'MOV-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      Object.values(store).forEach(cuentas => Object.values(cuentas).forEach(rows => rows.forEach(r => {
+        r.id = safeId(r.id) || newId();
+        (r.subtotales || []).forEach(sb => { sb.id = safeId(sb.id) || newId(); });
+      })));
+      if (Array.isArray(s.usersList)) s.usersList.forEach(u => { u.userKey = safeId(u.userKey); });
+      empresasData = store;
       if (Array.isArray(s.empresasList)) empresasList = s.empresasList;
       if (Array.isArray(s.usersList) && s.usersList.length) usersList = s.usersList;
-      if (s.currentMonth) currentMonth = s.currentMonth;
-      if (s.currentActiveUser && usersList.some(u => u.userKey === s.currentActiveUser)) currentActiveUser = s.currentActiveUser;
-      currentAccount = (s.currentAccount && appData[s.currentAccount]) ? s.currentAccount : Object.keys(appData)[0];
+      if (/^\d{4}-\d{2}$/.test(String(s.currentMonth || ''))) currentMonth = s.currentMonth;
+      const activeKey = safeId(s.currentActiveUser);
+      if (activeKey && usersList.some(u => u.userKey === activeKey)) currentActiveUser = activeKey;
+      if (s.currentEmpresa) currentEmpresa = s.currentEmpresa;
+      currentAccount = s.currentAccount || '';
+      lastCargue = (s.lastCargue && typeof s.lastCargue === 'object') ? s.lastCargue : null;
+      syncEmpresaData();
+    }
+
+    /* ===== Datos separados por empresa ===== */
+    function ensureEmpresaStore(nit) {
+      if (!empresasData[nit]) empresasData[nit] = {};
+      if (Object.keys(empresasData[nit]).length === 0) empresasData[nit]['CUENTA PRINCIPAL'] = [];
+      return empresasData[nit];
+    }
+
+    function syncEmpresaData() {
+      if (!currentEmpresa) { appData = {}; currentAccount = ''; }
+      else {
+        appData = ensureEmpresaStore(currentEmpresa);
+        if (!appData[currentAccount]) currentAccount = Object.keys(appData)[0];
+      }
+      rebuildAccountSelect();
+    }
+
+    function refreshActiveModule() {
+      const visible = [...document.querySelectorAll('.module-section')].find(s => !s.classList.contains('hidden'));
+      if (visible && visible.id !== 'mod-posicion') switchModule(visible.id);
+    }
+
+    /* ===== Utilidades ===== */
+    function escapeHtml(t) {
+      return String(t === undefined || t === null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+    function round2(n) { return Math.round((Number(n) || 0) * 100) / 100; }
+    function normalizeDate(text) {
+      const m = String(text || '').match(/(\d{4})-(\d{2})-(\d{2})/);
+      if (!m) return null;
+      const y = +m[1], mo = +m[2], d = +m[3];
+      const dt = new Date(Date.UTC(y, mo - 1, d));
+      if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== mo - 1 || dt.getUTCDate() !== d) return null;
+      return m[0];
+    }
+
+    /* ===== Cruce de reintegros: cuánto de un abono ya se aplicó ===== */
+    function getAbonosUsoMap() {            // una sola pasada: { abonoId: monto usado }
+      const mapa = {};
+      const suma = it => (it.abonosAplicados || []).forEach(a => { mapa[a.abonoId] = (mapa[a.abonoId] || 0) + (parseFloat(a.monto) || 0); });
+      (appData[currentAccount] || []).forEach(r => { suma(r); (r.subtotales || []).forEach(suma); });
+      return mapa;
+    }
+    function getAbonoUsado(abonoId) {
+      let usado = 0;
+      const suma = it => (it.abonosAplicados || []).forEach(a => { if (a.abonoId === abonoId) usado += (parseFloat(a.monto) || 0); });
+      (appData[currentAccount] || []).forEach(r => { suma(r); (r.subtotales || []).forEach(suma); });
+      return round2(usado);
     }
 
     function rebuildAccountSelect() {
@@ -2189,14 +2522,16 @@
       select.value = currentAccount;
       const monthSel = document.getElementById('monthSelect');
       if (monthSel) {
-        if (![...monthSel.options].some(o => o.value === currentMonth)) {
-          const o = document.createElement('option'); o.value = currentMonth; o.textContent = currentMonth; monthSel.appendChild(o);
-        }
+        const MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        monthSel.innerHTML = '';
+        const addOpt = (v, t) => { const o = document.createElement('option'); o.value = v; o.textContent = t; monthSel.appendChild(o); };
+        for (let y = 2025; y <= 2027; y++) for (let m = 1; m <= 12; m++) addOpt(y + '-' + String(m).padStart(2, '0'), MESES[m - 1] + ' ' + y);
+        if (![...monthSel.options].some(o => o.value === currentMonth)) addOpt(currentMonth, currentMonth);
         monthSel.value = currentMonth;
       }
     }
 
-    function loadState() {
+    function loadState() {   // versión simple (localStorage): solo como alternativa
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return false;
@@ -2206,6 +2541,36 @@
         console.error('No se pudo cargar el estado guardado:', err);
         return false;
       }
+    }
+
+    async function loadStateAsync() {
+      try { await openDB(); useIDB = true; }
+      catch (e) { useIDB = false; return loadState(); }         // sin IndexedDB: usa localStorage
+      try {
+        if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+      } catch (e) {}
+      let raw = null;
+      try { raw = await idbGet(IDB_KEY); } catch (e) { raw = null; }
+      if (raw) {
+        try { applySnapshot(JSON.parse(raw)); lastSaved = raw; return true; }
+        catch (err) {                                             // datos dañados: se conserva copia antes de continuar
+          console.error('Estado guardado ilegible:', err);
+          try { await idbSet('state_dañado_' + Date.now(), raw); } catch (e) {}
+          return false;
+        }
+      }
+      // Migración: datos que estaban en localStorage (versiones anteriores)
+      try {
+        const old = localStorage.getItem(STORAGE_KEY);
+        if (old) {
+          applySnapshot(JSON.parse(old));
+          await idbSet(IDB_KEY, old);
+          lastSaved = old;
+          localStorage.removeItem(STORAGE_KEY);                  // ya está a salvo en IndexedDB
+          return true;
+        }
+      } catch (err) { console.error('No se pudo migrar desde localStorage:', err); }
+      return false;
     }
 
     function exportBackup() {
@@ -2221,7 +2586,7 @@
       const file = event.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = e => {
+      reader.onload = async e => {
         try {
           const snap = JSON.parse(e.target.result);
           if (!confirm('Esto reemplazará TODA la información actual por la del respaldo. ¿Continuar?')) return;
@@ -2229,7 +2594,7 @@
           rebuildAccountSelect();
           renderUserSessionSwitcher();
           renderApp();
-          saveState();
+          await flushSave();
           alert('✅ Respaldo restaurado correctamente.');
         } catch (err) {
           alert('❌ El archivo no es un respaldo válido: ' + err.message);
@@ -2237,6 +2602,71 @@
       };
       reader.readAsText(file);
       event.target.value = '';
+    }
+
+    /* ===== Saldo inicial, borrar movimiento, deshacer cargue ===== */
+    function openSaldoInicial() {
+      if (!hasPermission('posicion', 'editarTodo')) { alert("⚠️ Tu usuario no tiene permiso para definir el saldo inicial."); return; }
+      const data = appData[currentAccount];
+      if (!data) { alert("⚠️ Selecciona una empresa y una cuenta primero."); return; }
+      const existente = data.find(r => r.esSaldoInicial);
+      const mes = prompt('¿En qué mes empieza tu información de la cuenta "' + currentAccount + '"? (AAAA-MM, ej: ' + currentMonth + ')',
+                         existente ? existente.fecha.slice(0, 7) : currentMonth);
+      if (mes === null) return;
+      if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(mes.trim())) { alert("Mes inválido. Usa el formato AAAA-MM (ej: 2026-01)."); return; }
+      const montoTxt = prompt('Saldo de la cuenta al INICIAR ese mes (el saldo del extracto del día 1). Ej: 9.321.711,00',
+                              existente ? String(existente.saldoInicial) : '');
+      if (montoTxt === null) return;
+      const monto = parseFormattedNumber(montoTxt);
+      const fecha = mes.trim() + '-01';
+      if (existente) { existente.saldoInicial = monto; existente.fecha = fecha; }
+      else data.push({
+        id: 'SI-' + Date.now().toString(36), esSaldoInicial: true, fecha, descripcion: 'SALDO INICIAL', referencia: '',
+        saldoInicial: monto, entrada: 0, salida: 0, informacion: 'Saldo inicial de la cuenta', documento: 'N/A', observaciones: '',
+        isReverso: false, reversoState: 'IDENTIFICADO', history: [], subtotalesVisible: true, subtotales: []
+      });
+      currentMonth = mes.trim();
+      rebuildAccountSelect();
+      renderApp();
+      alert('✅ Saldo inicial de ' + formatCurrency(monto) + ' registrado para ' + currentAccount + ' desde ' + mes.trim() + '.');
+    }
+
+    function deleteRow(id) {
+      if (!hasPermission('posicion', 'editarTodo')) { alert("⚠️ Tu usuario no tiene permiso para eliminar movimientos."); return; }
+      const data = appData[currentAccount] || [];
+      const idx = data.findIndex(r => r.id === id);
+      if (idx < 0) return;
+      const row = data[idx];
+      if (getAbonoUsado(row.id) > 0) {
+        alert("⚠️ Este movimiento es un abono que ya se aplicó a reintegros de auditoría. No se puede eliminar sin antes revisar esos reintegros.");
+        return;
+      }
+      const monto = (parseFloat(row.entrada) || 0) || (parseFloat(row.salida) || 0);
+      const extra = (row.subtotales && row.subtotales.length) ? '\n\nTambién se eliminarán sus ' + row.subtotales.length + ' subtotal(es).' : '';
+      if (!confirm('¿Eliminar este movimiento?\n\n' + row.fecha + ' · ' + (row.descripcion || '') + ' · ' + formatCurrency(monto) + extra + '\n\nNo se puede deshacer (usa 💾 Respaldo antes si tienes dudas).')) return;
+      data.splice(idx, 1);
+      renderApp();
+    }
+
+    function undoUltimoCargue() {
+      if (!lastCargue) { alert("No hay un cargue masivo reciente para deshacer."); return; }
+      if (lastCargue.empresa !== currentEmpresa || lastCargue.cuenta !== currentAccount) {
+        alert('El último cargue se hizo en la cuenta "' + lastCargue.cuenta + '" de otra empresa o cuenta. Cámbiate a esa empresa y cuenta para deshacerlo.');
+        return;
+      }
+      const data = appData[currentAccount] || [];
+      const delLote = data.filter(r => r.lote === lastCargue.lote);
+      if (delLote.length === 0) { alert("Los movimientos de ese cargue ya no existen."); lastCargue = null; return; }
+      if (delLote.some(r => getAbonoUsado(r.id) > 0)) {
+        alert("⚠️ Algunos movimientos de ese cargue ya se usaron como abono en reintegros de auditoría. No se puede deshacer automáticamente.");
+        return;
+      }
+      if (!confirm('¿Eliminar los ' + delLote.length + ' movimientos del último cargue (' + lastCargue.at.slice(0, 16).replace('T', ' ') + ')?\n\nNo se tocan los movimientos que agregaste de otra forma.')) return;
+      appData[currentAccount] = data.filter(r => r.lote !== lastCargue.lote);
+      empresasData[currentEmpresa][currentAccount] = appData[currentAccount];
+      lastCargue = null;
+      renderApp();
+      alert('↩️ Cargue deshecho: ' + delLote.length + ' movimientos eliminados.');
     }
 
     // Guardar después de cada render y de cada cambio en auditoría
@@ -2247,16 +2677,25 @@
       generateReportReversos = function() { _genRev.apply(this, arguments); saveState(); };
     })();
 
-    // Red de seguridad: ediciones que no pasan por un render (notas, reintegros, etc.)
-    setInterval(saveState, 5000);
-    window.addEventListener('beforeunload', saveState);
-    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveState(); });
+    (function hookEmpresa() {
+      const _res = renderEmpresasSelect;
+      renderEmpresasSelect = function() { _res.apply(this, arguments); syncEmpresaData(); };
+    })();
 
-    window.onload = function() {
-      loadState();
-      rebuildAccountSelect();
+    // Red de seguridad: ediciones que no pasan por un render (notas, reintegros, etc.)
+    setInterval(saveState, 10000);
+    window.addEventListener('beforeunload', flushSave);
+    window.addEventListener('pagehide', flushSave);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSave(); });
+
+    window.onload = async function() {
+      if (!(await loadStateAsync())) {   // primer uso: abrir en el mes actual
+        const hoy = new Date();
+        currentMonth = hoy.getFullYear() + '-' + String(hoy.getMonth() + 1).padStart(2, '0');
+      }
+      renderUserSessionSwitcher();     // también sincroniza los datos de la empresa activa
+      syncEmpresaData();
       persistenceReady = true;
-      renderUserSessionSwitcher();
       renderApp();
     };
   </script>
